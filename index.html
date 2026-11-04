@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lek och lär</title>
+<meta name="description" content="Små spel och övningar för att lära sig skolämnen, ett område i taget.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Grandstander:wght@600;800&family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+<script src="delad/profil.js"></script>
+<script src="kurser.js"></script>
+<style>
+:root{
+  --display:"Grandstander","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  --body:"Lexend","Segoe UI",Roboto,Arial,sans-serif;
+  --hand:"Gochi Hand","Comic Sans MS","Marker Felt",cursive;
+  --bg:#fff8ec; --paper:#ffffff; --ink:#1d2340; --ink-soft:#525a7a; --ink-faint:#7c839e;
+  --line:rgba(29,35,64,.12); --line-strong:rgba(29,35,64,.3);
+  --grid:rgba(29,35,64,.06); --pen:#2346b8; --sun:#ffb51e; --focus:#2346b8;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131833; --paper:#1c2347; --ink:#eef1ff; --ink-soft:#b6bddc; --ink-faint:#8b93b6;
+    --line:rgba(220,228,255,.13); --line-strong:rgba(220,228,255,.32);
+    --grid:rgba(220,228,255,.05); --pen:#8fb0ff; --focus:#8fb0ff;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;min-height:100dvh;
+  font:400 1.05rem/1.55 var(--body);color:var(--ink);background:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1040px;margin:0 auto;padding:0 clamp(18px,4vw,36px)}
+h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;letter-spacing:-.01em}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+
+header.top{padding-block:clamp(36px,7vw,72px) clamp(20px,4vw,36px)}
+.logo{display:flex;align-items:center;gap:14px}
+.logo-mark{width:58px;height:58px;flex:none}
+.logo h1{font-size:clamp(2.4rem,7vw,3.8rem);font-weight:800}
+.tagline{margin:12px 0 0;max-width:34ch;color:var(--ink-soft);font-size:1.1rem}
+
+/* Vem är du? */
+.who{padding-bottom:64px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:22px;padding:clamp(22px,4vw,38px);box-shadow:0 1px 0 var(--line),0 14px 40px -24px rgba(29,35,64,.35);max-width:560px}
+.hand{font-family:var(--hand);color:var(--pen);font-weight:400}
+.ask{font:400 clamp(1.9rem,5vw,2.5rem)/1 var(--hand);color:var(--pen);transform:rotate(-2deg);transform-origin:left;margin:0 0 18px}
+.name-form{display:flex;gap:10px;flex-wrap:wrap}
+.name-form label{flex-basis:100%;font-weight:600;font-size:.95rem;color:var(--ink-soft)}
+.name-input{flex:1 1 220px;min-width:0;font:400 1.7rem/1 var(--hand);color:var(--ink);background:transparent;border:0;border-bottom:2.5px dashed var(--line-strong);padding:8px 2px;border-radius:0}
+.name-input:focus{outline:none;border-bottom-color:var(--pen);border-bottom-style:solid}
+.name-input::placeholder{color:var(--ink-faint);opacity:.7}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:800 1.1rem/1 var(--display);padding:14px 22px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.btn-primary{background:var(--ink);color:var(--bg);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.saved{margin-top:26px;padding-top:20px;border-top:1.5px dashed var(--line)}
+.saved p{margin:0 0 10px;font-weight:600;font-size:.95rem;color:var(--ink-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.chip{display:inline-flex;align-items:center;border:1.5px solid var(--line-strong);border-radius:999px;background:var(--paper);overflow:hidden}
+.chip button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.chip .pick{font:400 1.35rem/1 var(--hand);padding:8px 6px 8px 16px}
+.chip .forget{width:34px;align-self:stretch;color:var(--ink-faint);font-size:1.1rem}
+.chip .forget:hover{color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+
+/* Kurser */
+.hej{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 18px;margin-bottom:26px}
+.hej h2{font:400 clamp(2.2rem,6vw,3rem)/1 var(--hand);color:var(--pen);transform:rotate(-2deg);transform-origin:left}
+.hej .switch{font:inherit;font-size:.95rem;color:var(--ink-soft);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.hej .switch:hover{color:var(--ink)}
+.lead{margin:0 0 22px;color:var(--ink-soft)}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px;list-style:none;margin:0;padding:0 0 72px}
+.course{--c:#1d6fd6;position:relative;display:flex;flex-direction:column;gap:14px;height:100%;padding:22px;background:var(--paper);border:1.5px solid var(--line);border-radius:22px;text-decoration:none;color:var(--ink);box-shadow:0 1px 0 var(--line),0 14px 40px -26px rgba(29,35,64,.4);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.course:hover{transform:translateY(-3px) rotate(-.4deg);border-color:var(--c);box-shadow:0 1px 0 var(--line),0 22px 44px -24px rgba(29,35,64,.45)}
+.course:active{transform:translateY(0)}
+.tile{position:relative;display:grid;place-items:center;width:84px;height:84px;border-radius:16px;background:var(--c);color:#fff;font:800 1.65rem/1 var(--display);letter-spacing:-.02em;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18)}
+.tile small{position:absolute;top:7px;left:9px;font:600 .72rem/1 var(--display);opacity:.85}
+.meta{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--ink)}
+.course h3{font-size:1.5rem;font-weight:800}
+.course p{margin:0;color:var(--ink-soft);font-size:.98rem}
+.go{margin-top:auto;font:800 1rem/1 var(--display);color:var(--c)}
+@media (prefers-color-scheme: dark){ .go{filter:brightness(1.5)} }
+.soon{display:flex;align-items:center;justify-content:center;min-height:200px;border:2px dashed var(--line-strong);border-radius:22px;padding:22px;text-align:center;font:400 1.5rem/1.2 var(--hand);color:var(--ink-faint)}
+
+footer{padding:0 0 40px;color:var(--ink-faint);font-size:.85rem}
+
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+
+<header class="top wrap">
+  <div class="logo">
+    <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="#ffb51e"/>
+      <g fill="none" stroke="#1d2340" stroke-width="2.2">
+        <ellipse cx="32" cy="32" rx="19" ry="7.5"/>
+        <ellipse cx="32" cy="32" rx="19" ry="7.5" transform="rotate(60 32 32)"/>
+        <ellipse cx="32" cy="32" rx="19" ry="7.5" transform="rotate(120 32 32)"/>
+      </g>
+      <circle cx="32" cy="32" r="4.5" fill="#e5304a"/>
+      <circle cx="51" cy="32" r="3" fill="#1d6fd6"/>
+    </svg>
+    <h1>Lek och lär</h1>
+  </div>
+  <p class="tagline">Små spel och övningar. Ett område i taget, i din egen takt.</p>
+</header>
+
+<main class="wrap">
+  <section class="who" id="who" hidden aria-labelledby="who-title">
+    <div class="card">
+      <h2 class="ask" id="who-title">Vem är du?</h2>
+      <form class="name-form" id="nameForm" autocomplete="off">
+        <label for="nameInput">Skriv ditt förnamn</label>
+        <input class="name-input" id="nameInput" name="namn" maxlength="30" placeholder="Ditt namn" required enterkeyhint="go" autocapitalize="words" spellcheck="false">
+        <button class="btn btn-primary" type="submit">Kör!</button>
+      </form>
+      <div class="saved" id="saved" hidden>
+        <p>Eller välj dig själv:</p>
+        <ul class="chips" id="chips"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pick" hidden aria-labelledby="hej-title">
+    <div class="hej">
+      <h2 id="hej-title">Hej <span data-namn></span>!</h2>
+      <button class="switch" id="switch" type="button">Inte <span data-namn></span>? Byt person</button>
+    </div>
+    <p class="lead">Välj vad du vill öva på.</p>
+    <ul class="courses" id="courses"></ul>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Ditt namn och dina bockar sparas bara i den här webbläsaren.</p>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const P = window.LekOchLar;
+  const kurser = window.KURSER || [];
+  const vantar = new URLSearchParams(location.search).get('kurs');
+  const kursUrl = id => 'kurser/' + encodeURIComponent(id) + '/';
+
+  function renderWho(){
+    $('#pick').hidden = true;
+    $('#who').hidden = false;
+    const profiler = P.profiler();
+    $('#saved').hidden = profiler.length === 0;
+    const chips = $('#chips');
+    chips.replaceChildren(...profiler.map(n => {
+      const li = document.createElement('li');
+      li.className = 'chip';
+      const pick = document.createElement('button');
+      pick.type = 'button'; pick.className = 'pick'; pick.textContent = n;
+      pick.addEventListener('click', () => choose(n));
+      const forget = document.createElement('button');
+      forget.type = 'button'; forget.className = 'forget'; forget.textContent = '×';
+      forget.setAttribute('aria-label', 'Glöm ' + n);
+      forget.addEventListener('click', () => {
+        if (confirm('Glömma ' + n + '? Bockarna finns kvar om du skriver samma namn igen.')) { P.glom(n); renderWho(); }
+      });
+      li.append(pick, forget);
+      return li;
+    }));
+    $('#nameInput').focus({ preventScroll: true });
+  }
+
+  function renderPick(){
+    $('#who').hidden = true;
+    $('#pick').hidden = false;
+    P.fyllNamn();
+    const list = $('#courses');
+    list.replaceChildren(...kurser.map(k => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'course';
+      a.href = kursUrl(k.id);
+      a.style.setProperty('--c', k.farg);
+      a.innerHTML =
+        '<span class="tile" aria-hidden="true"><small></small><span class="sym"></span></span>' +
+        '<span class="meta"><span class="tag t-amne"></span><span class="tag t-niva"></span></span>' +
+        '<h3></h3><p></p><span class="go" aria-hidden="true">Starta →</span>';
+      a.querySelector('small').textContent = k.nummer;
+      a.querySelector('.sym').textContent = k.symbol;
+      a.querySelector('.t-amne').textContent = k.amne;
+      a.querySelector('.t-niva').textContent = k.niva;
+      a.querySelector('h3').textContent = k.titel;
+      a.querySelector('p').textContent = k.beskrivning;
+      li.append(a);
+      return li;
+    }));
+    const soon = document.createElement('li');
+    soon.innerHTML = '<div class="soon">Fler kurser kommer…</div>';
+    list.append(soon);
+  }
+
+  function choose(namn){
+    if (!P.valj(namn)) return;
+    if (vantar && kurser.some(k => k.id === vantar)) { location.href = kursUrl(vantar); return; }
+    renderPick();
+  }
+
+  $('#nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    choose($('#nameInput').value);
+    $('#nameInput').value = '';
+  });
+  $('#switch').addEventListener('click', () => { P.bytPerson(); renderWho(); });
+
+  P.namn() ? renderPick() : renderWho();
+})();
+</script>
+</body>
+</html>

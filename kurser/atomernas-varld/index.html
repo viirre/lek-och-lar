@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atomernas värld</title>
+<script src="../../delad/profil.js"></script>
+<script>LekOchLar.kravNamn('atomernas-varld');</script>
+<meta name="description" content="Bygg atomer, se jonbindningar hända och snurra på riktiga molekyler. Interaktiv kemi för nyfikna.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --display:"Unbounded","Arial Black","Helvetica Neue",Arial,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bg:#f3f5fa;
+  --panel:#ffffff;
+  --panel-2:#eceff7;
+  --ink:#121735;
+  --ink-soft:#4a5175;
+  --ink-faint:#767c9b;
+  --line:rgba(18,23,53,.12);
+  --line-strong:rgba(18,23,53,.24);
+  --good:#0f7a55;
+  --bad:#c8283e;
+  --focus:#2f56e8;
+  --stage:#0b1129;
+  --stage-ink:#e8ebff;
+  --stage-soft:#9aa3cc;
+  --sodium:#ffc83d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#070b1e;
+    --panel:#0f1530;
+    --panel-2:#171e40;
+    --ink:#eef0ff;
+    --ink-soft:#aab1d6;
+    --ink-faint:#7a82ab;
+    --line:rgba(190,200,255,.13);
+    --line-strong:rgba(190,200,255,.26);
+    --good:#3ddc97;
+    --bad:#ff6b81;
+    --focus:#ffc83d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#070b1e;
+  --panel:#0f1530;
+  --panel-2:#171e40;
+  --ink:#eef0ff;
+  --ink-soft:#aab1d6;
+  --ink-faint:#7a82ab;
+  --line:rgba(190,200,255,.13);
+  --line-strong:rgba(190,200,255,.26);
+  --good:#3ddc97;
+  --bad:#ff6b81;
+  --focus:#ffc83d;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.08;letter-spacing:-.02em}
+h2{font-size:clamp(1.9rem,4.6vw,3.3rem);font-weight:700}
+h3{font-size:1.06rem;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+p{margin:0}
+b,strong{font-weight:700}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(16px,3vw,28px)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Navigering ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg);background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:9px clamp(16px,3vw,28px);display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:700 .98rem/1 var(--display);white-space:nowrap;letter-spacing:-.01em}
+.brand-mark{width:30px;height:30px;flex:none}
+.nav-tiles{display:flex;gap:6px;margin-left:auto}
+.tile-link{display:grid;min-width:52px;padding:5px 8px 6px;border:1.5px solid var(--line-strong);border-radius:9px;color:var(--ink);text-decoration:none;line-height:1;gap:2px;transition:background-color .2s,color .2s,border-color .2s}
+.tile-link .z{font:500 .56rem/1 var(--display);opacity:.7}
+.tile-link .sym{font:700 1rem/1 var(--display)}
+.tile-link .nm{font-size:.62rem;color:var(--ink-soft)}
+.tile-link:hover{border-color:var(--ink)}
+.tile-link.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tile-link.active .nm{color:inherit;opacity:.8}
+.progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--sodium);transform-origin:left center;transform:scaleX(0)}
+@media (max-width:640px){
+  .brand span{display:none}
+  .tile-link{min-width:40px;padding:5px 7px}
+  .tile-link .nm{display:none}
+}
+
+/* ---------- Hero ---------- */
+.hero{padding:clamp(8px,1.4vw,16px)}
+.hero-stage{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;min-height:min(88vh,860px);min-height:min(88svh,860px);border-radius:clamp(22px,3vw,36px);background:radial-gradient(120% 90% at 72% 45%,#1b2558 0%,#0b1129 55%,#070b1e 100%);color:var(--stage-ink)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;display:block}
+.hero-copy{position:relative;padding:clamp(28px,5.5vw,80px);max-width:min(660px,100%);pointer-events:none}
+.hero-copy a{pointer-events:auto}
+.hero-hej{margin:0 0 14px;font:700 clamp(1rem,2vw,1.2rem)/1.2 var(--display);color:var(--sodium);letter-spacing:-.01em}
+.home-link{display:grid;place-items:center;width:36px;height:36px;flex:none;border:1.5px solid var(--line-strong);border-radius:9px;color:var(--ink);text-decoration:none}
+.home-link:hover{border-color:var(--ink)}
+.home-link svg{width:18px;height:18px}
+.hero h1{font-size:clamp(2.1rem,5.2vw,4.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.02}
+.hero .lead{margin-top:24px;font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--stage-soft);max-width:31em}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.hero-caption{position:absolute;right:clamp(20px,4vw,56px);bottom:clamp(18px,3vw,36px);max-width:290px;text-align:right;font-size:.88rem;line-height:1.45;color:var(--stage-soft);pointer-events:none}
+.hero-caption b{color:var(--stage-ink)}
+@media (max-width:759px){
+  .hero-stage{align-items:flex-start;min-height:max(700px,92vh);min-height:max(700px,92svh)}
+  .hero-caption{left:24px;right:24px;text-align:left;max-width:none}
+}
+
+/* ---------- Knappar och chips ---------- */
+.btn{appearance:none;border:0;font:700 .98rem/1.1 var(--body);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;cursor:pointer;text-decoration:none;transition:transform .15s ease,box-shadow .2s,background-color .2s,color .2s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-primary:hover{box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 18%,transparent)}
+.btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line-strong)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:inset 0 0 0 1.5px var(--line-strong)}
+.hero .btn-primary{background:var(--sodium);color:#121735}
+.hero .btn-primary:hover{box-shadow:0 0 0 5px rgba(255,200,61,.25)}
+.hero .btn-ghost{color:var(--stage-ink);box-shadow:inset 0 0 0 1.5px rgba(232,235,255,.35)}
+.hero .btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--stage-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1.5px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 16px;min-height:42px;font:700 .95rem/1.1 var(--body);cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+.chip small{font-weight:400;color:var(--ink-soft);margin-left:6px;font-size:.85rem}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.75}
+
+/* ---------- Kapitel ---------- */
+.chapter{padding-top:clamp(76px,10vw,132px)}
+.chapter-head{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:clamp(16px,3vw,32px);row-gap:14px;align-items:start;margin-bottom:clamp(26px,4vw,42px)}
+.chapter-head .el-tile{grid-row:span 2}
+.chapter-head h2{align-self:end}
+.chapter-head .lead{color:var(--ink-soft);font-size:clamp(1.02rem,1.4vw,1.15rem);max-width:40em}
+@media (max-width:640px){
+  .chapter-head{align-items:center}
+  .chapter-head .el-tile{grid-row:auto;width:58px;border-radius:11px;padding:5px 7px 6px}
+  .chapter-head .el-tile .sym{font-size:1.35rem}
+  .chapter-head .el-tile .nm{display:none}
+  .chapter-head h2{align-self:center}
+  .chapter-head .lead{grid-column:1 / -1}
+}
+.el-tile{--cat:var(--sodium);width:clamp(66px,8vw,92px);aspect-ratio:1;border-radius:14px;border:2px solid var(--cat);background:color-mix(in srgb,var(--cat) 20%,var(--panel));display:grid;grid-template-rows:auto 1fr auto;padding:7px 9px 8px;line-height:1}
+.el-tile .z{font:500 .72rem/1 var(--display)}
+.el-tile .sym{font:800 clamp(1.5rem,3vw,2.2rem)/1 var(--display);align-self:center;letter-spacing:-.03em}
+.el-tile .nm{font-size:.66rem;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,2.4vw,26px)}
+.panel h3 + .hint{margin-top:4px}
+.hint{font-size:.9rem;color:var(--ink-soft)}
+.note{margin-top:18px;font-size:.95rem;color:var(--ink-soft);max-width:52em}
+.lab{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(14px,2vw,22px);align-items:stretch}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+
+/* Mikroskopfönster: alltid mörka så att partiklarna kan lysa */
+.stage{position:relative;overflow:hidden;border-radius:28px;background:radial-gradient(90% 80% at 50% 45%,#19224c 0%,var(--stage) 72%);border:1px solid rgba(190,200,255,.12);color:var(--stage-ink);touch-action:pan-y}
+.stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(190,200,255,.08) 1px,transparent 1.3px);background-size:22px 22px;pointer-events:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage-legend{position:absolute;left:16px;bottom:14px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--stage-soft);pointer-events:none}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+.dot.p{background:#ff3d57}
+.dot.n{background:#8e9ab5}
+.dot.e{background:#ffc83d;box-shadow:0 0 8px #ffc83d}
+.dot.cat{background:#ff7a45}
+.dot.an{background:#2fd6c3}
+.toast{position:absolute;left:50%;top:14px;transform:translate(-50%,-12px);opacity:0;padding:9px 16px;border-radius:999px;background:#e8ebff;color:#121735;font-weight:700;font-size:.9rem;white-space:nowrap;max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis;transition:opacity .3s,transform .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.stage-hint{position:absolute;right:16px;bottom:14px;font-size:.82rem;color:var(--stage-soft);pointer-events:none;transition:opacity .4s}
+.pill{position:absolute;left:16px;top:14px;padding:7px 13px;border-radius:999px;background:rgba(10,14,36,.72);border:1px solid rgba(190,200,255,.18);font:700 .85rem/1 var(--body);color:var(--stage-ink);pointer-events:none}
+
+/* ---------- Kapitel 1: atombyggaren ---------- */
+.stage-atom{min-height:clamp(400px,52vw,620px)}
+.element-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
+.el-big{--cat:var(--line-strong);width:118px;aspect-ratio:1;border-radius:16px;border:2px solid var(--cat);background:color-mix(in srgb,var(--cat) 22%,var(--panel));display:grid;grid-template-rows:auto 1fr auto;padding:8px 10px 9px;line-height:1;transition:background-color .35s,border-color .35s}
+.el-big .z{font:500 .8rem/1 var(--display)}
+.el-big .sym{font:800 2.5rem/1 var(--display);letter-spacing:-.04em;align-self:center;justify-self:center;white-space:nowrap}
+.el-big .iso{font-size:.74rem;color:var(--ink-soft)}
+.el-big.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.86)}100%{transform:scale(1)}}
+.el-info h3{font-size:1.3rem}
+.el-cat{margin-top:4px;font-size:.92rem;color:var(--ink-soft)}
+.facts{display:flex;flex-wrap:wrap;gap:6px 22px;margin:12px 0 0}
+.facts dt{font-size:.78rem;color:var(--ink-faint)}
+.facts dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.facts .pos{color:#e8590c}
+.facts .neg{color:#0c8f84}
+.status{margin:18px 0;padding:14px 16px;border-radius:14px;background:var(--panel-2);font-size:.98rem;line-height:1.5}
+.counters{display:grid;gap:10px}
+.counter{display:grid;grid-template-columns:auto minmax(0,1fr) auto 2.6ch auto;align-items:center;gap:10px;padding:8px 8px 8px 14px;border:1px solid var(--line);border-radius:16px}
+.counter .dot{width:14px;height:14px;margin:0}
+.counter .lbl b{display:block;font-size:.98rem;line-height:1.2}
+.counter .lbl small{display:block;color:var(--ink-faint);font-size:.8rem;line-height:1.3}
+.counter output{font:700 1.25rem/1 var(--display);text-align:center;font-variant-numeric:tabular-nums}
+.round{width:44px;height:44px;border-radius:50%;border:0;background:var(--panel-2);color:var(--ink);font:700 1.45rem/1 var(--body);cursor:pointer;transition:transform .12s,background-color .2s}
+.round:hover{background:color-mix(in srgb,var(--ink) 14%,var(--panel))}
+.round:active{transform:scale(.88)}
+.round:disabled{opacity:.3;cursor:not-allowed}
+.counter[data-kind="p"] .round.plus{background:color-mix(in srgb,#ff3d57 22%,var(--panel))}
+.counter[data-kind="n"] .round.plus{background:color-mix(in srgb,#8e9ab5 26%,var(--panel))}
+.counter[data-kind="e"] .round.plus{background:color-mix(in srgb,#ffc83d 30%,var(--panel))}
+.builder-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+.fact{font-size:.92rem;color:var(--ink-soft)}
+.fact b{color:var(--ink)}
+.lab-lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(14px,2vw,22px);margin-top:clamp(14px,2vw,22px)}
+@media (max-width:900px){.lab-lower{grid-template-columns:1fr}}
+.ptable{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin-top:16px}
+.pt{--cat:#999;appearance:none;display:grid;justify-items:center;gap:2px;min-height:60px;padding:5px 3px 6px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--cat) 75%,transparent);background:color-mix(in srgb,var(--cat) 15%,var(--panel));color:var(--ink);cursor:pointer;line-height:1;transition:transform .15s,background-color .2s}
+.pt .pz{font:500 .56rem/1 var(--display);justify-self:start;padding-left:3px;opacity:.75}
+.pt .ps{font:700 clamp(.95rem,2vw,1.2rem)/1 var(--display)}
+.pt .pn{font-size:.6rem;color:var(--ink-soft);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pt:hover{transform:translateY(-2px)}
+.pt[aria-pressed="true"]{background:var(--cat);border-color:var(--cat);color:#10142e}
+.pt[aria-pressed="true"] .pn{color:#10142e}
+@media (max-width:520px){.pt .pn{display:none}.pt{min-height:46px}}
+.pt-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:.8rem;color:var(--ink-soft)}
+.pt-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+.missions ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.missions li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;font-size:.95rem;line-height:1.4;color:var(--ink-soft)}
+.missions li small{display:block;color:var(--ink-faint);font-size:.82rem}
+.check{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-strong);display:grid;place-items:center;transition:background-color .3s,border-color .3s;margin-top:1px}
+.missions li.done{color:var(--ink)}
+.missions li.done .check{background:var(--good);border-color:var(--good)}
+.missions li.done .check::after{content:"";width:9px;height:5px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:translate(0,-1px) rotate(-45deg)}
+.missions li.just .check{animation:pop .6s cubic-bezier(.3,1.8,.5,1)}
+.mission-count{margin-top:16px;font-size:.85rem;color:var(--ink-faint)}
+
+/* ---------- Kapitel 2: jonbindning ---------- */
+.ion-pairs{margin-bottom:16px}
+.stage-ion{min-height:clamp(380px,46vw,540px)}
+.ion-legend{opacity:0;transition:opacity .5s;display:flex;gap:14px;flex-wrap:wrap}
+.ion-legend.show{opacity:1}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.steps button{appearance:none;width:100%;border:0;background:transparent;color:var(--ink-faint);font:700 .76rem/1.2 var(--body);display:grid;justify-items:start;gap:6px;padding:4px 2px;cursor:pointer;text-align:left;overflow-wrap:anywhere}
+.steps .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:700 .82rem/1 var(--display);border:1.5px solid var(--line-strong);transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s}
+.steps button:hover .n{border-color:var(--ink)}
+.steps button.done{color:var(--ink-soft)}
+.steps button.done .n{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.steps button.current{color:var(--ink)}
+.steps button.current .n{background:var(--sodium);border-color:var(--sodium);color:#121735;box-shadow:0 0 0 5px color-mix(in srgb,var(--sodium) 30%,transparent)}
+@media (max-width:480px){.steps .lbl{display:none}}
+.story{display:flex;flex-direction:column}
+.story-text{margin:22px 0;min-height:10.5em}
+.story-text h3{font-size:clamp(1.25rem,2.2vw,1.55rem);margin-bottom:10px}
+.story-text p{color:var(--ink-soft)}
+.story-text p b{color:var(--ink)}
+.story-text.swap{animation:swap .45s ease}
+@keyframes swap{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.story-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+
+/* ---------- Kapitel 3: kovalent bindning ---------- */
+.lab-cov{grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);align-items:start}
+@media (max-width:900px){.lab-cov{grid-template-columns:1fr}}
+.stage-small{min-height:270px;margin:16px 0 14px;border-radius:20px}
+.h2-card p{color:var(--ink-soft);font-size:.98rem;min-height:4.5em}
+.h2-card p b{color:var(--ink)}
+.h2-card .btn{margin-top:14px}
+.mol-studio{display:grid;gap:14px}
+.stage-mol{min-height:clamp(360px,40vw,480px)}
+.mol-mode{position:absolute;right:12px;top:12px;display:flex;padding:3px;border-radius:999px;background:rgba(10,14,36,.72);border:1px solid rgba(190,200,255,.18)}
+.mol-mode button{appearance:none;border:0;background:transparent;color:var(--stage-soft);font:700 .8rem/1 var(--body);padding:9px 13px;border-radius:999px;cursor:pointer}
+.mol-mode button[aria-pressed="true"]{background:var(--stage-ink);color:#121735}
+.mol-info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px;align-items:start}
+.mol-formula{font:800 clamp(1.9rem,3.6vw,2.7rem)/1 var(--display);letter-spacing:-.03em;min-width:3.2em}
+.mol-formula sub{font-size:.52em;vertical-align:-.28em;line-height:0}
+.mol-info h3{font-size:1.2rem;margin-bottom:6px}
+.mol-info p{color:var(--ink-soft);font-size:.98rem}
+.mol-info p + p{margin-top:8px}
+.mol-fact b{color:var(--ink)}
+.mol-info.swap{animation:swap .4s ease}
+@media (max-width:520px){.mol-info{grid-template-columns:1fr}}
+
+/* ---------- Kapitel 4: värme ---------- */
+.stage-heat{min-height:clamp(360px,42vw,500px)}
+.temp-read{display:flex;align-items:flex-start;gap:4px;font:800 clamp(3rem,7vw,4.6rem)/1 var(--display);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.temp-read span{font-size:.4em;margin-top:.3em;color:var(--ink-soft);letter-spacing:0}
+.temp{position:relative;margin:22px 0 54px}
+.temp input{-webkit-appearance:none;appearance:none;display:block;width:100%;height:14px;margin:0;border-radius:999px;cursor:pointer;background:linear-gradient(90deg,#7cc4ff 0%,#bfeaff 21%,#38b6ff 23.5%,#38b6ff 52%,#ffa24d 76.5%,#ff6b3d 79%,#ff3d57 100%)}
+.temp input::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:var(--panel);border:4px solid var(--ink);box-shadow:0 3px 12px rgba(0,0,0,.25)}
+.temp input::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--panel);border:4px solid var(--ink)}
+.temp input:focus-visible{outline-offset:8px}
+.marks span{position:absolute;top:28px;transform:translateX(-50%);font-size:.8rem;line-height:1.25;color:var(--ink-soft);text-align:center;white-space:nowrap}
+.marks span::before{content:"";position:absolute;left:50%;top:-10px;width:2px;height:7px;margin-left:-1px;background:var(--line-strong)}
+.marks small{color:var(--ink-faint)}
+.states{display:grid;gap:8px}
+.state{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:center;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);opacity:.6;transition:opacity .3s,border-color .3s,background-color .3s}
+.state svg{width:34px;height:34px;grid-row:span 2;color:var(--ink-soft)}
+.state b{font-size:1rem}
+.state p{grid-column:2;font-size:.9rem;color:var(--ink-soft);display:none}
+.state.on{opacity:1;border-color:var(--ink);background:var(--panel-2)}
+.state.on svg{color:var(--ink)}
+.state.on p{display:block}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+
+/* ---------- Kapitel 5: quiz ---------- */
+.quiz{max-width:780px}
+.quiz-top{display:flex;align-items:center;gap:14px;font-size:.88rem;color:var(--ink-soft)}
+.qbar{flex:1;height:6px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+.qbar i{display:block;height:100%;border-radius:inherit;background:var(--ink);transition:width .6s cubic-bezier(.3,1,.4,1)}
+.qtext{font-size:clamp(1.25rem,2.6vw,1.7rem);margin:24px 0 18px;line-height:1.22}
+.qtext:focus{outline:none}
+.qopts{display:grid;gap:10px}
+.qopt{appearance:none;display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 16px;border-radius:14px;border:1.5px solid var(--line-strong);background:var(--panel);color:var(--ink);font:400 1.02rem/1.35 var(--body);cursor:pointer;transition:border-color .2s,background-color .2s}
+.qopt .k{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--panel-2);font:700 .82rem/1 var(--display)}
+.qopt:hover:not(:disabled){border-color:var(--ink)}
+.qopt:disabled{cursor:default}
+.qopt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 13%,var(--panel))}
+.qopt.right .k{background:var(--good);color:#fff}
+.qopt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 11%,var(--panel));animation:shake .4s}
+.qopt.wrong .k{background:var(--bad);color:#fff}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.qfeed{margin-top:16px;min-height:1.6em;color:var(--ink-soft)}
+.qfeed b{color:var(--ink)}
+.qnav{margin-top:18px}
+.qend-score{font-size:1.1rem;color:var(--ink-soft)}
+.qend-score .big{font:800 clamp(3.4rem,9vw,5.6rem)/1 var(--display);letter-spacing:-.05em;color:var(--ink);margin-right:10px}
+.qend h3{font-size:clamp(1.2rem,2.4vw,1.6rem);margin:18px 0 24px;max-width:26em}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
+
+footer{padding:clamp(80px,10vw,120px) 0 48px;color:var(--ink-faint);font-size:.9rem}
+footer .wrap{border-top:1px solid var(--line);padding-top:24px}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Kapitel">
+  <div class="nav-inner">
+    <a class="home-link" href="../../" aria-label="Alla kurser" title="Alla kurser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></a>
+    <a class="brand" href="#top" aria-label="Atomernas värld, till början">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.5">
+          <ellipse cx="16" cy="16" rx="13.5" ry="5"/>
+          <ellipse cx="16" cy="16" rx="13.5" ry="5" transform="rotate(60 16 16)"/>
+          <ellipse cx="16" cy="16" rx="13.5" ry="5" transform="rotate(120 16 16)"/>
+        </g>
+        <circle cx="16" cy="16" r="3.4" fill="#ff3d57"/>
+        <circle cx="29.5" cy="16" r="2.2" fill="#ffc83d"/>
+      </svg>
+      <span>Atomernas värld</span>
+    </a>
+    <div class="nav-tiles">
+      <a class="tile-link" href="#atomen"><span class="z">1</span><span class="sym">At</span><span class="nm">Atomen</span></a>
+      <a class="tile-link" href="#joner"><span class="z">2</span><span class="sym">Jo</span><span class="nm">Joner</span></a>
+      <a class="tile-link" href="#molekyler"><span class="z">3</span><span class="sym">Mo</span><span class="nm">Molekyler</span></a>
+      <a class="tile-link" href="#varme"><span class="z">4</span><span class="sym">Vä</span><span class="nm">Värme</span></a>
+      <a class="tile-link" href="#quiz"><span class="z">5</span><span class="sym">Qu</span><span class="nm">Quiz</span></a>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-stage" id="heroStage">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <p class="hero-hej">Hej <span data-namn></span>!</p>
+      <h1>Allt du rör vid är byggt av atomer</h1>
+      <p class="lead">Din mobil, luften du andas och du själv. Här bygger du egna atomer, ser dem stjäla och dela elektroner och snurrar på riktiga molekyler.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#atomen">Bygg din första atom</a>
+        <a class="btn btn-ghost" href="#quiz">Testa vad du kan</a>
+      </div>
+    </div>
+    <p class="hero-caption"><b>Det här är en kolatom</b> med 6 protoner, 6 neutroner och 6 elektroner. Klicka på den för att ge den extra energi.</p>
+  </div>
+</header>
+
+<main>
+<!-- ============ KAPITEL 1 ============ -->
+<section class="chapter" id="atomen" aria-labelledby="atomen-titel">
+  <div class="wrap">
+    <div class="chapter-head">
+      <div class="el-tile" style="--cat:#ffc83d" aria-hidden="true"><span class="z">1</span><span class="sym">At</span><span class="nm">Atomen</span></div>
+      <h2 id="atomen-titel">Bygg en atom</h2>
+      <p class="lead">Varje atom har en kärna av protoner och neutroner. Runt kärnan susar elektroner i skal. Antalet protoner bestämmer vilket grundämne det blir. Lägg till och ta bort partiklar och se vad som händer.</p>
+    </div>
+
+    <div class="lab">
+      <div class="stage stage-atom" id="atomStage">
+        <canvas id="atomCanvas" role="img" aria-label="Modell av atomen du bygger"></canvas>
+        <div class="stage-legend" aria-hidden="true"><span><i class="dot p"></i>Proton, laddning +1</span><span><i class="dot n"></i>Neutron, ingen laddning</span><span><i class="dot e"></i>Elektron, laddning −1</span></div>
+        <div class="toast" id="atomToast" role="status" aria-live="polite"></div>
+      </div>
+
+      <aside class="panel" aria-label="Atombyggaren">
+        <div class="element-card">
+          <div class="el-big" id="elBig"><span class="z" id="elZ">–</span><span class="sym" id="elSym">?</span><span class="iso" id="elIso"></span></div>
+          <div class="el-info">
+            <h3 id="elName">Ingen atom ännu</h3>
+            <p class="el-cat" id="elCat"></p>
+            <dl class="facts">
+              <div><dt>Masstal</dt><dd id="elMass">0</dd></div>
+              <div><dt>Laddning</dt><dd id="elCharge">0</dd></div>
+              <div><dt>Elektronskal</dt><dd id="elShells">–</dd></div>
+            </dl>
+          </div>
+        </div>
+        <p class="status" id="elStatus" aria-live="polite"></p>
+        <div class="counters">
+          <div class="counter" data-kind="p">
+            <span class="dot p"></span>
+            <span class="lbl"><b>Protoner</b><small>bestämmer grundämnet</small></span>
+            <button class="round minus" data-act="-" aria-label="Ta bort en proton">−</button>
+            <output id="cntP" aria-live="polite">0</output>
+            <button class="round plus" data-act="+" aria-label="Lägg till en proton">+</button>
+          </div>
+          <div class="counter" data-kind="n">
+            <span class="dot n"></span>
+            <span class="lbl"><b>Neutroner</b><small>gör kärnan tyngre</small></span>
+            <button class="round minus" data-act="-" aria-label="Ta bort en neutron">−</button>
+            <output id="cntN" aria-live="polite">0</output>
+            <button class="round plus" data-act="+" aria-label="Lägg till en neutron">+</button>
+          </div>
+          <div class="counter" data-kind="e">
+            <span class="dot e"></span>
+            <span class="lbl"><b>Elektroner</b><small>bestämmer laddningen</small></span>
+            <button class="round minus" data-act="-" aria-label="Ta bort en elektron">−</button>
+            <output id="cntE" aria-live="polite">0</output>
+            <button class="round plus" data-act="+" aria-label="Lägg till en elektron">+</button>
+          </div>
+        </div>
+        <div class="builder-tools">
+          <p class="fact" id="elFact"></p>
+        </div>
+        <div class="builder-tools">
+          <button class="btn btn-ghost" id="atomClear">Töm atomen</button>
+          <span class="hint" id="elStable"></span>
+        </div>
+      </aside>
+    </div>
+
+    <div class="lab-lower">
+      <div class="panel">
+        <h3>Välj ett grundämne</h3>
+        <p class="hint">De 20 första grundämnena i periodiska systemet. Klicka så byggs en neutral atom direkt.</p>
+        <div class="ptable" id="ptable"></div>
+        <div class="pt-legend" id="ptLegend"></div>
+      </div>
+      <div class="panel missions">
+        <h3>Uppdrag</h3>
+        <p class="hint">Klarar du alla sex?</p>
+        <ul id="missions"></ul>
+        <p class="mission-count" id="missionCount"></p>
+      </div>
+    </div>
+    <p class="note">En atom är så liten att flera miljoner atomer på rad får plats på en millimeter. Bilden här är förenklad: elektroner åker inte runt i snygga banor utan finns i ett suddigt moln runt kärnan. Och kärnan är pytteliten: om atomen var lika stor som en fotbollsarena skulle kärnan vara ungefär som en ärta på mittcirkeln.</p>
+  </div>
+</section>
+
+<!-- ============ KAPITEL 2 ============ -->
+<section class="chapter" id="joner" aria-labelledby="joner-titel">
+  <div class="wrap">
+    <div class="chapter-head">
+      <div class="el-tile" style="--cat:#ff7a45" aria-hidden="true"><span class="z">2</span><span class="sym">Jo</span><span class="nm">Jonbindning</span></div>
+      <h2 id="joner-titel">När atomer stjäl elektroner</h2>
+      <p class="lead">Metaller har få elektroner i sitt yttersta skal och blir gärna av med dem. Icke-metaller saknar bara några för att få fullt. När de möts flyttar elektroner från den ena till den andra, och då uppstår en jonbindning. Följ det steg för steg.</p>
+    </div>
+
+    <div class="chips ion-pairs" id="ionPairs" role="group" aria-label="Välj vilka atomer som möts">
+      <button class="chip" data-k="nacl" aria-pressed="true">Na + Cl<small>koksalt</small></button>
+      <button class="chip" data-k="lif" aria-pressed="false">Li + F</button>
+      <button class="chip" data-k="kcl" aria-pressed="false">K + Cl</button>
+      <button class="chip" data-k="mgo" aria-pressed="false">Mg + O<small>två elektroner</small></button>
+      <button class="chip" data-k="cao" aria-pressed="false">Ca + O</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage stage-ion" id="ionStage">
+        <canvas id="ionCanvas" role="img" aria-label="Animation av hur en jonbindning bildas"></canvas>
+        <div class="pill ion-legend" id="ionLegend"></div>
+        <p class="stage-hint" id="ionHint" style="opacity:0">Dra för att snurra kristallen</p>
+      </div>
+      <aside class="panel story" aria-label="Berättelsen steg för steg">
+        <ol class="steps" id="ionSteps"></ol>
+        <div class="story-text" id="ionText" aria-live="polite">
+          <h3 id="ionTitle"></h3>
+          <p id="ionBody"></p>
+        </div>
+        <div class="story-actions">
+          <button class="btn btn-primary" id="ionNext">Nästa steg</button>
+          <button class="btn btn-ghost" id="ionPlay">Spela hela</button>
+          <button class="btn btn-ghost" id="ionReset">Börja om</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAPITEL 3 ============ -->
+<section class="chapter" id="molekyler" aria-labelledby="mol-titel">
+  <div class="wrap">
+    <div class="chapter-head">
+      <div class="el-tile" style="--cat:#3d7bff" aria-hidden="true"><span class="z">3</span><span class="sym">Mo</span><span class="nm">Molekyler</span></div>
+      <h2 id="mol-titel">När atomer delar</h2>
+      <p class="lead">När två icke-metaller möts vill båda ha fler elektroner. Ingen ger med sig, så de delar i stället. Ett delat elektronpar håller ihop atomerna. Det kallas kovalent bindning, och det som bildas är en molekyl.</p>
+    </div>
+
+    <div class="lab lab-cov">
+      <div class="panel h2-card">
+        <h3>Dra ihop två väteatomer</h3>
+        <div class="stage stage-small" id="h2Stage">
+          <canvas id="h2Canvas" role="img" aria-label="Två väteatomer som kan dras ihop till en vätemolekyl"></canvas>
+        </div>
+        <p id="h2Status" aria-live="polite">Två fria väteatomer. Var och en har bara 1 elektron men vill ha 2.</p>
+        <button class="btn btn-ghost" id="h2Toggle">Låt dem dela</button>
+      </div>
+
+      <div class="mol-studio">
+        <div class="chips" id="molPicker" role="group" aria-label="Välj molekyl">
+          <button class="chip" data-m="h2o" aria-pressed="true">H₂O<small>vatten</small></button>
+          <button class="chip" data-m="co2" aria-pressed="false">CO₂</button>
+          <button class="chip" data-m="ch4" aria-pressed="false">CH₄</button>
+          <button class="chip" data-m="nh3" aria-pressed="false">NH₃</button>
+          <button class="chip" data-m="o2" aria-pressed="false">O₂</button>
+          <button class="chip" data-m="n2" aria-pressed="false">N₂</button>
+          <button class="chip" data-m="c2h4" aria-pressed="false">C₂H₄</button>
+        </div>
+        <div class="stage stage-mol" id="molStage">
+          <canvas id="molCanvas" role="img" aria-label="Tredimensionell molekylmodell som går att snurra"></canvas>
+          <div class="mol-mode" role="group" aria-label="Typ av modell">
+            <button data-mode="0" aria-pressed="true">Kula och pinne</button>
+            <button data-mode="1" aria-pressed="false">Kalott</button>
+          </div>
+          <p class="stage-hint">Dra för att snurra</p>
+          <div class="stage-legend" aria-hidden="true"><span><i class="dot" style="background:#f2f4fa"></i>H</span><span><i class="dot" style="background:#7b849c"></i>C</span><span><i class="dot" style="background:#3d7bff"></i>N</span><span><i class="dot" style="background:#ff3d57"></i>O</span></div>
+        </div>
+        <div class="panel mol-info" id="molInfoBox">
+          <div class="mol-formula" id="molFormula"></div>
+          <div>
+            <h3 id="molName"></h3>
+            <p id="molInfo"></p>
+            <p class="mol-fact" id="molFact"></p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:0">Varje pinne är ett delat elektronpar. Två pinnar betyder att atomerna delar två par, en dubbelbindning. Kalottmodellen visar hur mycket plats atomerna faktiskt tar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAPITEL 4 ============ -->
+<section class="chapter" id="varme" aria-labelledby="varme-titel">
+  <div class="wrap">
+    <div class="chapter-head">
+      <div class="el-tile" style="--cat:#ff3d57" aria-hidden="true"><span class="z">4</span><span class="sym">Vä</span><span class="nm">Värme</span></div>
+      <h2 id="varme-titel">Värme är rörelse</h2>
+      <p class="lead">Molekyler står aldrig helt still. Ju varmare det blir, desto snabbare rör de sig. Dra i termometern och se vattenmolekyler gå från is till vatten till ånga.</p>
+    </div>
+
+    <div class="lab">
+      <div class="stage stage-heat" id="heatStage">
+        <canvas id="heatCanvas" role="img" aria-label="Vattenmolekyler som rör sig olika snabbt beroende på temperaturen"></canvas>
+        <div class="pill" id="heatBadge">Vatten</div>
+      </div>
+      <aside class="panel" aria-label="Termometer">
+        <div class="temp-read"><output id="tempOut" for="tempSlider">20</output><span>°C</span></div>
+        <div class="temp">
+          <label for="tempSlider" class="sr-only">Temperatur i grader Celsius</label>
+          <input type="range" id="tempSlider" min="-40" max="140" step="1" value="20">
+          <div class="marks" aria-hidden="true">
+            <span style="left:calc(16px + (100% - 32px) * .2222)">0 °C<br><small>smälter</small></span>
+            <span style="left:calc(16px + (100% - 32px) * .7778)">100 °C<br><small>kokar</small></span>
+          </div>
+        </div>
+        <div class="states" id="states">
+          <div class="state" data-s="0">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="6" cy="6" r="2.4"/><circle cx="12" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="18" cy="12" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="12" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/></g></svg>
+            <b>Fast form: is</b>
+            <p>Molekylerna sitter fast i ett ordnat mönster och kan bara skaka på stället. Därför behåller is sin form.</p>
+          </div>
+          <div class="state" data-s="1">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="14" r="2.4"/><circle cx="10.5" cy="12.5" r="2.4"/><circle cx="16" cy="14.5" r="2.4"/><circle cx="20" cy="18" r="2.4"/><circle cx="7.5" cy="19" r="2.4"/><circle cx="13" cy="19.5" r="2.4"/><circle cx="3.5" cy="19.5" r="2.2"/></g></svg>
+            <b>Flytande form: vatten</b>
+            <p>Molekylerna har lossnat från sina platser och glider runt varandra, men de håller fortfarande ihop. Därför kan vatten rinna men inte sväva iväg.</p>
+          </div>
+          <div class="state" data-s="2">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="5" r="2.4"/><circle cx="18" cy="4" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="20" cy="17" r="2.4"/><circle cx="5" cy="19" r="2.4"/></g></svg>
+            <b>Gasform: vattenånga</b>
+            <p>Molekylerna har så mycket energi att de slits loss helt och susar runt åt alla håll. En gas fyller hela utrymmet den får.</p>
+          </div>
+        </div>
+        <div class="quick">
+          <button class="btn btn-ghost" data-temp="-25">Frys till is</button>
+          <button class="btn btn-ghost" data-temp="20">Rumstemperatur</button>
+          <button class="btn btn-ghost" data-temp="125">Koka</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAPITEL 5 ============ -->
+<section class="chapter" id="quiz" aria-labelledby="quiz-titel">
+  <div class="wrap">
+    <div class="chapter-head">
+      <div class="el-tile" style="--cat:#2fd6c3" aria-hidden="true"><span class="z">5</span><span class="sym">Qu</span><span class="nm">Quiz</span></div>
+      <h2 id="quiz-titel">Hur mycket kan du nu?</h2>
+      <p class="lead">Åtta frågor om allt du har sett. Efter varje svar får du veta varför.</p>
+    </div>
+    <div class="panel quiz" id="quizBox"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Atomernas värld. Modellerna är förenklade för att visa idéerna – riktiga atomer är ännu konstigare, och ännu häftigare.</p>
+    <p>Inte <span data-namn></span>? <a href="../../" style="color:inherit">Byt person eller kurs</a>.</p>
+  </div>
+</footer>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= Verktyg ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const TAU = Math.PI * 2;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const E = {
+  inOut: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+  out: t => 1 - Math.pow(1 - t, 3),
+  in: t => t * t * t,
+  back: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  elastic: t => t <= 0 ? 0 : t >= 1 ? 1 : Math.max(0, Math.pow(2, -10 * t) * Math.sin((t * 10 - .75) * (TAU / 3)) + 1)
+};
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MS = reduceMotion ? .35 : 1;
+const FD = '"Unbounded", "Arial Black", sans-serif';
+const FB = '"Atkinson Hyperlegible", "Segoe UI", Arial, sans-serif';
+
+/* Färger i mikroskopfönstren (alltid mörk bakgrund). Inspirerade av flamfärger och molekylbyggsatser. */
+const COL = {
+  proton: '#ff3d57', neutron: '#8e9ab5', electron: '#ffc83d', electron2: '#ffe59a',
+  cation: '#ff7a45', anion: '#2fd6c3',
+  ink: '#e8ebff', soft: '#9aa3cc', stage: '#0b1129',
+  H: '#f2f4fa', C: '#646d84', N: '#3d7bff', O: '#ff3d57'
+};
+function rgbOf(hex){ const n = parseInt(hex.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function rgba(hex, a){ const c = rgbOf(hex); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + clamp(a, 0, 1).toFixed(3) + ')'; }
+function mix(h1, h2, t){ const a = rgbOf(h1), b = rgbOf(h2); return '#' + a.map((v, i) => Math.round(lerp(v, b[i], t)).toString(16).padStart(2, '0')).join(''); }
+const tintMemo = new Map();
+function tint(hex, t){ const k = hex + t; let v = tintMemo.get(k); if (!v){ v = t >= 0 ? mix(hex, '#ffffff', t) : mix(hex, '#000000', -t); tintMemo.set(k, v); } return v; }
+function sphere(ctx, x, y, r, hex, alpha = 1){
+  if (r < .3 || alpha <= .002) return;
+  const g = ctx.createRadialGradient(x - r * .38, y - r * .42, r * .06, x, y, r * 1.02);
+  g.addColorStop(0, tint(hex, .62));
+  g.addColorStop(.45, hex);
+  g.addColorStop(1, tint(hex, -.52));
+  ctx.globalAlpha = clamp(alpha, 0, 1);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function glow(ctx, x, y, r, hex, a = .5){
+  if (r < .5 || a <= .002) return;
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, rgba(hex, a));
+  g.addColorStop(1, rgba(hex, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+}
+function electronDot(ctx, x, y, r, alpha = 1, hex = COL.electron){
+  glow(ctx, x, y, r * 4.4, hex, .42 * alpha);
+  ctx.globalAlpha = clamp(alpha, 0, 1);
+  ctx.fillStyle = tint(hex, .55);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+function angDiff(target, cur){ return ((target - cur) % TAU + TAU * 1.5) % TAU - Math.PI; }
+
+function makeCanvas(canvas, onResize){
+  const ctx = canvas.getContext('2d');
+  const s = { canvas, ctx, w: 1, h: 1, dpr: 1 };
+  const resize = () => {
+    const r = canvas.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return;
+    s.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    s.w = r.width; s.h = r.height;
+    canvas.width = Math.round(r.width * s.dpr);
+    canvas.height = Math.round(r.height * s.dpr);
+    if (onResize) onResize(s);
+  };
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+  s.begin = () => { ctx.setTransform(s.dpr, 0, 0, s.dpr, 0, 0); ctx.clearRect(0, 0, s.w, s.h); };
+  return s;
+}
+
+/* Gemensam animationsloop: ritar bara de scener som syns */
+const scenes = [];
+const visIO = new IntersectionObserver(entries => {
+  for (const en of entries){ const sc = scenes.find(x => x.el === en.target); if (sc) sc.on = en.isIntersecting; }
+}, { rootMargin: '80px' });
+function scene(el, fn){ const sc = { el, fn, on: false }; scenes.push(sc); visIO.observe(el); return sc; }
+let lastT = performance.now();
+function frame(now){
+  const dt = Math.min(.05, Math.max(0, (now - lastT) / 1000)); lastT = now;
+  const t = now / 1000;
+  if (!document.hidden) for (const sc of scenes) if (sc.on) sc.fn(dt, t);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ================= Konfetti ================= */
+const confetti = (() => {
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  let parts = [], running = false, last = 0, w = 1, h = 1, dpr = 1;
+  const size = () => { dpr = Math.min(window.devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; };
+  addEventListener('resize', size); size();
+  const cols = ['#ff3d57', '#ffc83d', '#2fd6c3', '#3d7bff', '#ff7a45', '#f2f4fa'];
+  function burst(x, y, n = 70){
+    if (reduceMotion) return;
+    for (let i = 0; i < n; i++){
+      const a = -Math.PI / 2 + (Math.random() - .5) * 2.4, v = 320 + Math.random() * 480;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 3 + Math.random() * 4, c: cols[i % cols.length], rot: Math.random() * TAU, vr: (Math.random() - .5) * 14, life: 1.6 + Math.random(), shape: i % 3 });
+    }
+    if (!running){ running = true; last = performance.now(); requestAnimationFrame(tick); }
+  }
+  function tick(now){
+    const dt = Math.min(.04, (now - last) / 1000); last = now;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    parts = parts.filter(p => (p.life -= dt) > 0 && p.y < h + 40);
+    for (const p of parts){
+      p.vy += 900 * dt; p.vx *= Math.pow(.25, dt); p.vy *= Math.pow(.6, dt);
+      p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = clamp(p.life, 0, 1);
+      ctx.fillStyle = p.c; ctx.strokeStyle = p.c;
+      if (p.shape === 0){ ctx.fillRect(-p.r, -p.r * .5, p.r * 2, p.r); }
+      else if (p.shape === 1){ ctx.beginPath(); ctx.arc(0, 0, p.r * .8, 0, TAU); ctx.fill(); }
+      else { ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(0, 0, p.r * 1.6, p.r * .6, 0, 0, TAU); ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, p.r * .45, 0, TAU); ctx.fill(); }
+      ctx.restore();
+    }
+    if (parts.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, w, h); }
+  }
+  return { burst };
+})();
+
+/* ================= Grundämnen ================= */
+const CATS = {
+  alkali: { n: 'Alkalimetall', c: '#ff7a45' },
+  alkearth: { n: 'Alkalisk jordartsmetall', c: '#ffb53d' },
+  metal: { n: 'Metall', c: '#9aa6c4' },
+  semi: { n: 'Halvmetall', c: '#2fc7b0' },
+  nonmetal: { n: 'Icke-metall', c: '#5ccf6e' },
+  halogen: { n: 'Halogen', c: '#c08bff' },
+  noble: { n: 'Ädelgas', c: '#5b9dff' }
+};
+const EL = [null,
+  { s: 'H', n: 'Väte', cat: 'nonmetal', neu: 0, stable: [0, 1], fact: 'Universums vanligaste grundämne. Solen består mest av väte.' },
+  { s: 'He', n: 'Helium', cat: 'noble', neu: 2, stable: [1, 2], fact: 'Lättare än luft, därför svävar heliumballonger.' },
+  { s: 'Li', n: 'Litium', cat: 'alkali', neu: 4, stable: [3, 4], fact: 'Finns i batteriet i din mobil.' },
+  { s: 'Be', n: 'Beryllium', cat: 'alkearth', neu: 5, stable: [5], fact: 'Speglarna i rymdteleskopet James Webb är gjorda av beryllium.' },
+  { s: 'B', n: 'Bor', cat: 'semi', neu: 6, stable: [5, 6], fact: 'Gör glas tåligt mot värme, till exempel i ugnsformar.' },
+  { s: 'C', n: 'Kol', cat: 'nonmetal', neu: 6, stable: [6, 7], fact: 'Allt levande är byggt kring kol. Diamanter och blyerts är också rent kol.' },
+  { s: 'N', n: 'Kväve', cat: 'nonmetal', neu: 7, stable: [7, 8], fact: 'Ungefär 78 procent av luften du andas är kväve.' },
+  { s: 'O', n: 'Syre', cat: 'nonmetal', neu: 8, stable: [8, 9, 10], fact: 'Det vanligaste grundämnet i jordskorpan, och i din kropp.' },
+  { s: 'F', n: 'Fluor', cat: 'halogen', neu: 10, stable: [10], fact: 'Som fluorid i tandkräm gör det tänderna starkare.' },
+  { s: 'Ne', n: 'Neon', cat: 'noble', neu: 10, stable: [10, 11, 12], fact: 'Lyser rödorange i gamla neonskyltar.' },
+  { s: 'Na', n: 'Natrium', cat: 'alkali', neu: 12, stable: [12], fact: 'En mjuk metall som du kan skära med kniv. Den fräser och kan börja brinna i vatten.' },
+  { s: 'Mg', n: 'Magnesium', cat: 'alkearth', neu: 12, stable: [12, 13, 14], fact: 'Brinner med bländande vitt ljus, därför används den i fyrverkerier.' },
+  { s: 'Al', n: 'Aluminium', cat: 'metal', neu: 14, stable: [14], fact: 'Läskburkar och folie är gjorda av aluminium.' },
+  { s: 'Si', n: 'Kisel', cat: 'semi', neu: 14, stable: [14, 15, 16], fact: 'Datorchip är gjorda av kisel. Sand består mest av kisel och syre.' },
+  { s: 'P', n: 'Fosfor', cat: 'nonmetal', neu: 16, stable: [16], fact: 'Finns på tändsticksaskens plån, och i ditt DNA.' },
+  { s: 'S', n: 'Svavel', cat: 'nonmetal', neu: 16, stable: [16, 17, 18, 20], fact: 'Ett gult ämne. Svavelföreningar ger ruttna ägg deras lukt.' },
+  { s: 'Cl', n: 'Klor', cat: 'halogen', neu: 18, stable: [18, 20], fact: 'Används för att döda bakterier i simbassänger.' },
+  { s: 'Ar', n: 'Argon', cat: 'noble', neu: 22, stable: [18, 20, 22], fact: 'Nästan 1 procent av luften är argon.' },
+  { s: 'K', n: 'Kalium', cat: 'alkali', neu: 20, stable: [20, 22], fact: 'Finns i bananer. Dina nerver behöver kalium för att fungera.' },
+  { s: 'Ca', n: 'Kalcium', cat: 'alkearth', neu: 20, stable: [20, 22, 23, 24, 26], fact: 'Bygger upp ditt skelett och dina tänder.' }
+];
+const SUP = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+const chargeSup = q => q === 0 ? '' : (Math.abs(q) > 1 ? String(Math.abs(q)).split('').map(c => SUP[c]).join('') : '') + (q > 0 ? '⁺' : '⁻');
+const signed = q => q > 0 ? '+' + q : q < 0 ? '−' + Math.abs(q) : '0';
+function shellsOf(e){ const caps = [2, 8, 8, 8], out = []; let r = e; for (const c of caps){ if (r <= 0) break; const k = Math.min(c, r); out.push(k); r -= k; } return out; }
+const isFullShell = e => { const sh = shellsOf(e); if (!sh.length) return false; const s = sh.length - 1; return sh[s] === (s === 0 ? 2 : 8); };
+
+/* ================= Hero: levande kolatom ================= */
+(function hero(){
+  const host = $('#heroStage'), cv = $('#heroCanvas');
+  const S = makeCanvas(cv), ctx = S.ctx;
+  const nucl = [];
+  const NN = 12;
+  for (let i = 0; i < NN; i++){
+    const y = 1 - (i / (NN - 1)) * 2, rr = Math.sqrt(1 - y * y), th = i * 2.399963;
+    nucl.push({ v: [Math.cos(th) * rr, y, Math.sin(th) * rr], p: i % 2 === 0 });
+  }
+  const tilt = 73 * Math.PI / 180;
+  const orbits = [0, 60, 120].map((deg, k) => {
+    const a = (deg + 18) * Math.PI / 180;
+    return {
+      u: [Math.cos(a), Math.sin(a), 0],
+      v: [-Math.sin(a) * Math.cos(tilt), Math.cos(a) * Math.cos(tilt), Math.sin(tilt)],
+      speed: (.95 + k * .17) * (k % 2 ? -1 : 1), phase: k * 1.3, trails: [[], []]
+    };
+  });
+  const dustCols = [COL.electron, COL.proton, COL.anion, COL.ink];
+  const dust = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), z: .25 + Math.random() * .75, c: dustCols[Math.random() * 4 | 0], vx: (Math.random() - .5) * .008, vy: (Math.random() - .5) * .008, tw: Math.random() * TAU }));
+  let mx = 0, my = 0, tmx = 0, tmy = 0, energy = 0, spin = 0;
+  const bursts = [];
+  host.addEventListener('pointermove', e => { const r = host.getBoundingClientRect(); tmx = ((e.clientX - r.left) / r.width) * 2 - 1; tmy = ((e.clientY - r.top) / r.height) * 2 - 1; });
+  host.addEventListener('pointerleave', () => { tmx = 0; tmy = 0; });
+  host.addEventListener('click', e => { if (e.target.closest('a,button')) return; energy = 1; bursts.push(performance.now() / 1000); });
+  const rot = (p, ry, rx) => {
+    const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
+    const x1 = p[0] * cy + p[2] * sy, z1 = -p[0] * sy + p[2] * cy;
+    return [x1, p[1] * cx - z1 * sx, p[1] * sx + z1 * cx];
+  };
+  const ringPt = (o, a) => [o.u[0] * Math.cos(a) + o.v[0] * Math.sin(a), o.u[1] * Math.cos(a) + o.v[1] * Math.sin(a), o.u[2] * Math.cos(a) + o.v[2] * Math.sin(a)];
+
+  scene(host, (dt, t) => {
+    S.begin();
+    const w = S.w, h = S.h;
+    const kk = Math.min(1, dt * 3);
+    mx += (tmx - mx) * kk; my += (tmy - my) * kk;
+    energy = Math.max(0, energy - dt * .55);
+    spin += dt * MS * (1 + energy * 5);
+    const mobile = w < 760;
+    const cx = mobile ? w * .5 : w * .7, cy = mobile ? h * .67 : h * .46;
+    const R = mobile ? Math.min(w * .33, h * .17) : Math.min(w * .22, h * .33);
+
+    for (const d of dust){
+      d.x += d.vx * dt * MS; d.y += d.vy * dt * MS;
+      if (d.x < -.05) d.x = 1.05; else if (d.x > 1.05) d.x = -.05;
+      if (d.y < -.05) d.y = 1.05; else if (d.y > 1.05) d.y = -.05;
+      const px = d.x * w + mx * d.z * 22, py = d.y * h + my * d.z * 22;
+      const a = (.25 + .35 * Math.pow(Math.sin(t * 1.3 + d.tw), 2)) * d.z;
+      glow(ctx, px, py, 3 + d.z * 6, d.c, a * .55);
+      ctx.fillStyle = rgba(d.c, a); ctx.beginPath(); ctx.arc(px, py, .6 + d.z * 1.1, 0, TAU); ctx.fill();
+    }
+
+    glow(ctx, cx, cy, R * 2, COL.anion, .08 + energy * .1);
+    glow(ctx, cx, cy, R * .95, COL.proton, .1 + energy * .22);
+
+    const ry = Math.sin(t * .23 * MS) * .5 + mx * .55;
+    const rx = Math.sin(t * .17 * MS) * .2 + my * .4;
+    const persp = 5;
+    const proj = p => { const s = persp / (persp - p[2]); return [cx + p[0] * R * s, cy + p[1] * R * s, p[2], s]; };
+
+    // energiringar efter klick
+    const now = performance.now() / 1000;
+    for (let i = bursts.length - 1; i >= 0; i--){
+      const age = now - bursts[i];
+      if (age > 1.2){ bursts.splice(i, 1); continue; }
+      ctx.strokeStyle = rgba(COL.electron, (1 - age / 1.2) * .6);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, R * (.2 + age * 1.6), 0, TAU); ctx.stroke();
+    }
+
+    const elecs = [];
+    ctx.lineWidth = 1.2;
+    for (const o of orbits){
+      const pts = [];
+      for (let i = 0; i <= 72; i++) pts.push(proj(rot(ringPt(o, i / 72 * TAU), ry, rx)));
+      const back = new Path2D(), front = new Path2D();
+      for (let i = 0; i < 72; i++){
+        const a = pts[i], b = pts[i + 1], path = (a[2] + b[2]) / 2 >= 0 ? front : back;
+        path.moveTo(a[0], a[1]); path.lineTo(b[0], b[1]);
+      }
+      ctx.strokeStyle = rgba(COL.ink, .12); ctx.stroke(back);
+      ctx.strokeStyle = rgba(COL.ink, .34 + energy * .3); ctx.stroke(front);
+      for (let j = 0; j < 2; j++){
+        const q = proj(rot(ringPt(o, o.phase + spin * o.speed + j * Math.PI), ry, rx));
+        const tr = o.trails[j]; tr.push([q[0], q[1]]); if (tr.length > 18) tr.shift();
+        elecs.push({ q, tr });
+      }
+    }
+    const drawE = e => {
+      const tr = e.tr;
+      ctx.lineCap = 'round';
+      for (let i = 1; i < tr.length; i++){
+        const f = i / tr.length;
+        ctx.strokeStyle = rgba(COL.electron, f * .55);
+        ctx.lineWidth = f * R * .05;
+        ctx.beginPath(); ctx.moveTo(tr[i - 1][0], tr[i - 1][1]); ctx.lineTo(tr[i][0], tr[i][1]); ctx.stroke();
+      }
+      electronDot(ctx, e.q[0], e.q[1], R * .036 * e.q[3] + 1, 1);
+    };
+    elecs.filter(e => e.q[2] < 0).forEach(drawE);
+    glow(ctx, cx, cy, R * .36, COL.proton, .4);
+    const ns = nucl.map(n => {
+      const p = rot(n.v, ry + t * .4 * MS, rx + t * .25 * MS);
+      return { q: proj([p[0] * .13, p[1] * .13, p[2] * .13]), p: n.p };
+    }).sort((a, b) => a.q[2] - b.q[2]);
+    for (const n of ns) sphere(ctx, n.q[0], n.q[1], R * .088 * n.q[3], n.p ? COL.proton : COL.neutron);
+    elecs.filter(e => e.q[2] >= 0).forEach(drawE);
+  });
+})();
+
+/* ================= Kapitel 1: atombyggaren ================= */
+(function builder(){
+  const stage = $('#atomStage'), cv = $('#atomCanvas');
+  const S = makeCanvas(cv), ctx = S.ctx;
+  const target = { p: 6, n: 6, e: 6 };
+  const LIM = { p: 20, n: 24, e: 20 };
+  const parts = { p: [], n: [], e: [] };
+  const dying = [];
+  const phase = [0, 1.2, 2.1, .4];
+  const shellA = [0, 0, 0, 0];
+  let syncClock = 0;
+
+  function addPart(kind){
+    if (kind === 'e') parts.e.push({ kind, ang: Math.random() * TAU, rad: Math.max(S.w, S.h) * .75, a: 0 });
+    else {
+      const a = Math.random() * TAU, d = Math.max(S.w, S.h) * .7;
+      parts[kind].push({ kind, x: S.w / 2 + Math.cos(a) * d, y: S.h / 2 + Math.sin(a) * d, a: 0, seed: Math.random() * TAU });
+    }
+  }
+  function removePart(kind){
+    const o = parts[kind].pop(); if (!o) return;
+    o.life = 1;
+    if (kind !== 'e'){ const a = Math.random() * TAU; o.vx = Math.cos(a) * 340; o.vy = Math.sin(a) * 340; }
+    dying.push(o);
+  }
+  function sync(dt){
+    syncClock += dt;
+    if (syncClock < .045) return;
+    syncClock = 0;
+    for (const k of ['p', 'n', 'e']){
+      if (parts[k].length < target[k]) addPart(k);
+      else if (parts[k].length > target[k]) removePart(k);
+    }
+  }
+  function nucleusOrder(){
+    const P = parts.p, N = parts.n, out = [], tot = P.length + N.length;
+    let i = 0, j = 0;
+    while (out.length < tot){
+      const fp = P.length ? i / P.length : 2, fn = N.length ? j / N.length : 2;
+      if (i < P.length && (fp <= fn || j >= N.length)) out.push(P[i++]); else out.push(N[j++]);
+    }
+    return out;
+  }
+  function slotAngle(s, i, count){
+    if (s === 0) return i === 0 ? -Math.PI / 2 : Math.PI / 2;
+    const base = [-Math.PI / 2, 0, Math.PI / 2, Math.PI][i % 4];
+    if (i < 4) return base - (count > i + 4 ? .2 : 0);
+    return base + .2;
+  }
+
+  scene(stage, (dt, t) => {
+    sync(dt);
+    S.begin();
+    const m = Math.min(S.w, S.h), cx = S.w / 2, cy = S.h / 2 - Math.min(18, S.h * .03);
+    const k = 1 - Math.exp(-dt * 9);
+    const order = nucleusOrder(), N = order.length;
+    const rn = m * .026;
+    const Rn = N ? rn * (1.05 * Math.sqrt(Math.max(0, N - 1)) + 1) : 0;
+    const r1 = Math.max(Rn + m * .07, m * .12);
+    const rOut = m * .45;
+    const gap = Math.min(m * .1, (rOut - r1) / 3);
+    const shellR = s => r1 + s * gap;
+    const sh = shellsOf(parts.e.length);
+    const charge = parts.p.length - parts.e.length;
+
+    if (parts.p.length && charge !== 0){
+      const outerR = sh.length ? shellR(sh.length - 1) : Rn + 24;
+      glow(ctx, cx, cy, outerR * 1.35, charge > 0 ? COL.cation : COL.anion, .15 + .07 * Math.sin(t * 3));
+    }
+
+    for (let s = 0; s < 4; s++){
+      shellA[s] += ((s < sh.length ? 1 : 0) - shellA[s]) * k;
+      phase[s] += dt * [.7, .42, .3, .22][s] * MS;
+      if (shellA[s] < .01) continue;
+      const outer = s === sh.length - 1;
+      ctx.lineWidth = outer ? 1.6 : 1.1;
+      ctx.strokeStyle = rgba(COL.electron, (outer ? .4 : .2) * shellA[s]);
+      ctx.beginPath(); ctx.arc(cx, cy, shellR(s), 0, TAU); ctx.stroke();
+    }
+
+    const er = Math.max(3, m * .013);
+    if (sh.length){
+      const s = sh.length - 1, cap = s === 0 ? 2 : 8, cnt = sh[s], r = shellR(s);
+      if (cnt < cap){
+        ctx.setLineDash([2.5, 3]); ctx.lineWidth = 1.2;
+        ctx.strokeStyle = rgba(COL.electron, .5 + .2 * Math.sin(t * 4));
+        for (let i = cnt; i < cap; i++){
+          const a = phase[s] + (s === 0 ? slotAngle(0, i, cap) : slotAngle(s, i, 8) + (i < 4 ? -.2 : 0));
+          ctx.beginPath(); ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, er * 1.1, 0, TAU); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+      }
+      if (S.w > 420){
+        const a = -.85;
+        ctx.fillStyle = rgba(COL.soft, .9); ctx.font = '400 12px ' + FB; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText('yttersta skalet', cx + Math.cos(a) * (r + 12), cy + Math.sin(a) * (r + 12));
+      }
+    }
+
+    // kärnan
+    const nrot = t * .12 * MS;
+    order.forEach((o, i) => {
+      const r = rn * 1.05 * Math.sqrt(i), a = i * 2.399963 + nrot;
+      const tx = cx + Math.cos(a) * r + Math.sin(t * 3.1 + o.seed) * rn * .07;
+      const ty = cy + Math.sin(a) * r + Math.cos(t * 2.7 + o.seed) * rn * .07;
+      o.x += (tx - o.x) * k; o.y += (ty - o.y) * k;
+      o.a = Math.min(1, o.a + dt * 3);
+    });
+    if (N) glow(ctx, cx, cy, Rn * 2.3 + rn * 2, COL.proton, .22);
+    for (let i = N - 1; i >= 0; i--){
+      const o = order[i];
+      sphere(ctx, o.x, o.y, rn, o.kind === 'p' ? COL.proton : COL.neutron, o.a);
+      if (o.kind === 'p' && rn > 7.5){
+        ctx.strokeStyle = 'rgba(255,255,255,' + (.8 * o.a).toFixed(2) + ')'; ctx.lineWidth = Math.max(1.4, rn * .16); ctx.lineCap = 'round';
+        const q = rn * .32;
+        ctx.beginPath(); ctx.moveTo(o.x - q, o.y); ctx.lineTo(o.x + q, o.y); ctx.moveTo(o.x, o.y - q); ctx.lineTo(o.x, o.y + q); ctx.stroke();
+      }
+    }
+
+    // elektroner
+    const slots = [];
+    sh.forEach((cnt, s) => { for (let i = 0; i < cnt; i++) slots.push({ s, i, cnt }); });
+    ctx.lineCap = 'round';
+    parts.e.forEach((el, j) => {
+      const sl = slots[j]; if (!sl) return;
+      const ta = phase[sl.s] + slotAngle(sl.s, sl.i, sl.cnt);
+      el.ang += angDiff(ta, el.ang) * k;
+      el.rad += (shellR(sl.s) - el.rad) * k;
+      el.a = Math.min(1, el.a + dt * 3);
+      for (let q = 0; q < 5; q++){
+        const a0 = el.ang - .34 + q * .068;
+        ctx.strokeStyle = rgba(COL.electron, (q + 1) / 5 * .3 * el.a); ctx.lineWidth = er * .9;
+        ctx.beginPath(); ctx.arc(cx, cy, el.rad, a0, a0 + .07); ctx.stroke();
+      }
+      electronDot(ctx, cx + Math.cos(el.ang) * el.rad, cy + Math.sin(el.ang) * el.rad, er, el.a);
+    });
+
+    for (let i = dying.length - 1; i >= 0; i--){
+      const o = dying[i]; o.life -= dt * 1.6;
+      if (o.life <= 0){ dying.splice(i, 1); continue; }
+      if (o.kind === 'e'){ o.rad += 300 * dt; electronDot(ctx, cx + Math.cos(o.ang) * o.rad, cy + Math.sin(o.ang) * o.rad, er, o.life); }
+      else { o.x += o.vx * dt; o.y += o.vy * dt; sphere(ctx, o.x, o.y, rn, o.kind === 'p' ? COL.proton : COL.neutron, o.life); }
+    }
+
+    if (!N && !parts.e.length && !dying.length){
+      ctx.fillStyle = COL.soft; ctx.font = '400 16px ' + FB; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('Tryck på + vid Protoner för att börja', cx, cy);
+    }
+  });
+
+  /* ----- UI ----- */
+  const ui = {
+    big: $('#elBig'), z: $('#elZ'), sym: $('#elSym'), iso: $('#elIso'), name: $('#elName'), cat: $('#elCat'),
+    mass: $('#elMass'), charge: $('#elCharge'), shells: $('#elShells'), status: $('#elStatus'), fact: $('#elFact'),
+    stable: $('#elStable'), cnt: { p: $('#cntP'), n: $('#cntN'), e: $('#cntE') }
+  };
+  const ANION = { H: 'Hydridjon', N: 'Nitridjon', O: 'Oxidjon', F: 'Fluoridjon', P: 'Fosfidjon', S: 'Sulfidjon', Cl: 'Kloridjon' };
+  const ionName = (el, q) => q > 0 ? el.n + 'jon' : (ANION[el.s] || 'Negativ ' + el.n.toLowerCase() + 'jon');
+
+  function statusText(p, n, e){
+    const el = EL[p];
+    if (!p && !n && !e) return 'Tomt än så länge. Lägg till en <b>proton</b> för att skapa ditt första grundämne.';
+    if (!p) return 'Utan protoner finns inget grundämne. Det är antalet protoner som bestämmer vad atomen är.';
+    if (!e) return 'En naken kärna av ' + el.n.toLowerCase() + '! Lägg till elektroner som kan susa runt den.';
+    const sh = shellsOf(e), s = sh.length - 1, out = sh[s], cap = s === 0 ? 2 : 8, q = p - e;
+    if (Math.abs(q) > 3) return 'Laddningen är ' + signed(q) + '. Så stora laddningar är väldigt ovanliga, atomen skulle snabbt ge bort eller fånga elektroner.';
+    if (q === 0){
+      if (out === cap) return 'Yttersta skalet är <b>fullt</b>. ' + el.n + ' är nöjd och reagerar nästan aldrig, precis som alla ädelgaser.';
+      if (p === 1) return 'Väte har 1 elektron men vill ha 2. Därför <b>delar</b> väte gärna elektroner med andra atomer.';
+      if (out <= 3) return 'Bara ' + out + (out === 1 ? ' elektron' : ' elektroner') + ' i yttersta skalet. ' + el.n + ' vill hellre <b>ge bort</b> ' + (out === 1 ? 'den' : 'dem') + ' än att samla ' + (cap - out) + ' till.';
+      if (out >= 5) return out + ' elektroner i yttersta skalet, det saknas bara ' + (cap - out) + '. ' + el.n + ' vill gärna <b>ta</b> elektroner från andra atomer.';
+      return '4 elektroner i yttersta skalet, precis mittemellan. ' + el.n + ' gillar att <b>dela</b> elektroner med andra atomer.' + (p === 6 ? ' Därför kan kol bygga långa kedjor, grunden för allt levande.' : '');
+    }
+    const what = q > 0 ? 'fler protoner än elektroner, så den är <b>positiv</b>' : 'fler elektroner än protoner, så den är <b>negativ</b>';
+    if (out === cap) return 'Nu är det en jon: ' + what + '. Yttersta skalet är fullt, så just den här jonen är stabil och finns på riktigt.';
+    return 'Nu är det en jon: ' + what + '. Men yttersta skalet är inte fullt, så den här jonen är ovanlig.';
+  }
+
+  const MISSIONS = [
+    { text: 'Bygg en neutral heliumatom', sub: '2 protoner, 2 neutroner, 2 elektroner', test: (p, n, e) => p === 2 && n === 2 && e === 2 },
+    { text: 'Gör en positiv jon', sub: 'Färre elektroner än protoner', test: (p, n, e) => p > 0 && e > 0 && p > e },
+    { text: 'Gör en negativ jon', sub: 'Fler elektroner än protoner', test: (p, n, e) => p > 0 && e > p },
+    { text: 'Bygg en atom med fullt yttersta skal', sub: 'Tips: titta på ädelgaserna', test: (p, n, e) => p > 0 && p === e && isFullShell(e) },
+    { text: 'Bygg kol-14', sub: 'Används för att ta reda på hur gamla fornfynd är', test: (p, n) => p === 6 && n === 8 },
+    { text: 'Hitta en radioaktiv kärna', sub: 'Prova med för många eller för få neutroner', test: (p, n) => p > 0 && !EL[p].stable.includes(n) }
+  ];
+  const doneSet = new Set();
+  const mList = $('#missions');
+  MISSIONS.forEach((mi, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="check" aria-hidden="true"></span><span>' + mi.text + '<small>' + mi.sub + '</small></span>';
+    li.dataset.i = i; mList.appendChild(li);
+  });
+  let toastTimer = 0;
+  function toast(msg){
+    const el = $('#atomToast'); el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  }
+  function checkMissions(p, n, e){
+    MISSIONS.forEach((mi, i) => {
+      if (doneSet.has(i) || !mi.test(p, n, e)) return;
+      doneSet.add(i);
+      const li = mList.children[i];
+      li.classList.add('done', 'just');
+      setTimeout(() => li.classList.remove('just'), 700);
+      toast('Uppdrag klart: ' + mi.text.toLowerCase());
+      const r = li.getBoundingClientRect();
+      if (r.top < innerHeight && r.bottom > 0) confetti.burst(r.left + 12, r.top + 10, 40);
+    });
+    $('#missionCount').textContent = doneSet.size === MISSIONS.length ? 'Alla uppdrag klara. Snyggt jobbat!' : doneSet.size + ' av ' + MISSIONS.length + ' klara';
+  }
+
+  // periodiska systemet
+  const pt = $('#ptable');
+  for (let z = 1; z <= 20; z++){
+    const el = EL[z];
+    let row, col;
+    if (z === 1){ row = 1; col = 1; } else if (z === 2){ row = 1; col = 8; }
+    else if (z <= 10){ row = 2; col = z - 2; } else if (z <= 18){ row = 3; col = z - 10; } else { row = 4; col = z - 18; }
+    const b = document.createElement('button');
+    b.className = 'pt'; b.type = 'button'; b.dataset.z = z;
+    b.style.gridRow = row; b.style.gridColumn = col; b.style.setProperty('--cat', CATS[el.cat].c);
+    b.setAttribute('aria-label', el.n + ', atomnummer ' + z);
+    b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = '<span class="pz">' + z + '</span><span class="ps">' + el.s + '</span><span class="pn">' + el.n + '</span>';
+    b.addEventListener('click', () => { target.p = z; target.n = el.neu; target.e = z; refresh(true); });
+    pt.appendChild(b);
+  }
+  $('#ptLegend').innerHTML = Object.values(CATS).map(c => '<span><i style="background:' + c.c + '"></i>' + c.n + '</span>').join('');
+
+  let lastP = -1;
+  function refresh(){
+    const { p, n, e } = target, el = EL[p], q = p - e, sh = shellsOf(e);
+    ui.cnt.p.textContent = p; ui.cnt.n.textContent = n; ui.cnt.e.textContent = e;
+    $$('.counter').forEach(row => {
+      const kd = row.dataset.kind;
+      row.querySelector('.minus').disabled = target[kd] <= 0;
+      row.querySelector('.plus').disabled = target[kd] >= LIM[kd];
+    });
+    if (!el){
+      ui.sym.textContent = '?'; ui.z.textContent = '–'; ui.iso.textContent = '';
+      ui.name.textContent = n ? 'Bara neutroner' : 'Ingen atom ännu';
+      ui.cat.textContent = 'Lägg till protoner för att få ett grundämne';
+      ui.big.style.setProperty('--cat', 'var(--line-strong)');
+      ui.stable.textContent = '';
+    } else {
+      ui.sym.textContent = el.s + chargeSup(q);
+      ui.z.textContent = p;
+      ui.iso.textContent = el.n.toLowerCase() + '-' + (p + n);
+      ui.name.textContent = q === 0 ? el.n : ionName(el, q);
+      ui.cat.textContent = CATS[el.cat].n + (q === 0 ? ', neutral atom' : ', jon med laddning ' + signed(q));
+      ui.big.style.setProperty('--cat', CATS[el.cat].c);
+      ui.stable.textContent = el.stable.includes(n) ? 'Kärnan är stabil' : 'Kärnan är instabil (radioaktiv)';
+    }
+    ui.mass.textContent = (p + n) + (p + n ? '' : '');
+    ui.charge.innerHTML = p || e ? p + ' − ' + e + ' = <span class="' + (q > 0 ? 'pos' : q < 0 ? 'neg' : '') + '">' + signed(q) + '</span>' : '0';
+    ui.shells.textContent = sh.length ? sh.join(', ') : '–';
+    ui.status.innerHTML = statusText(p, n, e);
+    ui.fact.innerHTML = el ? '<b>Visste du?</b> ' + el.fact : 'Antalet protoner kallas atomnummer. Det är grundämnets id-nummer.';
+    if (p !== lastP){ ui.big.classList.remove('pop'); void ui.big.offsetWidth; ui.big.classList.add('pop'); lastP = p; }
+    $$('.pt', pt).forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.z === p)));
+    cv.setAttribute('aria-label', 'Atommodell med ' + p + ' protoner, ' + n + ' neutroner och ' + e + ' elektroner' + (el ? ': ' + ui.name.textContent : ''));
+    checkMissions(p, n, e);
+  }
+  $$('.counter').forEach(row => {
+    row.addEventListener('click', ev => {
+      const b = ev.target.closest('button'); if (!b) return;
+      const kd = row.dataset.kind;
+      target[kd] = clamp(target[kd] + (b.dataset.act === '+' ? 1 : -1), 0, LIM[kd]);
+      refresh();
+    });
+  });
+  $('#atomClear').addEventListener('click', () => { target.p = 0; target.n = 0; target.e = 0; refresh(); });
+  refresh();
+})();
+
+/* ================= Kapitel 2: jonbindning ================= */
+(function ionic(){
+  const stage = $('#ionStage'), cv = $('#ionCanvas');
+  const S = makeCanvas(cv), ctx = S.ctx;
+  const PAIRS = {
+    nacl: { A: { s: 'Na', n: 'Natrium', ion: 'natriumjon', sh: [2, 8, 1] }, B: { s: 'Cl', n: 'Klor', ion: 'kloridjon', sh: [2, 8, 7] }, g: 1, f: 'NaCl', name: 'Natriumklorid', nick: 'vanligt koksalt', fact: 'Det är saltet du strör på pommes frites.', ratio: .56 },
+    lif: { A: { s: 'Li', n: 'Litium', ion: 'litiumjon', sh: [2, 1] }, B: { s: 'F', n: 'Fluor', ion: 'fluoridjon', sh: [2, 7] }, g: 1, f: 'LiF', name: 'Litiumfluorid', nick: 'ett salt som släpper igenom UV-ljus', fact: 'Det används till linser i speciella kameror och rymdteleskop.', ratio: .57 },
+    kcl: { A: { s: 'K', n: 'Kalium', ion: 'kaliumjon', sh: [2, 8, 8, 1] }, B: { s: 'Cl', n: 'Klor', ion: 'kloridjon', sh: [2, 8, 7] }, g: 1, f: 'KCl', name: 'Kaliumklorid', nick: 'finns i lättsalt', fact: 'Det används också som gödsel så att växter får kalium.', ratio: .76 },
+    mgo: { A: { s: 'Mg', n: 'Magnesium', ion: 'magnesiumjon', sh: [2, 8, 2] }, B: { s: 'O', n: 'Syre', ion: 'oxidjon', sh: [2, 6] }, g: 2, f: 'MgO', name: 'Magnesiumoxid', nick: 'det vita pulvret som blir kvar när magnesium brinner', fact: 'Det tål enorm värme och används för att klä insidan av ugnar.', ratio: .51 },
+    cao: { A: { s: 'Ca', n: 'Kalcium', ion: 'kalciumjon', sh: [2, 8, 8, 2] }, B: { s: 'O', n: 'Syre', ion: 'oxidjon', sh: [2, 6] }, g: 2, f: 'CaO', name: 'Kalciumoxid', nick: 'kallas bränd kalk', fact: 'Det används för att tillverka cement och murbruk.', ratio: .71 }
+  };
+  const STEPS = ['Möts', 'Hopp', 'Joner', 'Dras ihop', 'Kristall'];
+  const DUR = [1.1, 2.6, 1.3, 1.9, 3];
+  const st = { key: 'nacl', step: 0, t: 0, playing: false, wait: 0, yaw: .6, pitch: -.5, vyaw: 0, drag: null, lattice: [] };
+
+  function story(P, i){
+    const A = P.A, B = P.B, g = P.g, two = g === 2;
+    const supA = two ? '²⁺' : '⁺', supB = two ? '²⁻' : '⁻';
+    switch (i){
+      case 0: return ['Möt ' + A.n.toLowerCase() + ' och ' + B.n.toLowerCase(), A.n + ' är en metall med ' + (two ? 'två elektroner' : 'en ensam elektron') + ' i sitt yttersta skal. ' + B.n + ' är en icke-metall som saknar ' + (two ? 'två elektroner' : 'en elektron') + ' för att få fullt. Båda vill ha ett fullt yttersta skal, precis som ädelgaserna.'];
+      case 1: return [two ? 'Elektronerna hoppar över' : 'Elektronen hoppar över', A.n + ' ger bort ' + (two ? 'sina två yttersta elektroner' : 'sin yttersta elektron') + ' till ' + B.n.toLowerCase() + '. Nu har båda atomerna ett fullt yttersta skal.'];
+      case 2: return ['Nu är de joner', A.n + ' har nu ' + (two ? 'två elektroner' : 'en elektron') + ' för lite och blir en positiv jon, <b>' + A.s + supA + '</b>. ' + B.n + ' har ' + (two ? 'två' : 'en') + ' för mycket och blir en negativ jon, <b>' + B.s + supB + '</b>. Jonen som tappade ett helt skal blir mindre.'];
+      case 3: return ['Plus och minus dras ihop', 'Positiva och negativa laddningar drar i varandra, ungefär som magneter. Kraften som håller ihop jonerna kallas <b>jonbindning</b>.'];
+      default: return ['Miljarder joner blir en kristall', 'På riktigt sitter otroligt många joner ihop i ett ordnat mönster, ett kristallgitter. ' + P.name + ' (' + P.f + ') – ' + P.nick + '. ' + P.fact];
+    }
+  }
+
+  function buildLattice(){
+    const arr = [];
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) for (let k = 0; k < 4; k++){
+      const p = [i - 1.5, j - 1.5, k - 1.5];
+      const th = Math.random() * TAU, ph = Math.acos(Math.random() * 2 - 1);
+      arr.push({ p, c: (i + j + k) % 2 === 0, from: [Math.sin(ph) * Math.cos(th) * 6, Math.cos(ph) * 6, Math.sin(ph) * Math.sin(th) * 6], delay: Math.hypot(p[0], p[1], p[2]) / 2.6 * .4 + Math.random() * .08 });
+    }
+    st.lattice = arr;
+  }
+  buildLattice();
+
+  function geo(){
+    const P = PAIRS[st.key], w = S.w, h = S.h;
+    const s = Math.min(1.7, w / 430, h / 300);
+    const shellR = k => (25 + k * 17) * s;
+    const rA = shellR(P.A.sh.length - 1), rB = shellR(P.B.sh.length - 1), rAi = shellR(P.A.sh.length - 2);
+    return { P, s, shellR, rA, rB, rAi, d0: Math.max(rA + rB + 70 * s, w * .44), cx: w / 2, cy: h * .46 };
+  }
+  const prog = i => st.step > i ? 1 : st.step === i ? st.t : 0;
+  const uOf = (k, g, tr) => clamp((tr - k * .15) / (.8 - (g - 1) * .15), 0, 1);
+  const cfg = sh => sh.join(', ');
+
+  function drawAtom(o){
+    const { x, y, sh, sc, a, s, shellR, t, role, g, tr, ionz, sym } = o;
+    if (a <= .005) return;
+    const L = sh.length - 1;
+    if (ionz > 0){
+      const rr = (role === 'A' ? shellR(L - 1) : shellR(L)) * sc;
+      glow(ctx, x, y, rr * 1.75, role === 'A' ? COL.cation : COL.anion, .3 * E.out(ionz) * a);
+    }
+    for (let k = 0; k <= L; k++){
+      let al = a * (k === L ? .5 : .22);
+      if (role === 'A' && k === L) al *= 1 - smooth(.6, .95, tr);
+      if (al <= .005) continue;
+      ctx.strokeStyle = rgba(COL.electron, al); ctx.lineWidth = k === L ? 1.5 : 1;
+      ctx.beginPath(); ctx.arc(x, y, shellR(k) * sc, 0, TAU); ctx.stroke();
+    }
+    const er = 3.4 * s;
+    for (let k = 0; k < L; k++){
+      const n = sh[k], r = shellR(k) * sc, ph = t * (k === 0 ? .9 : .45) * MS * (role === 'A' ? 1 : -1) + k;
+      for (let i = 0; i < n; i++){ const an = ph + i / n * TAU; electronDot(ctx, x + Math.cos(an) * r, y + Math.sin(an) * r, er, a); }
+    }
+    if (role === 'B'){
+      const r = shellR(L) * sc, n = sh[L];
+      for (let k = g; k < g + n; k++){ const an = Math.PI - (k - (g - 1) / 2) * Math.PI / 4; electronDot(ctx, x + Math.cos(an) * r, y + Math.sin(an) * r, er, a); }
+      ctx.setLineDash([2.5, 3]); ctx.lineWidth = 1.3;
+      for (let k = 0; k < g; k++){
+        const left = 1 - smooth(.85, 1, uOf(k, g, tr));
+        if (left <= 0) continue;
+        const an = Math.PI - (k - (g - 1) / 2) * Math.PI / 4;
+        ctx.strokeStyle = rgba(COL.electron, (.55 + .3 * Math.sin(t * 4)) * a * left);
+        ctx.beginPath(); ctx.arc(x + Math.cos(an) * r, y + Math.sin(an) * r, er * 1.3, 0, TAU); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+    const nr = 12.5 * s;
+    glow(ctx, x, y, nr * 2.7, COL.proton, .35 * a);
+    sphere(ctx, x, y, nr, COL.proton, a);
+    ctx.globalAlpha = a; ctx.fillStyle = '#ffffff'; ctx.font = '700 ' + Math.round(9 * s + 3) + 'px ' + FD;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(sym, x, y + .5); ctx.globalAlpha = 1;
+  }
+  function badge(x, y, txt, col, k, a, s){
+    if (k <= .01) return;
+    const r = 11.5 * s * k;
+    glow(ctx, x, y, r * 2.4, col, .4 * a);
+    ctx.globalAlpha = clamp(a, 0, 1); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#121735'; ctx.font = '800 ' + Math.max(1, Math.round(r * (txt.length > 1 ? .9 : 1.25))) + 'px ' + FD;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, x, y + r * .06); ctx.globalAlpha = 1;
+  }
+  function label(x, y, s, a, mixT, n1, n2, b1, b2){
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    const f1 = Math.round(12 * s + 3), f2 = Math.round(10 * s + 3);
+    if (1 - mixT > .01){
+      ctx.globalAlpha = a * (1 - mixT);
+      ctx.fillStyle = COL.ink; ctx.font = '700 ' + f1 + 'px ' + FB; ctx.fillText(n1, x, y);
+      ctx.fillStyle = COL.soft; ctx.font = '400 ' + f2 + 'px ' + FB; ctx.fillText('skal ' + b1, x, y + f2 * 1.45);
+    }
+    if (mixT > .01){
+      ctx.globalAlpha = a * mixT;
+      ctx.fillStyle = COL.ink; ctx.font = '700 ' + Math.round(f1 * 1.15) + 'px ' + FD; ctx.fillText(n2, x, y);
+      ctx.fillStyle = COL.soft; ctx.font = '400 ' + f2 + 'px ' + FB; ctx.fillText(b2, x, y + f2 * 1.45);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawPair(G, t, intro, tr, ionz, att, alpha){
+    const { P, s, shellR, rA, rB, rAi, d0, cx, cy } = G, g = P.g;
+    const ie = E.out(ionz);
+    const scA = lerp(1, .88, ie), scB = lerp(1, 1.07, ie);
+    const dF = rAi * scA + rB * scB + 3 * s;
+    const ap = clamp(att / .78, 0, 1);
+    let d = lerp(d0, dF, E.in(ap));
+    const snap = clamp((att - .78) / .22, 0, 1);
+    if (snap > 0) d = dF + Math.sin(snap * Math.PI * 2) * 5 * s * (1 - snap);
+    const slide = (1 - intro) * 70 * s;
+    const xA = cx - d / 2 - slide, xB = cx + d / 2 + slide;
+    const a = intro * alpha;
+
+    const field = Math.sin(ap * Math.PI) * a * (att < .78 ? 1 : 0);
+    if (field > .01){
+      ctx.setLineDash([4 * s, 6 * s]); ctx.lineDashOffset = -t * 40; ctx.lineWidth = 1.4;
+      for (let i = -2; i <= 2; i++){
+        const yo = i * 15 * s;
+        ctx.strokeStyle = rgba(COL.ink, .4 * field * (1 - Math.abs(i) * .25));
+        ctx.beginPath(); ctx.moveTo(xA + rAi * scA * .8, cy + yo * .4); ctx.quadraticCurveTo(cx, cy + yo * 2, xB - rB * scB * .8, cy + yo * .4); ctx.stroke();
+      }
+      ctx.setLineDash([]); ctx.lineDashOffset = 0;
+    }
+
+    drawAtom({ x: xA, y: cy, sh: P.A.sh, sc: scA, a, s, shellR, t, role: 'A', g, tr, ionz, sym: P.A.s });
+    drawAtom({ x: xB, y: cy, sh: P.B.sh, sc: scB, a, s, shellR, t, role: 'B', g, tr, ionz, sym: P.B.s });
+
+    const er = 3.6 * s;
+    for (let k = 0; k < g; k++){
+      const u = uOf(k, g, tr), ue = E.inOut(u);
+      const off = (k - (g - 1) / 2) * Math.PI / 4;
+      const p0x = xA + Math.cos(off) * rA * scA, p0y = cy + Math.sin(off) * rA * scA;
+      const p1x = xB + Math.cos(Math.PI - off) * rB * scB, p1y = cy + Math.sin(Math.PI - off) * rB * scB;
+      const dir = g === 1 || k === 0 ? -1 : 1;
+      const qx = (p0x + p1x) / 2, qy = cy + dir * (d * .42 + 20 * s);
+      const bz = v => { const mm = 1 - v; return [mm * mm * p0x + 2 * mm * v * qx + v * v * p1x, mm * mm * p0y + 2 * mm * v * qy + v * v * p1y]; };
+      if (u > 0 && u < 1){
+        ctx.lineCap = 'round';
+        for (let q = 0; q < 14; q++){
+          const v0 = E.inOut(clamp(u - (14 - q) * .016, 0, 1)), v1 = E.inOut(clamp(u - (13 - q) * .016, 0, 1));
+          const A0 = bz(v0), A1 = bz(v1);
+          ctx.strokeStyle = rgba(COL.electron, (q / 14) * .75 * a); ctx.lineWidth = er * 2.1 * (q / 14);
+          ctx.beginPath(); ctx.moveTo(A0[0], A0[1]); ctx.lineTo(A1[0], A1[1]); ctx.stroke();
+        }
+      }
+      const ep = bz(ue);
+      if (tr === 0 && intro >= 1){
+        const pu = (t * 1.3) % 1;
+        ctx.strokeStyle = rgba(COL.electron, (1 - pu) * .85 * a); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(ep[0], ep[1], er * (1.6 + pu * 3.6), 0, TAU); ctx.stroke();
+      }
+      electronDot(ctx, ep[0], ep[1], er * (1 + .55 * Math.sin(u * Math.PI)), a);
+      const b = clamp((tr - (k * .15 + .8 - (g - 1) * .15)) / .2, 0, 1);
+      if (b > 0 && b < 1){
+        ctx.strokeStyle = rgba(COL.electron, (1 - b) * a); ctx.lineWidth = 2.5 * (1 - b) + .5;
+        ctx.beginPath(); ctx.arc(ep[0], ep[1], er * (2 + b * 9), 0, TAU); ctx.stroke();
+        glow(ctx, ep[0], ep[1], er * 10 * (1 - b * .5), COL.electron, .4 * (1 - b) * a);
+      }
+    }
+
+    if (ionz > 0){
+      const k = E.elastic(ionz), q = -Math.PI / 4;
+      const ra = rAi * scA + 7 * s, rb = rB * scB + 7 * s;
+      badge(xA + Math.cos(q) * ra, cy + Math.sin(q) * ra, g === 1 ? '+' : '2+', COL.cation, k, a, s);
+      badge(xB - Math.cos(q) * rb, cy + Math.sin(q) * rb, g === 1 ? '−' : '2−', COL.anion, k, a, s);
+    }
+
+    const yLab = cy + Math.max(rA, rB) * 1.07 + 30 * s;
+    const supA = g === 2 ? '²⁺' : '⁺', supB = g === 2 ? '²⁻' : '⁻';
+    const shA2 = P.A.sh.slice(0, -1), shB2 = P.B.sh.slice(0, -1).concat(P.B.sh[P.B.sh.length - 1] + g);
+    label(xA, yLab, s, a, smooth(0, .6, ionz), P.A.n, P.A.s + supA, cfg(P.A.sh), 'skal ' + cfg(shA2));
+    label(xB, yLab, s, a, smooth(0, .6, ionz), P.B.n, P.B.s + supB, cfg(P.B.sh), 'skal ' + cfg(shB2));
+
+    if (snap > 0){
+      const k2 = E.back(clamp(snap * 1.5, 0, 1));
+      const yT = cy - Math.max(rA, rB) * 1.1 - 24 * s;
+      ctx.globalAlpha = a * clamp(snap * 3, 0, 1); ctx.fillStyle = COL.ink;
+      ctx.font = '800 ' + Math.max(1, Math.round(20 * s * k2 + 4)) + 'px ' + FD; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText('Jonbindning!', cx, yT); ctx.globalAlpha = 1;
+      glow(ctx, xA + rAi * scA, cy, 70 * s * (1 + snap), '#ffffff', .55 * (1 - snap) * a);
+    }
+  }
+
+  function drawLattice(G, dt, t, cry){
+    const P = G.P, w = S.w, h = S.h;
+    if (!st.drag){ st.yaw += dt * .35 * MS + st.vyaw * dt; st.vyaw *= Math.pow(.04, dt); }
+    const m = Math.min(w, h), unit = m * .108;
+    const rAn = unit / (1 + P.ratio), rCat = rAn * P.ratio, persp = 12;
+    const cyw = Math.cos(st.yaw), syw = Math.sin(st.yaw), cp = Math.cos(st.pitch), sp = Math.sin(st.pitch);
+    const cx = w / 2, cy = h / 2;
+    const items = st.lattice.map(o => {
+      const u = E.out(clamp((cry - .08 - o.delay) / .42, 0, 1));
+      const x = lerp(o.from[0], o.p[0], u), y = lerp(o.from[1], o.p[1], u), z = lerp(o.from[2], o.p[2], u);
+      const x1 = x * cyw + z * syw, z1 = -x * syw + z * cyw;
+      const y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+      const sc = persp / (persp - z2);
+      return { x: cx + x1 * unit * sc, y: cy + y1 * unit * sc, z: z2, sc, c: o.c, a: smooth(0, .25, u) };
+    }).sort((p, q) => p.z - q.z);
+    glow(ctx, cx, cy, m * .55, COL.anion, .08 * smooth(.3, 1, cry));
+    for (const it of items){
+      if (it.a <= 0) continue;
+      const fog = Math.round(clamp((2.6 - it.z) / 5.2, 0, 1) * 8) / 8 * .5;
+      const col = mix(it.c ? COL.cation : COL.anion, COL.stage, fog);
+      const r = (it.c ? rCat : rAn) * it.sc;
+      sphere(ctx, it.x, it.y, r, col, it.a);
+      if (r > 9){
+        ctx.globalAlpha = it.a * (1 - fog); ctx.fillStyle = it.c ? '#3a1404' : '#032823';
+        ctx.font = '700 ' + Math.round(r * .95) + 'px ' + FB; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(it.c ? '+' : '−', it.x, it.y + r * .05); ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  scene(stage, (dt, t) => {
+    if (st.t < 1) st.t = Math.min(1, st.t + dt / DUR[st.step]);
+    else if (st.playing){
+      if (st.step < 4){ st.wait += dt; if (st.wait > .8) go(st.step + 1); }
+      else { st.playing = false; updateUI(false); }
+    }
+    S.begin();
+    const G = geo();
+    const cry = prog(4), pairA = 1 - smooth(0, .35, cry);
+    if (pairA > 0) drawPair(G, t, E.out(prog(0)), prog(1), prog(2), prog(3), pairA);
+    if (cry > 0) drawLattice(G, dt, t, cry);
+  });
+
+  /* ----- UI ----- */
+  const stepsEl = $('#ionSteps'), textEl = $('#ionText'), titleEl = $('#ionTitle'), bodyEl = $('#ionBody');
+  const nextBtn = $('#ionNext'), playBtn = $('#ionPlay'), hint = $('#ionHint'), legend = $('#ionLegend');
+  STEPS.forEach((nm, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<button type="button" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="lbl">' + nm + '</span></button>';
+    stepsEl.appendChild(li);
+  });
+  function go(i){ st.step = clamp(i, 0, 4); st.t = 0; st.wait = 0; updateUI(true); }
+  function updateUI(textChanged){
+    const P = PAIRS[st.key], [title, body] = story(P, st.step);
+    titleEl.textContent = title; bodyEl.innerHTML = body;
+    if (textChanged){ textEl.classList.remove('swap'); void textEl.offsetWidth; textEl.classList.add('swap'); }
+    $$('button', stepsEl).forEach((b, i) => {
+      b.classList.toggle('done', i < st.step); b.classList.toggle('current', i === st.step);
+      if (i === st.step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+      b.setAttribute('aria-label', 'Steg ' + (i + 1) + ': ' + STEPS[i]);
+    });
+    nextBtn.disabled = st.step >= 4;
+    playBtn.textContent = st.playing ? 'Pausa' : 'Spela hela';
+    hint.style.opacity = st.step === 4 ? '1' : '0';
+    legend.classList.toggle('show', st.step >= 2);
+    const supA = P.g === 2 ? '²⁺' : '⁺', supB = P.g === 2 ? '²⁻' : '⁻';
+    legend.innerHTML = '<span><i class="dot cat"></i>' + P.A.s + supA + ' ' + P.A.ion + '</span><span><i class="dot an"></i>' + P.B.s + supB + ' ' + P.B.ion + '</span>';
+    $$('#ionPairs .chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.k === st.key)));
+    cv.style.cursor = st.step === 4 ? 'grab' : 'default';
+  }
+  stepsEl.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st.playing = false; go(+b.dataset.i); });
+  nextBtn.addEventListener('click', () => { st.playing = false; if (st.step < 4) go(st.step + 1); });
+  playBtn.addEventListener('click', () => { if (st.playing){ st.playing = false; updateUI(false); return; } st.playing = true; go(st.step >= 4 ? 0 : st.step === 0 ? 0 : st.step); });
+  $('#ionReset').addEventListener('click', () => { st.playing = false; go(0); });
+  $$('#ionPairs .chip').forEach(c => c.addEventListener('click', () => { st.key = c.dataset.k; st.playing = false; buildLattice(); go(0); }));
+
+  cv.addEventListener('pointerdown', e => { if (st.step !== 4) return; st.drag = { x: e.clientX, y: e.clientY, t: performance.now() }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+  cv.addEventListener('pointermove', e => {
+    if (!st.drag) return;
+    const dx = e.clientX - st.drag.x, dy = e.clientY - st.drag.y, now = performance.now();
+    st.yaw += dx * .01; st.pitch = clamp(st.pitch - dy * .01, -1.4, 1.4);
+    st.vyaw = clamp(dx * .01 / Math.max(.016, (now - st.drag.t) / 1000), -6, 6);
+    st.drag.x = e.clientX; st.drag.y = e.clientY; st.drag.t = now;
+  });
+  const endDrag = () => { if (st.drag){ st.drag = null; cv.style.cursor = st.step === 4 ? 'grab' : 'default'; } };
+  cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+  updateUI(false);
+})();
+
+/* ================= Kapitel 3a: två väteatomer ================= */
+(function hydrogen(){
+  const stage = $('#h2Stage'), cv = $('#h2Canvas');
+  const S = makeCanvas(cv), ctx = S.ctx;
+  const statusEl = $('#h2Status'), btn = $('#h2Toggle');
+  const st = { bx: null, by: null, bond: 0, bonded: false, drag: false, gx: 0, gy: 0, auto: null, flash: 0, touched: false, tr1: [], tr2: [] };
+  const dims = () => { const R = Math.min(S.w * .13, S.h * .27); return { R, ax: S.w * .32, ay: S.h * .47, apart: S.w * .74 }; };
+  function setBond(v){
+    if (st.bonded === v) return;
+    st.bonded = v; st.flash = 1;
+    statusEl.innerHTML = v
+      ? '<b>Bundna! Nu är det H₂, en vätemolekyl.</b> De två elektronerna delas och åker runt båda kärnorna. Båda atomerna får känna på 2 elektroner, ett fullt skal. Det här är en kovalent bindning.'
+      : 'Två fria väteatomer. Var och en har bara 1 elektron men vill ha 2.';
+    btn.textContent = v ? 'Dra isär dem' : 'Låt dem dela';
+  }
+  const local = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => {
+    const { R } = dims(), p = local(e);
+    if (Math.hypot(p.x - st.bx, p.y - st.by) < R * 1.4){ st.drag = true; st.touched = true; st.auto = null; st.gx = p.x; st.gy = p.y; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; }
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = local(e);
+    if (st.drag){ st.gx = p.x; st.gy = p.y; return; }
+    const { R } = dims();
+    cv.style.cursor = st.bx !== null && Math.hypot(p.x - st.bx, p.y - st.by) < R * 1.4 ? 'grab' : 'default';
+  });
+  const up = () => { st.drag = false; cv.style.cursor = 'default'; };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  btn.addEventListener('click', () => { st.touched = true; if (st.bonded){ setBond(false); st.auto = 'apart'; } else st.auto = 'join'; });
+
+  scene(stage, (dt, t) => {
+    S.begin();
+    const D = dims(), R = D.R, ax = D.ax, ay = D.ay, bondLen = R * 1.25;
+    if (st.bx === null){ st.bx = D.apart; st.by = ay; }
+    const cur = Math.hypot(st.bx - ax, st.by - ay) || 1;
+    let tx = st.bx, ty = st.by, rate = 10;
+    if (st.drag){
+      tx = clamp(st.gx, R * .8, S.w - R * .8); ty = clamp(st.gy, R * .8, S.h - R * .8);
+      const dist = Math.hypot(tx - ax, ty - ay) || 1;
+      if (!st.bonded && dist < R * 2.05) setBond(true);
+      else if (st.bonded && dist > R * 2.8) setBond(false);
+      if (st.bonded){ const len = bondLen + Math.max(0, dist - bondLen) * .3; tx = ax + (tx - ax) / dist * len; ty = ay + (ty - ay) / dist * len; }
+    } else if (st.auto === 'join'){
+      tx = ax + bondLen; ty = ay; rate = 3.2;
+      if (!st.bonded && cur < R * 2.05) setBond(true);
+      if (Math.abs(st.bx - tx) < .5) st.auto = null;
+    } else if (st.auto === 'apart'){
+      tx = D.apart; ty = ay; rate = 3.2;
+      if (Math.abs(st.bx - tx) < .5) st.auto = null;
+    } else if (st.bonded){
+      tx = ax + (st.bx - ax) / cur * bondLen; ty = ay + (st.by - ay) / cur * bondLen; rate = 6;
+    } else {
+      ty = ay + Math.sin(t * 1.3) * R * .08; rate = 2;
+    }
+    const kk = 1 - Math.exp(-dt * rate);
+    st.bx += (tx - st.bx) * kk; st.by += (ty - st.by) * kk;
+    st.bond += ((st.bonded ? 1 : 0) - st.bond) * (1 - Math.exp(-dt * 4.5));
+    st.flash = Math.max(0, st.flash - dt * 1.6);
+    const be = st.bond * st.bond * (3 - 2 * st.bond);
+
+    const bx = st.bx, by = st.by, mx = (ax + bx) / 2, my = (ay + by) / 2;
+    const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, vx = -uy, vy = ux;
+    const a8 = L / 2 + R * .85;
+    const eight = ph => { const x = a8 * Math.cos(ph), y = R * .85 * Math.sin(2 * ph); return [mx + ux * x + vx * y, my + uy * x + vy * y]; };
+
+    if (be > .01){
+      ctx.save(); ctx.translate(mx, my); ctx.rotate(Math.atan2(dy, dx)); ctx.scale(1.75, 1);
+      glow(ctx, 0, 0, R * 1.05, COL.electron, .26 * be); ctx.restore();
+    }
+    ctx.lineWidth = 1.3;
+    ctx.strokeStyle = rgba(COL.electron, .32 * (1 - be * .8));
+    ctx.beginPath(); ctx.arc(ax, ay, R, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx, by, R, 0, TAU); ctx.stroke();
+    if (be > .01){
+      ctx.strokeStyle = rgba(COL.electron, .3 * be); ctx.beginPath();
+      for (let i = 0; i <= 90; i++){ const p = eight(i / 90 * TAU); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }
+      ctx.stroke();
+    }
+    if (st.flash > 0){
+      ctx.strokeStyle = rgba(st.bonded ? COL.electron : COL.ink, st.flash * .8); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(mx, my, R * (.4 + (1 - st.flash) * 2.2), 0, TAU); ctx.stroke();
+    }
+    for (const [x, y] of [[ax, ay], [bx, by]]){
+      glow(ctx, x, y, R * .55, COL.proton, .4);
+      sphere(ctx, x, y, R * .17, COL.proton);
+    }
+    const th = t * 2.4 * MS;
+    const c1 = [ax + Math.cos(th) * R, ay + Math.sin(th) * R], c2 = [bx + Math.cos(th + Math.PI) * R, by + Math.sin(th + Math.PI) * R];
+    const e1 = eight(th), e2 = eight(th + Math.PI);
+    const p1 = [lerp(c1[0], e1[0], be), lerp(c1[1], e1[1], be)], p2 = [lerp(c2[0], e2[0], be), lerp(c2[1], e2[1], be)];
+    const er = Math.max(3, R * .075);
+    [[p1, st.tr1, COL.electron], [p2, st.tr2, COL.electron2]].forEach(([p, tr, col]) => {
+      tr.push(p); if (tr.length > 14) tr.shift();
+      ctx.lineCap = 'round';
+      for (let i = 1; i < tr.length; i++){
+        const f = i / tr.length;
+        ctx.strokeStyle = rgba(col, f * .45); ctx.lineWidth = er * 1.6 * f;
+        ctx.beginPath(); ctx.moveTo(tr[i - 1][0], tr[i - 1][1]); ctx.lineTo(tr[i][0], tr[i][1]); ctx.stroke();
+      }
+      electronDot(ctx, p[0], p[1], er, 1, col);
+    });
+
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    const fs = Math.round(clamp(R * .3, 12, 18));
+    const ly = Math.max(ay, by) + R + fs * 1.6;
+    if (1 - be > .02){
+      ctx.globalAlpha = 1 - be; ctx.fillStyle = COL.ink; ctx.font = '700 ' + fs + 'px ' + FD;
+      ctx.fillText('H', ax, ay + R + fs * 1.6); ctx.fillText('H', bx, by + R + fs * 1.6);
+    }
+    if (be > .02){
+      ctx.globalAlpha = be; ctx.fillStyle = COL.ink; ctx.font = '700 ' + Math.round(fs * 1.15) + 'px ' + FD;
+      ctx.fillText('H₂', mx, ly);
+      ctx.fillStyle = COL.soft; ctx.font = '400 ' + Math.round(fs * .8) + 'px ' + FB;
+      ctx.fillText('delat elektronpar', mx, my - R * 1.35);
+    }
+    ctx.globalAlpha = 1;
+
+    if (!st.touched && !st.bonded){
+      const pu = (t * .9) % 1;
+      ctx.fillStyle = rgba(COL.electron, .95); ctx.font = '700 ' + Math.round(fs * .85) + 'px ' + FB;
+      ctx.fillText('dra mig', bx, by - R - 14);
+      ctx.strokeStyle = rgba(COL.electron, .8 * (1 - pu)); ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      const hx = bx - R - 10 - pu * 18;
+      ctx.beginPath(); ctx.moveTo(hx + 6, by - 7); ctx.lineTo(hx, by); ctx.lineTo(hx + 6, by + 7); ctx.stroke();
+    }
+  });
+})();
+
+/* ================= Kapitel 3b: molekylstudion ================= */
+(function molecules(){
+  const stage = $('#molStage'), cv = $('#molCanvas');
+  const S = makeCanvas(cv), ctx = S.ctx;
+  const RB = { H: .27, C: .4, N: .38, O: .38 };
+  const RS = { H: 1.1, C: 1.6, N: 1.5, O: 1.45 };
+  const c = 1.09 / Math.sqrt(3), nr = .938, nh = .376;
+  const MOLS = {
+    h2o: { f: 'H<sub>2</sub>O', n: 'Vatten', atoms: [['O', 0, 0, 0], ['H', .757, .586, 0], ['H', -.757, .586, 0]], bonds: [[0, 1, 1], [0, 2, 1]],
+      info: 'Två enkelbindningar mellan syre och väte. Molekylen är vinklad, ungefär 104,5 grader, och det är en stor del av varför vatten är så speciellt.', fact: 'Ungefär 60 procent av din kropp är vatten.' },
+    co2: { f: 'CO<sub>2</sub>', n: 'Koldioxid', atoms: [['C', 0, 0, 0], ['O', 1.16, 0, 0], ['O', -1.16, 0, 0]], bonds: [[0, 1, 2], [0, 2, 2]],
+      info: 'Två dubbelbindningar. Kolet delar två elektronpar med varje syreatom, och molekylen blir helt rak.', fact: 'Du andas ut den, växter tar upp den, och bubblorna i läsk är koldioxid.' },
+    ch4: { f: 'CH<sub>4</sub>', n: 'Metan', atoms: [['C', 0, 0, 0], ['H', c, c, c], ['H', c, -c, -c], ['H', -c, c, -c], ['H', -c, -c, c]], bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1]],
+      info: 'Fyra enkelbindningar som pekar så långt ifrån varandra som möjligt, mot hörnen av en tetraeder.', fact: 'Huvudingrediensen i naturgas och biogas. Kor rapar ut massor av metan.' },
+    nh3: { f: 'NH<sub>3</sub>', n: 'Ammoniak', atoms: [['N', 0, 0, 0], ['H', 0, nh, nr], ['H', -nr * .866, nh, -nr * .5], ['H', nr * .866, nh, -nr * .5]], bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1]],
+      info: 'Tre enkelbindningar. Kvävet har också ett elektronpar som inte delas, och det trycker ner väteatomerna så att molekylen blir som en liten pyramid.', fact: 'Luktar stickande. Används för att tillverka gödsel som hjälper till att mätta en stor del av jordens befolkning.' },
+    o2: { f: 'O<sub>2</sub>', n: 'Syrgas', atoms: [['O', .605, 0, 0], ['O', -.605, 0, 0]], bonds: [[0, 1, 2]],
+      info: 'En dubbelbindning: de två syreatomerna delar två elektronpar.', fact: 'Det är syrgasen i luften som du behöver för att leva.' },
+    n2: { f: 'N<sub>2</sub>', n: 'Kvävgas', atoms: [['N', .55, 0, 0], ['N', -.55, 0, 0]], bonds: [[0, 1, 3]],
+      info: 'En trippelbindning: tre delade elektronpar. En av de starkaste bindningarna som finns.', fact: 'Bindningen är så stark att kvävgasen i luften nästan aldrig reagerar med något.' },
+    c2h4: { f: 'C<sub>2</sub>H<sub>4</sub>', n: 'Eten', atoms: [['C', .667, 0, 0], ['C', -.667, 0, 0], ['H', 1.235, .927, 0], ['H', 1.235, -.927, 0], ['H', -1.235, .927, 0], ['H', -1.235, -.927, 0]], bonds: [[0, 1, 2], [0, 2, 1], [0, 3, 1], [1, 4, 1], [1, 5, 1]],
+      info: 'En dubbelbindning mellan kolatomerna och fyra enkelbindningar till väte. Hela molekylen är platt.', fact: 'Ett växthormon! Bananer avger eten som får frukt i närheten att mogna snabbare.' }
+  };
+  for (const k in MOLS){
+    const M = MOLS[k], n = M.atoms.length, cen = [0, 0, 0];
+    M.atoms.forEach(a => { cen[0] += a[1] / n; cen[1] += a[2] / n; cen[2] += a[3] / n; });
+    M.pts = M.atoms.map(a => [a[1] - cen[0], a[2] - cen[1], a[3] - cen[2]]);
+  }
+  const st = { key: 'h2o', yaw: .5, pitch: -.3, vyaw: .5, vpitch: 0, drag: null, mode: 0, modeT: 0, appear: 0 };
+
+  // Ritar en halv bindning från atomens yta (A) till mitten av bindningen (B), båda redan projicerade
+  function drawHalf(A, B, o, alpha, scale, el){
+    const mx = B.x, my = B.y;
+    const dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1;
+    const nx = -dy / L, ny = dx / L, sg = ny > 0 ? -1 : 1;
+    const bw = scale * .12 * ((A.s + B.s) / 2) * (o > 1 ? .78 : 1);
+    const col = COL[el];
+    ctx.lineCap = 'butt'; ctx.globalAlpha = alpha;
+    for (let k = 0; k < o; k++){
+      const off = (k - (o - 1) / 2) * bw * 1.35;
+      const x0 = A.x + nx * off, y0 = A.y + ny * off, x1 = mx + nx * off, y1 = my + ny * off;
+      ctx.strokeStyle = tint(col, -.5); ctx.lineWidth = bw;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      ctx.strokeStyle = col; ctx.lineWidth = bw * .62;
+      ctx.beginPath(); ctx.moveTo(x0 + nx * sg * bw * .1, y0 + ny * sg * bw * .1); ctx.lineTo(x1 + nx * sg * bw * .1, y1 + ny * sg * bw * .1); ctx.stroke();
+      ctx.strokeStyle = tint(col, .55); ctx.lineWidth = bw * .18;
+      ctx.beginPath(); ctx.moveTo(x0 + nx * sg * bw * .22, y0 + ny * sg * bw * .22); ctx.lineTo(x1 + nx * sg * bw * .22, y1 + ny * sg * bw * .22); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  scene(stage, (dt, t) => {
+    S.begin();
+    const M = MOLS[st.key];
+    st.appear = Math.min(1, st.appear + dt / .9);
+    st.modeT += (st.mode - st.modeT) * (1 - Math.exp(-dt * 6));
+    if (!st.drag){
+      st.vyaw += (.45 * MS - st.vyaw) * (1 - Math.exp(-dt * 1.2));
+      st.yaw += st.vyaw * dt;
+      st.vpitch *= Math.pow(.1, dt);
+      st.pitch = clamp(st.pitch + st.vpitch * dt, -1.3, 1.3);
+    }
+    let ext = .5;
+    M.pts.forEach((p, i) => { const el = M.atoms[i][0]; ext = Math.max(ext, Math.hypot(p[0], p[1], p[2]) + lerp(RB[el], RS[el], st.modeT)); });
+    const scale = Math.min(S.w, S.h) * .4 / ext;
+    const cyw = Math.cos(st.yaw), syw = Math.sin(st.yaw), cp = Math.cos(st.pitch), sp = Math.sin(st.pitch), persp = 7;
+    const cx = S.w / 2, cy = S.h / 2;
+    const R3 = M.pts.map(p => {
+      const x1 = p[0] * cyw + p[2] * syw, z1 = -p[0] * syw + p[2] * cyw;
+      return [x1, p[1] * cp - z1 * sp, p[1] * sp + z1 * cp];
+    });
+    const proj = v => { const s = persp / (persp - v[2]); return { x: cx + v[0] * scale * s, y: cy + v[1] * scale * s, z: v[2], s }; };
+    const P = R3.map(proj);
+    ctx.save(); ctx.translate(cx, cy + Math.min(S.h * .4, ext * scale * 1.05)); ctx.scale(1, .18);
+    glow(ctx, 0, 0, ext * scale * 1.1, '#000000', .45); ctx.restore();
+
+    const bondA = smooth(.25, .85, st.appear) * (1 - st.modeT);
+    const items = M.atoms.map((a, i) => ({ type: 0, z: P[i].z, i }));
+    if (bondA > .01) M.bonds.forEach(([i, j, o]) => {
+      const a = R3[i], b = R3[j], L = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) || 1;
+      const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2], Pm = proj(mid);
+      [[i, a, b], [j, b, a]].forEach(([k, from, to]) => {
+        const rr = Math.min(L / 2 - .02, lerp(RB[M.atoms[k][0]], RS[M.atoms[k][0]], st.modeT) * .92);
+        if (rr <= 0) return;
+        const st3 = [from[0] + (to[0] - from[0]) / L * rr, from[1] + (to[1] - from[1]) / L * rr, from[2] + (to[2] - from[2]) / L * rr];
+        const Ps = proj(st3);
+        items.push({ type: 1, z: (Ps.z + Pm.z) / 2, A: Ps, B: Pm, o, el: M.atoms[k][0] });
+      });
+    });
+    items.sort((a, b) => a.z - b.z);
+    for (const it of items){
+      if (it.type === 1){ drawHalf(it.A, it.B, it.o, bondA, scale, it.el); continue; }
+      const el = M.atoms[it.i][0], p = P[it.i];
+      const ap = E.back(clamp(st.appear * 1.7 - it.i * .1, 0, 1));
+      const r = lerp(RB[el], RS[el], st.modeT) * scale * p.s * Math.max(0, ap);
+      sphere(ctx, p.x, p.y, r, COL[el]);
+      if (r > 14){
+        ctx.globalAlpha = .88; ctx.fillStyle = el === 'H' ? '#1b2140' : '#ffffff';
+        ctx.font = '700 ' + Math.round(clamp(r * .5, 10, 24)) + 'px ' + FD;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(el, p.x, p.y + 1); ctx.globalAlpha = 1;
+      }
+    }
+  });
+
+  const info = { box: $('#molInfoBox'), f: $('#molFormula'), n: $('#molName'), i: $('#molInfo'), x: $('#molFact') };
+  function setMol(k){
+    st.key = k; st.appear = 0; st.vyaw += 2.2;
+    const M = MOLS[k];
+    info.f.innerHTML = M.f; info.n.textContent = M.n; info.i.textContent = M.info; info.x.innerHTML = '<b>Visste du?</b> ' + M.fact;
+    info.box.classList.remove('swap'); void info.box.offsetWidth; info.box.classList.add('swap');
+    $$('#molPicker .chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.m === k)));
+    cv.setAttribute('aria-label', '3D-modell av ' + M.n.toLowerCase() + ' som går att snurra');
+  }
+  $$('#molPicker .chip').forEach(c => c.addEventListener('click', () => setMol(c.dataset.m)));
+  $$('.mol-mode button').forEach(b => b.addEventListener('click', () => {
+    st.mode = +b.dataset.mode;
+    $$('.mol-mode button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  cv.style.cursor = 'grab';
+  cv.addEventListener('pointerdown', e => { st.drag = { x: e.clientX, y: e.clientY, t: performance.now() }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+  cv.addEventListener('pointermove', e => {
+    if (!st.drag) return;
+    const dx = e.clientX - st.drag.x, dy = e.clientY - st.drag.y, now = performance.now(), el = Math.max(.016, (now - st.drag.t) / 1000);
+    st.yaw += dx * .012; st.pitch = clamp(st.pitch - dy * .012, -1.3, 1.3);
+    st.vyaw = clamp(dx * .012 / el, -8, 8); st.vpitch = clamp(-dy * .012 / el, -8, 8);
+    st.drag.x = e.clientX; st.drag.y = e.clientY; st.drag.t = now;
+  });
+  const end = () => { st.drag = null; cv.style.cursor = 'grab'; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  setMol('h2o'); st.vyaw = .5;
+})();
+
+/* ================= Kapitel 4: värme och rörelse ================= */
+(function heat(){
+  const N = 84, cols = 12;
+  const parts = [], homes = [];
+  let r = 9, box = { x0: 0, y0: 0, x1: 1, y1: 1 }, T = 20, prevState = 1;
+  function layout(s){
+    r = Math.min(clamp(Math.min(s.w, s.h) * .027, 6, 11), (s.w - 34) / ((cols - .5) * 2.5 + 2));
+    box = { x0: 14 + r, y0: 14 + r, x1: s.w - 14 - r, y1: s.h - 14 - r };
+    const d = r * 2.5, W = (cols - 1) * d + d * .5, x0 = s.w / 2 - W / 2, yb = box.y1 - 1;
+    homes.length = 0;
+    for (let i = 0; i < N; i++){
+      const row = Math.floor(i / cols), c = i % cols;
+      homes.push({ x: x0 + c * d + (row % 2 ? d * .5 : 0), y: yb - row * d * .87, ang: (row % 2 ? Math.PI / 2 : -Math.PI / 2) + (c % 2 ? .5 : -.5) });
+    }
+    if (!parts.length) homes.forEach((h, i) => parts.push({ x: h.x, y: h.y - 30, vx: 0, vy: 0, ang: h.ang, va: 0, ph: Math.random() * TAU, f1: .8 + Math.random() * .6, f2: .8 + Math.random() * .6, home: i, vt: .7 + Math.random() * .6 }));
+  }
+  const stage = $('#heatStage'), cv = $('#heatCanvas');
+  const S = makeCanvas(cv, layout), ctx = S.ctx;
+  const stateOf = v => v < 0 ? 0 : v < 100 ? 1 : 2;
+
+  function assignHomes(){
+    const ps = parts.slice().sort((a, b) => b.y - a.y);
+    const hs = homes.map((h, i) => ({ h, i })).sort((a, b) => b.h.y - a.h.y || a.h.x - b.h.x);
+    for (let row = 0; row * cols < N; row++){
+      const pr = ps.slice(row * cols, row * cols + cols).sort((a, b) => a.x - b.x);
+      const hr = hs.slice(row * cols, row * cols + cols).sort((a, b) => a.h.x - b.h.x);
+      pr.forEach((p, j) => { p.home = hr[j].i; });
+    }
+  }
+
+  function physics(dt, t){
+    const state = stateOf(T);
+    if (state === 0 && prevState !== 0) assignHomes();
+    if (state !== 0 && prevState === 0) parts.forEach(p => { const a = Math.random() * TAU; p.vx = Math.cos(a) * 25; p.vy = Math.sin(a) * 25; });
+    prevState = state;
+    if (state === 0){
+      const amp = r * (.06 + clamp((T + 40) / 40, 0, 1) * .28);
+      const k = 1 - Math.exp(-dt * 4);
+      for (const p of parts){
+        const h = homes[p.home];
+        const tx = h.x + Math.sin(t * 9 * p.f1 + p.ph) * amp, ty = h.y + Math.cos(t * 8 * p.f2 + p.ph) * amp;
+        p.x += (tx - p.x) * k; p.y += (ty - p.y) * k;
+        p.ang += angDiff(h.ang + Math.sin(t * 7 * p.f1 + p.ph) * amp / r * .4, p.ang) * k;
+      }
+      return;
+    }
+    const sub = 2, hh = dt / sub;
+    const vT = state === 1 ? 30 + T * 1.15 : 170 + (T - 100) * 4.5;
+    const g = state === 1 ? 480 : 36;
+    const D = r * 2.15, A = r * 3.3, A2 = A * A;
+    const rate = 1 - Math.exp(-hh * (state === 1 ? 2.2 : 3));
+    for (let it = 0; it < sub; it++){
+      for (const p of parts){ p.ax = 0; p.ay = g; }
+      for (let i = 0; i < N; i++){
+        const a = parts[i];
+        for (let j = i + 1; j < N; j++){
+          const b = parts[j], dx = b.x - a.x, dy = b.y - a.y, d2 = dx * dx + dy * dy;
+          if (d2 > A2 || d2 < 1e-6) continue;
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d;
+          let f = 0;
+          if (d < D) f = -(D - d) * 1400; else if (state === 1) f = (d - D) * 90;
+          a.ax += nx * f; a.ay += ny * f; b.ax -= nx * f; b.ay -= ny * f;
+        }
+      }
+      for (const p of parts){
+        p.vx += p.ax * hh; p.vy += p.ay * hh;
+        const sp = Math.hypot(p.vx, p.vy), tgt = vT * p.vt;
+        if (sp < 1){ const a = Math.random() * TAU; p.vx += Math.cos(a) * tgt * .5; p.vy += Math.sin(a) * tgt * .5; }
+        else { const ns = sp + (tgt - sp) * rate; p.vx *= ns / sp; p.vy *= ns / sp; }
+        const jit = (state === 1 ? 2.5 : 1) * hh, ca = Math.cos((Math.random() - .5) * jit), sa = Math.sin((Math.random() - .5) * jit);
+        const nvx = p.vx * ca - p.vy * sa; p.vy = p.vx * sa + p.vy * ca; p.vx = nvx;
+        p.x += p.vx * hh; p.y += p.vy * hh;
+        if (p.x < box.x0){ p.x = box.x0; p.vx = Math.abs(p.vx); } else if (p.x > box.x1){ p.x = box.x1; p.vx = -Math.abs(p.vx); }
+        if (p.y < box.y0){ p.y = box.y0; p.vy = Math.abs(p.vy); } else if (p.y > box.y1){ p.y = box.y1; p.vy = -Math.abs(p.vy) * (state === 1 ? .6 : 1); }
+        p.va += (Math.random() - .5) * hh * (state === 1 ? 50 : 140);
+        p.va = clamp(p.va * (1 - hh * 1.5), state === 1 ? -4 : -11, state === 1 ? 4 : 11);
+        p.ang += p.va * hh;
+      }
+    }
+  }
+
+  scene(stage, (dt, t) => {
+    physics(dt, t);
+    S.begin();
+    const w = S.w, h = S.h, state = stateOf(T), t01 = (T + 40) / 180;
+    if (T < 0){
+      const a = .1 + clamp(-T / 40, 0, 1) * .25;
+      const gt = ctx.createLinearGradient(0, 0, 0, h * .45);
+      gt.addColorStop(0, rgba('#bfeaff', a)); gt.addColorStop(1, rgba('#bfeaff', 0));
+      ctx.fillStyle = gt; ctx.fillRect(0, 0, w, h);
+    }
+    if (T > 25){
+      const a = clamp((T - 25) / 115, 0, 1) * .5;
+      const gb = ctx.createLinearGradient(0, h, 0, h * .45);
+      gb.addColorStop(0, rgba('#ff6a3d', a)); gb.addColorStop(1, rgba('#ff6a3d', 0));
+      ctx.fillStyle = gb; ctx.fillRect(0, 0, w, h);
+    }
+    ctx.strokeStyle = 'rgba(232,235,255,.16)'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(10, 10, w - 20, h - 20, 16); else ctx.rect(10, 10, w - 20, h - 20);
+    ctx.stroke();
+
+    if (state < 2){
+      const lim = r * (state === 0 ? 2.9 : 2.7), lim2 = lim * lim;
+      const path = new Path2D();
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++){
+        const a = parts[i], b = parts[j], dx = b.x - a.x, dy = b.y - a.y;
+        if (dx * dx + dy * dy < lim2){ path.moveTo(a.x, a.y); path.lineTo(b.x, b.y); }
+      }
+      ctx.setLineDash([2, 3]); ctx.lineWidth = 1.1;
+      ctx.strokeStyle = rgba('#8fdcff', state === 0 ? .32 : .17); ctx.stroke(path); ctx.setLineDash([]);
+    }
+    // isblått -> vattenblått -> varmt orange -> rött
+    const q = Math.round(t01 * 60) / 60;
+    const oCol = q < .333 ? mix('#c3e8ff', '#3aa6ff', q / .333) : q < .778 ? mix('#3aa6ff', '#ff9e3d', (q - .333) / .445) : mix('#ff9e3d', '#ff4b4b', (q - .778) / .222);
+    for (const p of parts){
+      if (state === 2){
+        ctx.strokeStyle = rgba(oCol, .22); ctx.lineWidth = r * .9; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(p.x - p.vx * .045, p.y - p.vy * .045); ctx.lineTo(p.x, p.y); ctx.stroke();
+      }
+      sphere(ctx, p.x, p.y, r, oCol);
+      for (const sgn of [-1, 1]){
+        const a = p.ang + sgn * .912;
+        sphere(ctx, p.x + Math.cos(a) * r * .95, p.y + Math.sin(a) * r * .95, r * .58, COL.H);
+      }
+    }
+  });
+
+  const slider = $('#tempSlider'), out = $('#tempOut'), badge = $('#heatBadge');
+  const NAMES = ['Is', 'Vatten', 'Vattenånga'];
+  let lastState = -1;
+  function setT(v){
+    T = Math.round(+v);
+    out.textContent = T < 0 ? '−' + Math.abs(T) : String(T);
+    const s = stateOf(T);
+    slider.setAttribute('aria-valuetext', T + ' grader, ' + NAMES[s].toLowerCase());
+    if (s !== lastState){
+      lastState = s;
+      badge.textContent = NAMES[s];
+      $$('#states .state').forEach(el => el.classList.toggle('on', +el.dataset.s === s));
+    }
+  }
+  slider.addEventListener('input', () => setT(slider.value));
+  let tween = 0;
+  $$('[data-temp]').forEach(b => b.addEventListener('click', () => {
+    const from = T, to = +b.dataset.temp, t0 = performance.now(), dur = reduceMotion ? 1 : 900;
+    cancelAnimationFrame(tween);
+    const step = now => {
+      const k = clamp((now - t0) / dur, 0, 1), v = Math.round(lerp(from, to, E.inOut(k)));
+      slider.value = v; setT(v);
+      if (k < 1) tween = requestAnimationFrame(step);
+    };
+    tween = requestAnimationFrame(step);
+  }));
+  setT(slider.value);
+})();
+
+/* ================= Kapitel 5: quiz ================= */
+(function quiz(){
+  const Q = [
+    { q: 'Vad bestämmer vilket grundämne en atom är?', o: ['Antalet neutroner', 'Antalet protoner', 'Antalet elektroner', 'Hur stor atomen är'], a: 1, x: 'Antalet protoner i kärnan är grundämnets id-nummer. 6 protoner är alltid kol, 8 protoner är alltid syre.' },
+    { q: 'Vilken laddning har en elektron?', o: ['Positiv', 'Negativ', 'Ingen laddning alls'], a: 1, x: 'Elektronen är negativ, protonen är positiv och neutronen har ingen laddning.' },
+    { q: 'Natrium ger bort en elektron till klor. Vad händer med natriumatomen?', o: ['Den blir en negativ jon', 'Den blir en positiv jon', 'Den blir en ädelgas', 'Den försvinner'], a: 1, x: 'Med en elektron mindre har natrium fler protoner än elektroner. Då blir den positiv: Na⁺.' },
+    { q: 'Vad håller ihop jonerna i ett saltkorn?', o: ['De delar elektronpar', 'Plus- och minusladdningar drar i varandra', 'Små krokar på atomerna', 'Tyngdkraften'], a: 1, x: 'Positiva och negativa joner attraherar varandra. Det kallas jonbindning.' },
+    { q: 'Hur sitter atomerna ihop i en vattenmolekyl, H₂O?', o: ['Med jonbindningar', 'Med delade elektronpar', 'De sitter inte ihop alls'], a: 1, x: 'Syre och väte delar elektronpar. Det kallas kovalent bindning.' },
+    { q: 'Varför reagerar neon nästan aldrig med andra ämnen?', o: ['Neon har inga elektroner', 'Neon är för tungt', 'Yttersta skalet är redan fullt', 'Neon är radioaktivt'], a: 2, x: 'Med 8 elektroner i yttersta skalet är neon redan nöjd. Så är det för alla ädelgaser.' },
+    { q: 'Hur många elektronpar delar de två syreatomerna i O₂?', o: ['Ett', 'Två', 'Tre'], a: 1, x: 'Syremolekylen har en dubbelbindning, alltså två delade elektronpar.' },
+    { q: 'Vad händer med vattenmolekylerna när is smälter?', o: ['De blir större', 'De rör sig mer och lossnar från sina platser', 'De slutar röra sig', 'De förvandlas till syre och väte'], a: 1, x: 'Värme är rörelse. När molekylerna skakar tillräckligt mycket slits de loss från mönstret i isen.' }
+  ];
+  const box = $('#quizBox');
+  let i = 0, score = 0;
+  function render(focus){
+    if (i >= Q.length) return renderEnd(focus);
+    const q = Q[i];
+    box.innerHTML =
+      '<div class="quiz-top"><span>Fråga ' + (i + 1) + ' av ' + Q.length + '</span><div class="qbar" aria-hidden="true"><i style="width:' + (i / Q.length * 100) + '%"></i></div><span id="qScore">' + score + ' rätt</span></div>' +
+      '<h3 class="qtext" id="qText" tabindex="-1">' + q.q + '</h3>' +
+      '<div class="qopts">' + q.o.map((o, k) => '<button class="qopt" data-k="' + k + '"><span class="k" aria-hidden="true">' + 'ABCD'[k] + '</span><span>' + o + '</span></button>').join('') + '</div>' +
+      '<p class="qfeed" aria-live="polite"></p>' +
+      '<div class="qnav"><button class="btn btn-primary" id="qNext" hidden>' + (i === Q.length - 1 ? 'Se resultatet' : 'Nästa fråga') + '</button></div>';
+    $$('.qopt', box).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k, b)));
+    $('#qNext', box).addEventListener('click', () => { i++; render(true); });
+    if (focus) $('#qText', box).focus({ preventScroll: true });
+  }
+  function answer(k, btn){
+    const q = Q[i], ok = k === q.a;
+    $$('.qopt', box).forEach((b, j) => { b.disabled = true; if (j === q.a) b.classList.add('right'); });
+    if (!ok) btn.classList.add('wrong');
+    else { score++; const r = btn.getBoundingClientRect(); confetti.burst(r.left + 30, r.top + r.height / 2); }
+    $('.qfeed', box).innerHTML = '<b>' + (ok ? 'Rätt!' : 'Inte riktigt.') + '</b> ' + q.x;
+    $('#qScore', box).textContent = score + ' rätt';
+    $('.qbar i', box).style.width = ((i + 1) / Q.length * 100) + '%';
+    const nb = $('#qNext', box); nb.hidden = false; nb.focus({ preventScroll: true });
+  }
+  function renderEnd(focus){
+    const msg = score === Q.length ? 'Fullpott, ' + LekOchLar.escape(LekOchLar.namn()) + '! Du har riktig koll på atomerna.'
+      : score >= 6 ? 'Riktigt starkt. Du är nästan en atomexpert.'
+      : score >= 4 ? 'Bra jobbat! Scrolla upp och testa de delar du var osäker på.'
+      : 'Bra försök. Bygg några atomer till och försök igen.';
+    box.innerHTML = '<div class="qend"><p class="qend-score"><span class="big">' + score + '</span>av ' + Q.length + ' rätt</p><h3 id="qText" tabindex="-1">' + msg + '</h3><button class="btn btn-primary" id="qAgain">Gör om quizet</button></div>';
+    $('#qAgain', box).addEventListener('click', () => { i = 0; score = 0; render(true); });
+    if (focus) $('#qText', box).focus({ preventScroll: true });
+    if (score >= 6){
+      const r = box.getBoundingClientRect();
+      [0, 250, 500].forEach((d, n) => setTimeout(() => confetti.burst(r.left + r.width * (.25 + n * .25), r.top + 40, 60), d));
+    }
+  }
+  render(false);
+})();
+
+/* ================= Navigering ================= */
+(function nav(){
+  const links = $$('.tile-link');
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  $$('section.chapter, header.hero').forEach(s => io.observe(s));
+  const bar = $('#progress');
+  const onScroll = () => { const max = document.documentElement.scrollHeight - innerHeight; bar.style.transform = 'scaleX(' + (max > 0 ? clamp(scrollY / max, 0, 1) : 0) + ')'; };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+})();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1413 @@
+<!doctype html><html lang="sv"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Kemikoll</title>
+<script src="../../delad/profil.js"></script>
+<script>if (LekOchLar.kravNamn('kemikoll')) document.title = LekOchLar.genitiv() + ' kemikoll';</script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Grandstander:wght@600;800&family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: en lång väg av stationer som följer häftets checklista. Varje station = kort förklaring + ett litet spel som bockar av rutan. */
+:root{
+  --display:"Grandstander","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  --body:"Lexend","Segoe UI",Roboto,Arial,sans-serif;
+  --hand:"Gochi Hand","Comic Sans MS","Marker Felt",cursive;
+
+  --bg:#eef5ff; --paper:#ffffff; --paper-2:#f3f8ff;
+  --ink:#172447; --ink-soft:#4a5878; --ink-faint:#747f9c;
+  --line:rgba(23,36,71,.12); --line-strong:rgba(23,36,71,.28);
+  --water:#1d6fd6; --water-soft:#d6e8ff; --water-ink:#0d4a96; --on-water:#ffffff;
+  --sun:#ffb51e; --sun-soft:#fff0c7;
+  --proton:#e5463d; --neutron:#3561d8; --electron:#f08c14;
+  --good:#16834c; --good-soft:#daf3e5; --bad:#cc3341; --bad-soft:#fde3e5;
+  --pen:#2346b8;
+  --sky:#cfe5ff; --sea:#2f82e0; --grass:#7cc35a; --soil:#6e4c36; --snow:#ffffff; --cloud:#ffffff; --cloud-rain:#aebbd0; --trunk:#7a5233; --leaf:#3f9a46;
+  --glass:rgba(23,36,71,.45); --ice:#e8f6ff; --sugar:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1630; --paper:#16203f; --paper-2:#1c2850;
+    --ink:#eef3ff; --ink-soft:#b3bfdf; --ink-faint:#8692b4;
+    --line:rgba(200,215,255,.13); --line-strong:rgba(200,215,255,.3);
+    --water:#5aa6ff; --water-soft:#1d3566; --water-ink:#a3ccff; --on-water:#0b1a36;
+    --sun:#ffc444; --sun-soft:#3a3118;
+    --proton:#ff6a5f; --neutron:#7395ff; --electron:#ffab45;
+    --good:#47d18c; --good-soft:#163c2c; --bad:#ff6d78; --bad-soft:#45202a;
+    --pen:#93b2ff;
+    --sky:#1b2d57; --sea:#2a6cc0; --grass:#3f7d3a; --soil:#3d2b22; --snow:#e9efff; --cloud:#cfd9ee; --cloud-rain:#7f8aa3; --trunk:#6b4a30; --leaf:#2f6f35;
+    --glass:rgba(200,215,255,.5); --ice:#cfe9ff; --sugar:#f3f6ff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1630; --paper:#16203f; --paper-2:#1c2850;
+  --ink:#eef3ff; --ink-soft:#b3bfdf; --ink-faint:#8692b4;
+  --line:rgba(200,215,255,.13); --line-strong:rgba(200,215,255,.3);
+  --water:#5aa6ff; --water-soft:#1d3566; --water-ink:#a3ccff; --on-water:#0b1a36;
+  --sun:#ffc444; --sun-soft:#3a3118;
+  --proton:#ff6a5f; --neutron:#7395ff; --electron:#ffab45;
+  --good:#47d18c; --good-soft:#163c2c; --bad:#ff6d78; --bad-soft:#45202a;
+  --pen:#93b2ff;
+  --sky:#1b2d57; --sea:#2a6cc0; --grass:#3f7d3a; --soil:#3d2b22; --snow:#e9efff; --cloud:#cfd9ee; --cloud-rain:#7f8aa3; --trunk:#6b4a30; --leaf:#2f6f35;
+  --glass:rgba(200,215,255,.5); --ice:#cfe9ff; --sugar:#f3f6ff;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--water);outline-offset:3px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sub{font-size:.62em;vertical-align:-.25em;line-height:0}
+
+/* topprad */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg);background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:56px}
+.top .brand{font:800 1.1rem/1 var(--display);color:var(--ink);text-decoration:none}
+.top .spacer{flex:1}
+.top a.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line-strong);color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem}
+.top a.pill:hover{border-color:var(--ink)}
+.top .count{font-variant-numeric:tabular-nums}
+
+/* knappar */
+.btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:14px;font:600 1rem/1.1 var(--body);text-decoration:none;transition:transform .12s,box-shadow .2s,background-color .2s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--water);color:var(--on-water);box-shadow:0 3px 0 var(--water-ink)}
+.btn.primary:hover{box-shadow:0 3px 0 var(--water-ink),0 0 0 4px color-mix(in srgb,var(--water) 22%,transparent)}
+.btn.ghost{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--line-strong)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* checkrutor som på pappret */
+.box{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border:2.5px solid var(--ink);border-radius:5px;background:var(--paper)}
+.box svg{width:130%;height:130%;margin:-6px -2px 0 6px;overflow:visible}
+.box path{fill:none;stroke:var(--pen);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;transition:stroke-dashoffset .5s ease}
+.box.on path{stroke-dashoffset:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(32px,6vw,72px) clamp(24px,4vw,40px)}
+.hello{font:400 clamp(1.8rem,4vw,2.4rem)/1 var(--hand);color:var(--pen);transform:rotate(-2deg);transform-origin:left;margin-bottom:10px}
+.hero h1{font-size:clamp(2.3rem,5.6vw,4rem);font-weight:800}
+.hero .lead{margin-top:18px;max-width:34em;color:var(--ink-soft);font-size:1.1rem}
+.prog{display:flex;align-items:center;gap:14px;margin-top:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.prog .bar{flex:1;max-width:260px;height:12px;border-radius:999px;background:var(--water-soft);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;border-radius:inherit;background:var(--good);transition:width .6s cubic-bezier(.3,1.3,.5,1)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.sheet{position:relative;background:var(--paper);border-radius:6px;padding:26px 26px 22px;box-shadow:0 1px 0 var(--line),0 18px 40px -18px rgba(23,36,71,.35);transform:rotate(1.2deg);border:1px solid var(--line)}
+.sheet-title{font-weight:600;font-size:.98rem}
+.sheet-name{margin-top:10px;display:flex;align-items:baseline;justify-content:flex-end;gap:8px;font-size:.95rem}
+.sheet-name .hand{font:400 1.7rem/1 var(--hand);color:var(--pen);min-width:150px;border-bottom:1.5px solid var(--ink);padding:0 6px 2px;transform:rotate(-1.5deg)}
+.sheet ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:4px}
+.sheet a{display:flex;align-items:center;gap:12px;padding:5px 6px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:.97rem}
+.sheet a:hover{background:var(--paper-2)}
+.sheet .box{width:24px;height:24px;border-width:2px}
+.reset{appearance:none;border:0;background:none;color:var(--ink-faint);font:400 .85rem var(--body);cursor:pointer;margin-top:12px;padding:6px;text-decoration:underline;text-underline-offset:3px}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.sheet{transform:none}}
+
+/* stationer */
+.station{padding-block:clamp(44px,7vw,80px) 0}
+.st-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:24px}
+.st-head .box{width:38px;height:38px;border-width:3px;border-radius:7px;margin-top:2px}
+.st-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800}
+.goal{margin-top:6px;color:var(--ink-soft);font-size:.98rem;max-width:44em}
+.goal::before{content:"Kunna: ";font-weight:600;color:var(--ink)}
+.st-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,34px);align-items:start}
+@media (max-width:860px){.st-grid{grid-template-columns:1fr}}
+.st-grid.stack{grid-template-columns:1fr}
+.st-grid.stack .play{max-width:760px}
+.st-grid.stack .learn{max-width:760px}
+.learn{display:grid;gap:14px;font-size:1.06rem;max-width:36em}
+.learn b{font-weight:600;color:var(--ink)}
+.learn ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.remember{border:2px dashed var(--line-strong);border-radius:14px;padding:14px 18px;background:var(--paper-2)}
+.remember h3{font-size:1.05rem;margin-bottom:6px}
+.remember ul{padding-left:1.1em}
+.tip{font:400 1.35rem/1.25 var(--hand);color:var(--pen)}
+.play{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,2.6vw,26px);box-shadow:0 10px 30px -22px rgba(23,36,71,.5);min-width:0}
+.play h3{font-size:1.2rem;margin-bottom:4px}
+.hint{font-size:.92rem;color:var(--ink-soft)}
+.muted{color:var(--ink-faint);font-size:.85rem}
+
+/* spelgemensamt */
+.g-top{display:flex;justify-content:space-between;font-size:.86rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.g-feed{min-height:3.2em;margin-top:14px;color:var(--ink-soft);font-size:.98rem}
+.g-feed b{color:var(--ink)}
+.g-next{margin-top:10px}
+.g-end{text-align:center;padding:10px 0 4px}
+.g-end .big{font:800 3.4rem/1 var(--display);color:var(--ink)}
+.g-end .big small{font:600 1.1rem var(--body);color:var(--ink-soft)}
+.g-end p{margin-bottom:14px}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.85);opacity:.4}to{transform:none;opacity:1}}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* sorteringsspel */
+.sort-card{display:grid;justify-items:center;gap:6px;margin:16px auto 0;padding:22px 16px;border-radius:18px;background:var(--paper-2);border:2px solid var(--line);max-width:340px;text-align:center}
+.sc-pic{font-size:3.4rem;line-height:1.1;min-height:1.1em}
+.sc-pic svg{width:210px;height:140px;display:block;max-width:100%}
+.sc-t{font:600 1.2rem/1.3 var(--body)}
+.sort-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.bin{appearance:none;cursor:pointer;min-height:54px;padding:8px 10px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 1rem/1.2 var(--body);transition:border-color .2s,background-color .2s}
+.bin:hover:not(:disabled){border-color:var(--ink)}
+.bin:disabled{cursor:default}
+.bin.right{border-color:var(--good);background:var(--good-soft)}
+.bin.wrong{border-color:var(--bad);background:var(--bad-soft);animation:shake .4s}
+.piles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.pile{border-top:2px solid var(--line);padding-top:8px;min-width:0}
+.pile b{display:block;font-size:.84rem;margin-bottom:6px}
+.pile div{display:flex;flex-wrap:wrap;gap:4px}
+.chip{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--water-soft);color:var(--ink);font-size:.8rem}
+
+/* ordningsspel */
+.ord-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+.slot{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;min-height:46px;padding:6px 10px;border-radius:12px;border:2px dashed var(--line-strong)}
+.slot .sn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--paper-2);font:800 .95rem/1 var(--display)}
+.slot.filled{border-style:solid;border-color:var(--good);background:var(--good-soft);animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.slot.filled .sn{background:var(--good);color:var(--paper)}
+.slot .st b{display:block;line-height:1.25}
+.slot .st small{display:block;color:var(--ink-soft);font-size:.86rem;line-height:1.35}
+.ord-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-btn{appearance:none;cursor:pointer;padding:10px 16px;min-height:46px;border-radius:12px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 1rem/1.2 var(--body)}
+.chip-btn:hover{border-color:var(--water)}
+
+/* quiz */
+.q-t{font-size:clamp(1.2rem,2.4vw,1.5rem);margin:16px 0 14px;line-height:1.25}
+.q-t:focus{outline:none}
+.q-opts{display:grid;gap:8px}
+.q-opt{appearance:none;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 14px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:400 1rem/1.35 var(--body)}
+.q-opt .k{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--paper-2);font:800 .9rem/1 var(--display)}
+.q-opt:hover:not(:disabled){border-color:var(--ink)}
+.q-opt:disabled{cursor:default}
+.q-opt.right{border-color:var(--good);background:var(--good-soft)}
+.q-opt.right .k{background:var(--good);color:var(--paper)}
+.q-opt.wrong{border-color:var(--bad);background:var(--bad-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--bad);color:var(--paper)}
+
+/* atom */
+.atom-wrap{display:grid;justify-items:center}
+.atom-svg{width:min(100%,330px);height:auto;display:block;touch-action:manipulation}
+.atom-svg .orbit{fill:none;stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:4 5}
+.atom-svg .part{cursor:pointer}
+.atom-svg .part:focus{outline:none}
+.atom-svg .part:focus-visible .ring,.atom-svg .part.hl .ring{stroke:var(--ink);stroke-width:3}
+.atom-svg .ring{fill:none;stroke:transparent}
+.atom-svg .hit{fill:transparent}
+.atom-svg text{font:800 15px var(--display);fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.e-spin{transform-origin:160px 160px;animation:spin 10s linear infinite}
+.atom-svg.paused .e-spin{animation-play-state:paused}
+@keyframes spin{to{transform:rotate(360deg)}}
+.part-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:10px}
+.part-btn{appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 .95rem var(--body)}
+.part-btn i{width:14px;height:14px;border-radius:50%}
+.part-btn[aria-pressed="true"]{border-color:var(--ink);background:var(--paper-2)}
+.part-btn.wrong{border-color:var(--bad);animation:shake .4s}
+.part-info{margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--paper-2);min-height:5.2em}
+.part-info b{color:var(--ink)}
+.challenge{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.prompt{font:800 1.15rem/1.3 var(--display)}
+.dots-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem}
+.dots-legend > span{display:flex;align-items:flex-start;gap:10px}
+.dots-legend > span > i{flex:none;width:14px;height:14px;border-radius:50%;margin-top:.35em}
+
+/* guld */
+.gold{display:grid;justify-items:center;gap:12px;text-align:center}
+.gold-box{display:grid;gap:4px;justify-content:center;min-height:250px;align-content:center}
+.au{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 .62rem/1 var(--display);color:#5b3f00;background:radial-gradient(circle at 35% 30%,#fff3b0,#f4c534 50%,#b58410);transition:transform .45s ease,opacity .45s ease}
+.au.away{transform:translateX(70px) scale(.6);opacity:0}
+.gold-count{font:800 1.4rem/1.2 var(--display);font-variant-numeric:tabular-nums}
+.gold-msg{min-height:3em;color:var(--ink-soft);max-width:30em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.tile{border:2px solid var(--line-strong);border-radius:12px;padding:6px 8px 8px;background:var(--paper);display:grid;gap:2px;line-height:1.1}
+.tile .s{font:800 1.6rem/1 var(--display)}
+.tile .n{font-weight:600;font-size:.86rem}
+.tile small{font-size:.74rem;color:var(--ink-soft)}
+
+/* jämförelse */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compare > div{border-left:4px solid var(--water);padding:4px 0 4px 12px}
+.compare > div + div{border-color:var(--sun)}
+.compare h3{font-size:1.02rem;margin-bottom:4px}
+.compare p{font-size:.95rem;color:var(--ink-soft)}
+.compare svg{width:110px;height:70px;display:block;margin-top:6px}
+@media (max-width:480px){.compare{grid-template-columns:1fr}}
+
+/* vattenbyggare */
+.b-stage{position:relative;border-radius:18px;background:var(--water-soft);overflow:hidden}
+.b-stage svg{display:block;width:100%;height:auto}
+.b-atom{transition:transform .7s cubic-bezier(.3,1.45,.5,1),opacity .4s}
+.b-atom text{font:800 22px var(--display);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.b-formula{font:800 30px var(--display);fill:var(--ink);text-anchor:middle;opacity:0;transition:opacity .5s .4s}
+.b-done .b-formula{opacity:1}
+.b-empty{font:600 15px var(--body);fill:var(--ink-soft);text-anchor:middle}
+.b-tray{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.b-add{appearance:none;cursor:pointer;display:grid;justify-items:center;gap:4px;padding:10px 4px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 .88rem/1.1 var(--body)}
+.b-add i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 1rem/1 var(--display);font-style:normal}
+.b-add:hover{border-color:var(--ink)}
+.b-add.no{animation:shake .4s;border-color:var(--bad)}
+.b-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+
+/* superkrafter */
+.powers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,20px)}
+@media (max-width:860px){.powers{grid-template-columns:1fr}}
+.power{display:flex;flex-direction:column;gap:10px}
+.power .scene{border-radius:16px;background:var(--paper-2);overflow:hidden}
+.power svg{display:block;width:100%;height:auto}
+.power .reveal{color:var(--ink-soft);font-size:.96rem;min-height:4.8em}
+.power .reveal b{color:var(--ink)}
+.power .btn{align-self:flex-start;margin-top:auto}
+.glass{fill:none;stroke:var(--glass);stroke-width:3;stroke-linejoin:round}
+.waterfill{fill:var(--water);opacity:.28}
+.waterfront{fill:var(--water);opacity:.32}
+.ice g{transform:translate(100px,-30px)}
+.ice.go g{animation:drop 1.4s cubic-bezier(.4,0,.3,1) forwards}
+@keyframes drop{0%{transform:translate(100px,-30px)}55%{transform:translate(100px,104px)}78%{transform:translate(100px,82px)}100%{transform:translate(100px,86px)}}
+.strider .bug{transform:translate(40px,0)}
+.strider.go .bug{animation:skate 3.2s ease-in-out forwards}
+@keyframes skate{0%{transform:translate(40px,0)}30%{transform:translate(85px,0)}35%{transform:translate(85px,0)}65%{transform:translate(130px,0)}70%{transform:translate(130px,0)}100%{transform:translate(150px,0)}}
+.grain{fill:var(--sugar);stroke:var(--glass);stroke-width:1;transition:opacity .6s,transform .9s}
+.sugar.go .grain{opacity:0;transform:translateY(-30px)}
+.spoon{transform-origin:100px 20px;transform:rotate(-12deg)}
+.sugar.go .spoon{animation:stir .5s ease-in-out 4}
+@keyframes stir{50%{transform:rotate(12deg)}}
+.swirl{fill:none;stroke:var(--water);stroke-width:2;opacity:0;stroke-dasharray:6 8}
+.sugar.go .swirl{animation:swirl 2s ease-out}
+@keyframes swirl{30%{opacity:.6}100%{opacity:0;stroke-dashoffset:-60}}
+
+/* tillstånd */
+.states-lab{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(16px,2.6vw,28px);align-items:start}
+@media (max-width:860px){.states-lab{grid-template-columns:1fr}}
+.st-stage{position:relative;border-radius:22px;background:var(--water-soft);border:2px solid var(--line);min-height:clamp(280px,34vw,380px);overflow:hidden}
+.st-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.st-badge{position:absolute;left:14px;top:12px;padding:6px 12px;border-radius:999px;background:var(--paper);font:800 .95rem/1 var(--display)}
+.mode-btns{display:grid;gap:8px}
+.mode{appearance:none;cursor:pointer;display:grid;grid-template-columns:44px minmax(0,1fr);gap:2px 12px;align-items:center;text-align:left;padding:10px 14px;border-radius:16px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:400 .93rem/1.4 var(--body)}
+.mode svg{grid-row:span 2;width:40px;height:40px;color:var(--water)}
+.mode b{font:800 1.1rem/1.2 var(--display)}
+.mode span{color:var(--ink-soft)}
+.mode[aria-pressed="true"]{border-color:var(--water);background:var(--water-soft)}
+.mode .seen{display:none}
+
+/* fasövergångar */
+.phase{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center}
+.ph-state{display:grid;justify-items:center;gap:4px;padding:14px 8px;border-radius:16px;background:var(--water-soft);text-align:center}
+.ph-state svg{width:46px;height:46px;color:var(--water)}
+.ph-state b{font:800 1.05rem/1 var(--display)}
+.ph-state small{color:var(--ink-soft)}
+.ph-arrows{display:grid;gap:8px}
+.ph-arrow{appearance:none;cursor:pointer;padding:8px 10px;border-radius:12px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 .86rem/1.2 var(--body);white-space:nowrap}
+.ph-arrow.warm{border-color:color-mix(in srgb,var(--sun) 70%,var(--line-strong))}
+.ph-arrow[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.ph-arrow .v{display:none}
+.ph-info{margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--paper-2);min-height:6em}
+.ph-info h3{font-size:1.15rem;margin-bottom:4px}
+@media (max-width:620px){
+  .phase{grid-template-columns:1fr}
+  .ph-arrows{grid-template-columns:1fr 1fr}
+  .ph-arrow .h{display:none}.ph-arrow .v{display:inline}
+}
+
+/* kretslopp */
+.cycle{display:grid;gap:14px}
+.wc{display:block;width:100%;height:auto;border-radius:22px;border:2px solid var(--line)}
+.wc .layer{opacity:0;transition:opacity .6s}
+.wc.s1 .l1,.wc.s2 .l2,.wc.s3 .l3,.wc.s4 .l4{opacity:1}
+.wc .cloud{transform-origin:365px 85px;transition:transform .8s cubic-bezier(.3,1.4,.5,1)}
+.wc .cloud circle{fill:var(--cloud);transition:fill .8s}
+.wc.s2 .cloud,.wc.s3 .cloud{transform:scale(1.18)}
+.wc.s3 .cloud circle{fill:var(--cloud-rain)}
+.wc .vap{fill:none;stroke:var(--ink-soft);stroke-width:3;stroke-linecap:round;opacity:.7}
+.wc.s1 .vap{animation:rise 2.4s ease-in infinite}
+.wc .vap:nth-child(2){animation-delay:.6s}.wc .vap:nth-child(3){animation-delay:1.2s}
+@keyframes rise{0%{transform:translateY(20px);opacity:0}30%{opacity:.8}100%{transform:translateY(-70px);opacity:0}}
+.wc .drop{fill:var(--water)}
+.wc .rain line{stroke:var(--sea);stroke-width:3;stroke-linecap:round}
+.wc.s3 .rain{animation:fall .7s linear infinite}
+@keyframes fall{from{transform:translateY(-14px)}to{transform:translateY(14px)}}
+.wc .river{fill:none;stroke:var(--sea);stroke-width:8;stroke-linecap:round;stroke-dasharray:14 10}
+.wc.s4 .river{animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+.wc .gw{fill:none;stroke:var(--water-soft);stroke-width:3;stroke-linecap:round}
+.wc .lbl{font:800 17px var(--display);fill:var(--ink)}
+.wc .lbl-bg{fill:var(--paper);opacity:.9}
+.wc .small{font:600 11px var(--body);fill:var(--ink-soft)}
+.cycle-ctrl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(14px,2.4vw,26px);align-items:start}
+@media (max-width:860px){.cycle-ctrl{grid-template-columns:1fr}}
+.wc-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.wc-step{appearance:none;cursor:pointer;display:grid;justify-items:center;gap:6px;padding:8px 4px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 .8rem/1.2 var(--body);overflow-wrap:anywhere}
+.wc-step .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--paper-2);font:800 .95rem/1 var(--display)}
+.wc-step[aria-pressed="true"]{border-color:var(--water);background:var(--water-soft)}
+.wc-step[aria-pressed="true"] .n{background:var(--water);color:var(--on-water)}
+.wc-text{margin-top:12px;min-height:5.6em}
+.wc-text h3{font-size:1.2rem;margin-bottom:4px}
+.wc-text p{color:var(--ink-soft)}
+.wc-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+
+.exp-parts{display:grid;gap:clamp(16px,2.4vw,24px)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2.4vw,24px);align-items:start}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+
+#prov .play{max-width:760px}
+footer{padding-block:clamp(70px,9vw,110px) 48px;text-align:center}
+footer .tip{font-size:1.8rem}
+footer p.muted{margin-top:8px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:90;padding:12px 20px;border-radius:999px;background:var(--ink);color:var(--paper);font-weight:600;pointer-events:none;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:95}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head><body>
+
+<nav class="top" aria-label="Snabblänkar">
+  <div class="wrap">
+    <a class="brand" href="#start"><span data-namn-genitiv></span> kemikoll</a>
+    <span class="spacer"></span>
+    <a class="pill" href="#start"><span class="box" data-box="all" aria-hidden="true" style="width:20px;height:20px;border-width:2px"></span><span class="count" id="topCount">0/12</span><span class="sr">rutor bockade, till checklistan</span></a>
+    <a class="pill" href="#prov">Provet</a>
+    <a class="pill" href="../../">Alla kurser</a>
+  </div>
+</nav>
+
+<header class="wrap hero" id="start">
+  <div>
+    <p class="hello">Hej <span data-namn></span>!</p>
+    <h1>Kemiprovet: Ett ämne om ämnen</h1>
+    <p class="lead">Här finns allt från din checklista. Läs lite, spela lite och testa dig själv. När du klarar en station bockas rutan av, precis som på pappret.</p>
+    <div class="prog"><span id="progCount">0 av 12 bockade</span><span class="bar" id="progBar"><i></i></span></div>
+    <div class="hero-actions">
+      <a class="btn primary" href="#materia">Börja med första rutan</a>
+      <a class="btn ghost" href="#prov">Gör provet direkt</a>
+    </div>
+  </div>
+  <aside class="sheet" aria-label="Checklista">
+    <p class="sheet-title">Checklista: Kapitel 2 – Ett ämne om ämnen (Kemi)</p>
+    <p class="sheet-name">Namn: <span class="hand" data-namn></span></p>
+    <ul id="sheetList"></ul>
+    <button class="reset" id="reset" type="button">Sudda alla bockar</button>
+  </aside>
+</header>
+
+<main>
+<!-- 1 materia -->
+<section class="station wrap" id="materia" aria-labelledby="h-materia">
+  <header class="st-head"><span class="box" data-box="materia" aria-hidden="true"></span><div><h2 id="h-materia">Vad är materia?</h2><p class="goal">förklara och ge exempel på det som är materia och sånt som inte är materia.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p><b>Materia</b> är allt i universum som <b>väger något</b> och <b>tar plats</b>. Allt du kan se och ta på är byggt av materia.</p>
+      <p>Även luften är materia! Du ser den inte, men den tar plats. Blås upp en ballong, så ser du.</p>
+      <div class="remember">
+        <h3>Det här är inte materia</h3>
+        <p>Tankar, känslor, kärlek och glädje. Ljus, värme och ljud. Skuggor och drömmar. De väger ingenting och tar ingen plats.</p>
+      </div>
+      <p class="tip">Knep: Kan du lägga det på en våg? Kan det fylla en låda? Då är det materia.</p>
+    </div>
+    <div class="play">
+      <h3>Sortera korten</h3>
+      <p class="hint">Är det materia eller inte?</p>
+      <div id="gMateria"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 atomen -->
+<section class="station wrap" id="atom" aria-labelledby="h-atom">
+  <header class="st-head"><span class="box" data-box="atom" aria-hidden="true"></span><div><h2 id="h-atom">Atomens delar</h2><p class="goal">atomens olika delar: elektroner, neutroner och protoner.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>All materia är byggd av pyttesmå byggstenar som heter <b>atomer</b>. De är så små att flera miljoner atomer på rad får plats på en millimeter.</p>
+      <p>En atom har tre viktiga delar:</p>
+      <div class="dots-legend" style="display:grid;gap:10px">
+        <span><i style="background:var(--proton)"></i><span><b>Protoner (+)</b> finns mitt i atomens kärna. De är <b>positivt</b> laddade.</span></span>
+        <span><i style="background:var(--neutron)"></i><span><b>Neutroner (0)</b> finns också i kärnan. De har <b>ingen laddning</b>, de är neutrala.</span></span>
+        <span><i style="background:var(--electron)"></i><span><b>Elektroner (−)</b> snurrar supersnabbt runt kärnan. De är <b>negativt</b> laddade.</span></span>
+      </div>
+      <p class="tip">Knep: Proton = plus. Båda börjar på P!</p>
+    </div>
+    <div class="play">
+      <h3>Klicka på atomens delar</h3>
+      <p class="hint">Det här är en heliumatom. Tryck på en del för att se vad den heter.</p>
+      <div class="atom-wrap">
+        <svg class="atom-svg" id="atomSvg" viewBox="0 0 320 320" role="group" aria-label="En atom med kärna och elektroner">
+          <circle class="orbit" cx="160" cy="160" r="110"/>
+          <g class="part" data-part="p" tabindex="0" role="button" aria-label="Proton">
+            <circle class="hit" cx="160" cy="160" r="1"/>
+            <circle cx="146" cy="147" r="17" fill="var(--proton)"/><text x="146" y="147">+</text>
+            <circle cx="174" cy="173" r="17" fill="var(--proton)"/><text x="174" y="173">+</text>
+            <circle class="ring" cx="146" cy="147" r="20"/><circle class="ring" cx="174" cy="173" r="20"/>
+          </g>
+          <g class="part" data-part="n" tabindex="0" role="button" aria-label="Neutron">
+            <circle cx="174" cy="147" r="17" fill="var(--neutron)"/><text x="174" y="147">0</text>
+            <circle cx="146" cy="173" r="17" fill="var(--neutron)"/><text x="146" y="173">0</text>
+            <circle class="ring" cx="174" cy="147" r="20"/><circle class="ring" cx="146" cy="173" r="20"/>
+          </g>
+          <g class="e-spin">
+            <g class="part" data-part="e" tabindex="0" role="button" aria-label="Elektron">
+              <circle class="hit" cx="270" cy="160" r="28"/><circle class="hit" cx="50" cy="160" r="28"/>
+              <circle cx="270" cy="160" r="14" fill="var(--electron)"/><text x="270" y="160">−</text>
+              <circle cx="50" cy="160" r="14" fill="var(--electron)"/><text x="50" y="160">−</text>
+              <circle class="ring" cx="270" cy="160" r="17"/><circle class="ring" cx="50" cy="160" r="17"/>
+            </g>
+          </g>
+        </svg>
+        <div class="part-btns">
+          <button class="part-btn" data-part="p" aria-pressed="false"><i style="background:var(--proton)"></i>Proton</button>
+          <button class="part-btn" data-part="n" aria-pressed="false"><i style="background:var(--neutron)"></i>Neutron</button>
+          <button class="part-btn" data-part="e" aria-pressed="false"><i style="background:var(--electron)"></i>Elektron</button>
+        </div>
+      </div>
+      <div class="part-info" id="partInfo" aria-live="polite">Kärnan i mitten har 2 protoner och 2 neutroner. Runt kärnan snurrar 2 elektroner.</div>
+      <div class="challenge" id="atomGame">
+        <span class="prompt" id="atomPrompt">Kan du hitta rätt del?</span>
+        <button class="btn primary" id="atomStart">Starta Hitta delen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 grundämne -->
+<section class="station wrap" id="grundamne" aria-labelledby="h-grund">
+  <header class="st-head"><span class="box" data-box="grundamne" aria-hidden="true"></span><div><h2 id="h-grund">Grundämne</h2><p class="goal">förklara vad ett grundämne är och ge exempel på grundämnen.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>Ett <b>grundämne</b> består av bara <b>en enda sorts atomer</b>. Om du delar det får du fortfarande bara samma sorts atom.</p>
+      <p>Varje grundämne har en kort förkortning, en <b>kemisk beteckning</b>.</p>
+      <div class="tiles">
+        <div class="tile"><span class="s">Au</span><span class="n">Guld</span><small>bara guldatomer</small></div>
+        <div class="tile"><span class="s">O</span><span class="n">Syre</span><small>gasen vi andas</small></div>
+        <div class="tile"><span class="s">Fe</span><span class="n">Järn</span><small>i spikar</small></div>
+        <div class="tile"><span class="s">C</span><span class="n">Kol</span><small>i blyerts</small></div>
+        <div class="tile"><span class="s">Al</span><span class="n">Aluminium</span><small>i läskburkar</small></div>
+        <div class="tile"><span class="s">He</span><span class="n">Helium</span><small>i ballonger</small></div>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Dela guldbiten</h3>
+      <p class="hint">Dela guldet på mitten igen och igen. Vad finns kvar till slut?</p>
+      <div class="gold">
+        <div class="gold-box" id="goldBox"></div>
+        <p class="gold-count" id="goldCount" aria-live="polite">64 guldatomer</p>
+        <p class="gold-msg" id="goldMsg">En liten bit guld. Allt den består av är guldatomer.</p>
+        <button class="btn primary" id="goldBtn">Dela guldbiten på mitten</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 kemisk förening -->
+<section class="station wrap" id="forening" aria-labelledby="h-foren">
+  <header class="st-head"><span class="box" data-box="forening" aria-hidden="true"></span><div><h2 id="h-foren">Kemisk förening</h2><p class="goal">förklara skillnaden mellan ett grundämne och en kemisk förening, och ge exempel.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>En <b>kemisk förening</b> bildas när två eller flera <b>olika sorters</b> atomer sitter ihop, till exempel i en <b>molekyl</b>.</p>
+      <div class="compare">
+        <div>
+          <h3>Grundämne</h3>
+          <p>Bara en sorts atomer.</p>
+          <svg viewBox="0 0 110 70" aria-label="Två syreatomer"><circle cx="40" cy="35" r="20" fill="var(--proton)"/><circle cx="70" cy="35" r="20" fill="var(--proton)"/><text x="40" y="36" fill="#fff" font-family="Grandstander,sans-serif" font-weight="800" font-size="16" text-anchor="middle" dominant-baseline="central">O</text><text x="70" y="36" fill="#fff" font-family="Grandstander,sans-serif" font-weight="800" font-size="16" text-anchor="middle" dominant-baseline="central">O</text></svg>
+        </div>
+        <div>
+          <h3>Kemisk förening</h3>
+          <p>Olika sorters atomer sitter ihop.</p>
+          <svg viewBox="0 0 110 70" aria-label="En vattenmolekyl"><circle cx="55" cy="42" r="21" fill="var(--proton)"/><circle cx="32" cy="22" r="13" fill="#f6f8fc" stroke="#9aa6bf" stroke-width="1.5"/><circle cx="78" cy="22" r="13" fill="#f6f8fc" stroke="#9aa6bf" stroke-width="1.5"/><text x="55" y="43" fill="#fff" font-family="Grandstander,sans-serif" font-weight="800" font-size="16" text-anchor="middle" dominant-baseline="central">O</text><text x="32" y="23" fill="#28324d" font-family="Grandstander,sans-serif" font-weight="800" font-size="12" text-anchor="middle" dominant-baseline="central">H</text><text x="78" y="23" fill="#28324d" font-family="Grandstander,sans-serif" font-weight="800" font-size="12" text-anchor="middle" dominant-baseline="central">H</text></svg>
+        </div>
+      </div>
+      <div class="remember">
+        <h3>Exempel på kemiska föreningar</h3>
+        <p>Vatten (H<span class="sub">2</span>O), koldioxid (CO<span class="sub">2</span>) och bordsalt (NaCl).</p>
+      </div>
+      <p class="tip">Se upp! Syrgas har två atomer, men båda är syre. Samma sort = grundämne.</p>
+    </div>
+    <div class="play">
+      <h3>Grundämne eller förening?</h3>
+      <p class="hint">Titta på atomerna. Är de av samma sort eller olika?</p>
+      <div id="gForening"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 filosof -->
+<section class="station wrap" id="filosof" aria-labelledby="h-filo">
+  <header class="st-head"><span class="box" data-box="filosof" aria-hidden="true"></span><div><h2 id="h-filo">Filosof eller forskare?</h2><p class="goal">förklara skillnaden mellan en filosof och en vetenskapsperson.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <div class="compare">
+        <div><h3>Filosof</h3><p>Klurar och tänker på stora frågor om livet och världen med sina egna tankar och logik. Filosofer gör inte labbtester.</p></div>
+        <div><h3>Vetenskapsperson (forskare)</h3><p>Undersöker världen genom att göra <b>experiment</b>, mäta noggrant och samla bevis i verkligheten.</p></div>
+      </div>
+      <p class="tip">Knep: Filosofen tänker. Forskaren testar.</p>
+    </div>
+    <div class="play">
+      <h3>Vem gör vad?</h3>
+      <p class="hint">Gör en filosof eller en forskare så här?</p>
+      <div id="gFilosof"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 vattenmolekylen -->
+<section class="station wrap" id="molekyl" aria-labelledby="h-mol">
+  <header class="st-head"><span class="box" data-box="molekyl" aria-hidden="true"></span><div><h2 id="h-mol">Vattenmolekylen</h2><p class="goal">vad vattenmolekylen består av för atomer och hur den ser ut.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>En molekyl av vatten kallas <b>H<span class="sub">2</span>O</b>. Den består av:</p>
+      <ul><li><b>2 väteatomer</b> (H)</li><li><b>1 syreatom</b> (O)</li></ul>
+      <p>Den lilla 2:an efter H betyder två. Efter O står ingen siffra, och då betyder det en.</p>
+      <p>Sätter man ihop dem ser vattenmolekylen ut som ett litet huvud med två runda öron. I ditt häfte kallas det ett Musse Pigg-huvud.</p>
+    </div>
+    <div class="play">
+      <h3>Bygg en vattenmolekyl</h3>
+      <p class="hint">Tryck på de atomer som behövs.</p>
+      <div class="b-stage">
+        <svg id="bSvg" viewBox="0 0 300 220" role="img" aria-label="Byggyta för molekylen">
+          <text class="b-empty" id="bEmpty" x="150" y="110">Lägg till atomer här nere</text>
+          <text class="b-formula" x="150" y="204">H₂O</text>
+        </svg>
+      </div>
+      <div class="b-tray">
+        <button class="b-add" data-a="H"><i style="background:#f6f8fc;color:#28324d;box-shadow:inset 0 0 0 1.5px #9aa6bf">H</i>Väte</button>
+        <button class="b-add" data-a="O"><i style="background:var(--proton);color:#fff">O</i>Syre</button>
+        <button class="b-add" data-a="C"><i style="background:#5a6378;color:#fff">C</i>Kol</button>
+        <button class="b-add" data-a="Fe"><i style="background:#9aa3b5;color:#1d2438">Fe</i>Järn</button>
+      </div>
+      <p class="g-feed" id="bFeed" aria-live="polite"></p>
+      <div class="b-tools"><span class="muted" id="bCount">0 atomer</span><button class="btn ghost" id="bReset">Börja om</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 egenskaper -->
+<section class="station wrap" id="egenskaper" aria-labelledby="h-egen">
+  <header class="st-head"><span class="box" data-box="egenskaper" aria-hidden="true"></span><div><h2 id="h-egen">Vattnets superkrafter</h2><p class="goal">vilka egenskaper vatten (H<span class="sub">2</span>O) har. Prova alla tre!</p></div></header>
+  <div class="powers">
+    <div class="play power">
+      <h3>Is flyter</h3>
+      <div class="scene"><svg class="ice" id="pIce" viewBox="0 0 200 170" aria-hidden="true">
+        <rect class="waterfill" x="54" y="72" width="92" height="76"/>
+        <g><rect x="-18" y="-18" width="36" height="36" rx="6" fill="var(--ice)" stroke="var(--glass)" stroke-width="2"/><path d="M-10 -10 L-2 -10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+        <rect class="waterfront" x="54" y="72" width="92" height="76"/>
+        <path class="glass" d="M50 28 L54 150 Q100 156 146 150 L150 28"/>
+      </svg></div>
+      <p class="reveal" id="rIce">Vad händer om du släpper en isbit i ett glas vatten?</p>
+      <button class="btn primary" data-power="ice">Släpp isbiten</button>
+    </div>
+    <div class="play power">
+      <h3>Ytspänning</h3>
+      <div class="scene"><svg class="strider" id="pStrider" viewBox="0 0 200 170" aria-hidden="true">
+        <rect x="0" y="100" width="200" height="70" fill="var(--water)" opacity=".3"/>
+        <path d="M0 100 H200" stroke="var(--water)" stroke-width="2.5"/>
+        <g class="bug">
+          <g fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round">
+            <path d="M-6 92 L-24 84 L-36 100"/><path d="M6 92 L24 84 L40 100"/>
+            <path d="M-2 94 L-10 100"/><path d="M2 94 L12 100"/>
+            <path d="M-14 90 L-30 76"/><path d="M14 90 L28 74"/>
+          </g>
+          <ellipse cx="0" cy="91" rx="16" ry="5" fill="var(--ink)"/>
+          <circle cx="16" cy="90" r="3.5" fill="var(--ink)"/>
+          <g fill="none" stroke="var(--water)" stroke-width="2"><path d="M-42 100 Q-36 105 -30 100"/><path d="M34 100 Q40 105 46 100"/><path d="M-15 100 Q-10 104 -5 100"/><path d="M7 100 Q12 104 17 100"/></g>
+        </g>
+      </svg></div>
+      <p class="reveal" id="rStrider">Kan en liten insekt gå på vatten utan att sjunka?</p>
+      <button class="btn primary" data-power="strider">Låt skräddaren gå</button>
+    </div>
+    <div class="play power">
+      <h3>Bra lösningsmedel</h3>
+      <div class="scene"><svg class="sugar" id="pSugar" viewBox="0 0 200 170" aria-hidden="true">
+        <rect class="waterfill" x="54" y="56" width="92" height="92"/>
+        <g id="grains"></g>
+        <path class="swirl" d="M70 110 Q100 90 130 110 Q100 130 70 110"/>
+        <g class="spoon"><path d="M100 10 L108 118" stroke="var(--ink-faint)" stroke-width="5" stroke-linecap="round"/><ellipse cx="108" cy="124" rx="8" ry="11" fill="var(--ink-faint)"/></g>
+        <path class="glass" d="M50 28 L54 150 Q100 156 146 150 L150 28"/>
+      </svg></div>
+      <p class="reveal" id="rSugar">Vad händer med sockret när du rör om?</p>
+      <button class="btn primary" data-power="sugar">Rör om</button>
+    </div>
+  </div>
+</section>
+
+<!-- 8 tre former -->
+<section class="station wrap" id="former" aria-labelledby="h-form">
+  <header class="st-head"><span class="box" data-box="former" aria-hidden="true"></span><div><h2 id="h-form">Fast, flytande och gas</h2><p class="goal">de tre formerna fast, flytande och gasform, och hur molekylerna beter sig i varje form.</p></div></header>
+  <div class="states-lab">
+    <div class="st-stage" id="stStage">
+      <canvas id="stCanvas" role="img" aria-label="Vattenmolekyler som rör sig"></canvas>
+      <span class="st-badge" id="stBadge">Flytande</span>
+    </div>
+    <div>
+      <p class="hint" style="margin-bottom:10px">Varje prick är en vattenmolekyl. Tryck på alla tre formerna.</p>
+      <div class="mode-btns" id="modeBtns">
+        <button class="mode" data-m="0" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="6" cy="6" r="2.4"/><circle cx="12" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="18" cy="12" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="12" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/></g></svg>
+          <b>Fast form (is)</b><span>Molekylerna sitter fast i ett mönster. De kan bara skaka lite på stället.</span>
+        </button>
+        <button class="mode" data-m="1" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="15" r="2.4"/><circle cx="10.5" cy="13" r="2.4"/><circle cx="16" cy="15" r="2.4"/><circle cx="20" cy="19" r="2.4"/><circle cx="7.5" cy="20" r="2.4"/><circle cx="13" cy="20" r="2.4"/></g></svg>
+          <b>Flytande (vatten)</b><span>Molekylerna glider runt varandra men håller ihop. Därför kan vatten rinna.</span>
+        </button>
+        <button class="mode" data-m="2" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="5" r="2.4"/><circle cx="18" cy="4" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="20" cy="17" r="2.4"/><circle cx="5" cy="19" r="2.4"/></g></svg>
+          <b>Gasform (ånga)</b><span>Molekylerna är långt isär och rör sig snabbt åt alla håll.</span>
+        </button>
+      </div>
+      <p class="tip" style="margin-top:14px">Det är samma vattenmolekyler hela tiden. Bara rörelsen ändras!</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 fasövergångar -->
+<section class="station wrap" id="fas" aria-labelledby="h-fas">
+  <header class="st-head"><span class="box" data-box="fas" aria-hidden="true"></span><div><h2 id="h-fas">Fasövergångar</h2><p class="goal">kondensering, avdunstning, stelning och smältning.</p></div></header>
+  <div class="st-grid stack">
+    <div class="learn">
+      <p>När vatten byter form kallas det en <b>fasövergång</b>. Tryck på pilarna.</p>
+      <div class="phase" role="group" aria-label="Fasövergångar">
+        <div class="ph-state"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="6" cy="6" r="2.4"/><circle cx="12" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="18" cy="12" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="12" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/></g></svg><b>Fast</b><small>is</small></div>
+        <div class="ph-arrows">
+          <button class="ph-arrow warm" data-p="0" aria-pressed="false"><span class="h">Smältning →</span><span class="v">↓ Smältning</span></button>
+          <button class="ph-arrow" data-p="3" aria-pressed="false"><span class="h">← Stelning</span><span class="v">↑ Stelning</span></button>
+        </div>
+        <div class="ph-state"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="15" r="2.4"/><circle cx="10.5" cy="13" r="2.4"/><circle cx="16" cy="15" r="2.4"/><circle cx="20" cy="19" r="2.4"/><circle cx="7.5" cy="20" r="2.4"/><circle cx="13" cy="20" r="2.4"/></g></svg><b>Flytande</b><small>vatten</small></div>
+        <div class="ph-arrows">
+          <button class="ph-arrow warm" data-p="1" aria-pressed="false"><span class="h">Avdunstning →</span><span class="v">↓ Avdunstning</span></button>
+          <button class="ph-arrow" data-p="2" aria-pressed="false"><span class="h">← Kondensering</span><span class="v">↑ Kondensering</span></button>
+        </div>
+        <div class="ph-state"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="5" r="2.4"/><circle cx="18" cy="4" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="20" cy="17" r="2.4"/><circle cx="5" cy="19" r="2.4"/></g></svg><b>Gas</b><small>ånga</small></div>
+      </div>
+      <div class="ph-info" id="phInfo" aria-live="polite"><p class="hint">Pilarna åt höger behöver värme. Pilarna åt vänster händer när det kyls ner.</p></div>
+    </div>
+    <div class="play">
+      <h3>Vad heter det?</h3>
+      <p class="hint">Saker som händer i vardagen. Vilken fasövergång är det?</p>
+      <div id="gFas"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ta hand om vattnet -->
+<section class="station wrap" id="omsorg" aria-labelledby="h-oms">
+  <header class="st-head"><span class="box" data-box="omsorg" aria-hidden="true"></span><div><h2 id="h-oms">Ta hand om vattnet</h2><p class="goal">förklara och ge exempel på hur man kan ta hand om vattnet som finns på jorden.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>Vattnet på jorden är samma vatten som går runt och runt i kretsloppet. Därför måste vi vara rädda om det.</p>
+      <div class="remember">
+        <h3>Så sparar och skyddar vi vattnet</h3>
+        <ul>
+          <li>Stäng kranen när du borstar tänderna.</li>
+          <li>Skräpa inte ner i naturen eller i sjöar.</li>
+          <li>Spola aldrig ner kemikalier eller målarfärg i avloppet!</li>
+        </ul>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Bra eller dåligt för vattnet?</h3>
+      <p class="hint">Sortera vad folk gör.</p>
+      <div id="gOmsorg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 kretslopp -->
+<section class="station wrap" id="kretslopp" aria-labelledby="h-kret">
+  <header class="st-head"><span class="box" data-box="kretslopp" aria-hidden="true"></span><div><h2 id="h-kret">Vattnets kretslopp</h2><p class="goal">rita och förklara med ord vad som händer i de olika stegen i kretsloppet.</p></div></header>
+  <div class="cycle">
+    <svg class="wc" id="wc" viewBox="0 0 640 380" role="img" aria-label="Bild av vattnets kretslopp med sol, hav, moln, berg och grundvatten">
+      <rect width="640" height="380" fill="var(--sky)"/>
+      <g transform="translate(78 70)"><g stroke="var(--sun)" stroke-width="5" stroke-linecap="round"><path d="M0 -50V-42M0 42V50M-50 0H-42M42 0H50M-35 -35L-30 -30M30 30L35 35M-35 35L-30 30M30 -30L35 -35"/></g><circle r="32" fill="var(--sun)"/></g>
+      <rect x="0" y="292" width="640" height="88" fill="var(--soil)"/>
+      <path class="gw" d="M230 335 q12 -8 24 0 t24 0 t24 0 t24 0 M380 352 q12 -8 24 0 t24 0 t24 0 M250 362 q12 -8 24 0 t24 0"/>
+      <text class="small" x="440" y="372" fill="var(--snow)" style="fill:var(--water-soft)">Grundvatten</text>
+      <rect x="0" y="246" width="215" height="134" fill="var(--sea)"/>
+      <path d="M0 246 q14 -6 28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0" fill="none" stroke="var(--water-soft)" stroke-width="2.5"/>
+      <text class="small" x="18" y="280" style="fill:var(--water-soft)">Hav</text>
+      <path d="M192 292 L192 262 Q260 240 330 250 Q385 256 420 220 L500 118 L582 212 Q612 232 640 226 L640 292 Z" fill="var(--grass)"/>
+      <path d="M468 160 L500 118 L532 160 L516 153 L500 163 L484 153 Z" fill="var(--snow)"/>
+      <g><rect x="257" y="226" width="5" height="16" fill="var(--trunk)"/><circle cx="259" cy="222" r="11" fill="var(--leaf)"/><rect x="297" y="224" width="5" height="18" fill="var(--trunk)"/><circle cx="299" cy="219" r="12" fill="var(--leaf)"/></g>
+      <g class="cloud"><circle cx="330" cy="88" r="28"/><circle cx="365" cy="72" r="36"/><circle cx="402" cy="88" r="28"/><circle cx="366" cy="98" r="28"/></g>
+
+      <g class="layer l1"><g transform="translate(0 0)"><path class="vap" d="M60 230 q8 -10 0 -20 t0 -20"/><path class="vap" d="M110 230 q8 -10 0 -20 t0 -20"/><path class="vap" d="M160 230 q8 -10 0 -20 t0 -20"/></g>
+        <rect class="lbl-bg" x="40" y="128" width="140" height="30" rx="15"/><text class="lbl" x="110" y="149" text-anchor="middle">1 Avdunstning</text></g>
+      <g class="layer l2"><g class="drop"><circle cx="345" cy="78" r="3"/><circle cx="372" cy="66" r="3"/><circle cx="392" cy="86" r="3"/><circle cx="360" cy="96" r="3"/><circle cx="382" cy="102" r="3"/><circle cx="336" cy="96" r="3"/></g>
+        <path d="M150 190 Q220 120 315 110" fill="none" stroke="var(--ink-soft)" stroke-width="2.5" stroke-dasharray="6 6"/><path d="M305 102 L318 110 L305 118" fill="none" stroke="var(--ink-soft)" stroke-width="2.5" stroke-linecap="round"/>
+        <rect class="lbl-bg" x="430" y="34" width="154" height="30" rx="15"/><text class="lbl" x="507" y="55" text-anchor="middle">2 Kondensering</text></g>
+      <g class="layer l3"><g class="rain"><line x1="335" y1="130" x2="331" y2="146"/><line x1="355" y1="138" x2="351" y2="154"/><line x1="375" y1="128" x2="371" y2="144"/><line x1="395" y1="140" x2="391" y2="156"/><line x1="345" y1="166" x2="341" y2="182"/><line x1="368" y1="172" x2="364" y2="188"/><line x1="388" y1="168" x2="384" y2="184"/><line x1="410" y1="132" x2="406" y2="148"/></g>
+        <g fill="var(--snow)"><circle cx="485" cy="96" r="3"/><circle cx="505" cy="82" r="3"/><circle cx="520" cy="104" r="3"/><circle cx="495" cy="70" r="2.5"/></g>
+        <rect class="lbl-bg" x="430" y="34" width="140" height="30" rx="15"/><text class="lbl" x="500" y="55" text-anchor="middle">3 Nederbörd</text></g>
+      <g class="layer l4"><path class="river" d="M488 168 Q450 214 400 236 Q330 262 210 258"/>
+        <path d="M335 258 L335 318" stroke="var(--water-soft)" stroke-width="3" stroke-dasharray="5 5" fill="none"/><path d="M328 309 L335 320 L342 309" stroke="var(--water-soft)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <rect class="lbl-bg" x="360" y="196" width="130" height="30" rx="15"/><text class="lbl" x="425" y="217" text-anchor="middle">4 Tillrinning</text></g>
+    </svg>
+    <div class="cycle-ctrl">
+      <div class="play">
+        <div class="wc-steps" role="group" aria-label="Kretsloppets steg">
+          <button class="wc-step" data-s="1" aria-pressed="false"><span class="n">1</span>Avdunstning</button>
+          <button class="wc-step" data-s="2" aria-pressed="false"><span class="n">2</span>Kondensering</button>
+          <button class="wc-step" data-s="3" aria-pressed="false"><span class="n">3</span>Nederbörd</button>
+          <button class="wc-step" data-s="4" aria-pressed="false"><span class="n">4</span>Tillrinning</button>
+        </div>
+        <div class="wc-text" id="wcText" aria-live="polite"><h3>Vattnet går runt, runt</h3><p>Tryck på steg 1 för att börja, eller spela hela kretsloppet.</p></div>
+        <div class="wc-actions"><button class="btn primary" id="wcPlay">Spela hela kretsloppet</button></div>
+      </div>
+      <div class="play">
+        <h3>Lägg stegen i rätt ordning</h3>
+        <p class="hint">Börja med det som händer när solen värmer havet.</p>
+        <div id="gKret"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 experiment -->
+<section class="station wrap" id="experiment" aria-labelledby="h-exp">
+  <header class="st-head"><span class="box" data-box="experiment" aria-hidden="true"></span><div><h2 id="h-exp">Experiment och labbrapport</h2><p class="goal">förklara vad som är en bra vetenskaplig undersökning och hur man antecknar under en laboration.</p></div></header>
+  <div class="exp-parts">
+    <div class="two">
+      <div class="learn">
+        <div class="remember">
+          <h3>Ett bra experiment</h3>
+          <ul>
+            <li><b>Rättvist test:</b> Ändra bara <i>en sak i taget</i>, till exempel vattnets temperatur, så att du vet vad som påverkade resultatet.</li>
+            <li><b>Noggrannhet:</b> Mät med termometer, linjal eller tidtagarur i stället för att gissa.</li>
+            <li><b>Upprepa:</b> Gör testet flera gånger för att vara helt säker på ditt resultat.</li>
+          </ul>
+        </div>
+        <p class="tip">Ändra en sak. Mät noga. Gör om!</p>
+      </div>
+      <div class="play">
+        <h3>Smälter is snabbare i saltvatten?</h3>
+        <p class="hint">Hjälp till att planera experimentet. Du behöver båda delarna för att bocka av rutan.</p>
+        <div id="gExpQuiz"></div>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Labbrapportens 7 steg</h3>
+      <p class="hint">Så antecknar du under en laboration. Tryck på stegen i rätt ordning.</p>
+      <div id="gLabb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- prov -->
+<section class="station wrap" id="prov" aria-labelledby="h-prov">
+  <header class="st-head"><div><h2 id="h-prov">Provet på låtsas</h2><p class="goal" style="--x:0">svara på frågor om hela kapitlet. Efter varje svar får du veta varför.</p></div></header>
+  <div class="play" id="gProv"></div>
+</section>
+</main>
+
+<footer class="wrap">
+  <p class="tip">Lycka till på provet, <span data-namn></span>!</p>
+  <p class="muted">Du kan göra om alla spel hur många gånger du vill. Inte <span data-namn></span>? <a href="../../">Byt person</a>.</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, e = document) => e.querySelector(s);
+const $$ = (s, e = document) => Array.from(e.querySelectorAll(s));
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.random() * a.length | 0];
+const YES = ['Rätt!', 'Snyggt!', 'Precis!', 'Ja, rätt!', 'Bra!'];
+
+/* ---------- Bockar ---------- */
+const ITEMS = [
+  ['materia', 'Vad är materia?'], ['atom', 'Atomens delar'], ['grundamne', 'Grundämne'], ['forening', 'Kemisk förening'],
+  ['filosof', 'Filosof eller forskare'], ['molekyl', 'Vattenmolekylen'], ['egenskaper', 'Vattnets superkrafter'],
+  ['former', 'Fast, flytande och gas'], ['fas', 'Fasövergångar'], ['omsorg', 'Ta hand om vattnet'],
+  ['kretslopp', 'Vattnets kretslopp'], ['experiment', 'Experiment och labbrapport']
+];
+const KEY = LekOchLar.nyckel('kemikoll');
+const NAMN = LekOchLar.escape(LekOchLar.namn());
+let done = new Set();
+try { done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} };
+const TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 C 6 14.5, 8 17, 9.5 19.5 C 12 13, 16 7.5, 22 3"/></svg>';
+
+$('#sheetList').innerHTML = ITEMS.map(([id, nm]) => '<li><a href="#' + id + '"><span class="box" data-box="' + id + '" aria-hidden="true"></span><span>' + nm + '</span><span class="sr" data-sr="' + id + '"></span></a></li>').join('');
+$$('.box').forEach(b => { b.innerHTML = TICK; });
+
+function renderProgress(){
+  $$('[data-box]').forEach(b => b.classList.toggle('on', b.dataset.box === 'all' ? done.size >= 12 : done.has(b.dataset.box)));
+  $$('[data-sr]').forEach(s => { s.textContent = done.has(s.dataset.sr) ? ' (klar)' : ''; });
+  const n = ITEMS.filter(([id]) => done.has(id)).length;
+  $('#progCount').textContent = n === 12 ? 'Alla 12 bockade!' : n + ' av 12 bockade';
+  $('#progBar i').style.width = (n / 12 * 100) + '%';
+  $('#topCount').textContent = n + '/12';
+}
+function complete(id, anchor){
+  if (done.has(id)) return;
+  done.add(id); save(); renderProgress();
+  const nm = ITEMS.find(i => i[0] === id)[1];
+  toast(done.size >= 12 ? 'Alla rutor bockade! Nu är du redo för provet.' : 'Bockat av: ' + nm);
+  const box = $('#' + id + ' .st-head .box') || anchor;
+  const r = (anchor || box).getBoundingClientRect();
+  const inView = r.bottom > 0 && r.top < innerHeight;
+  confetti(inView ? r.left + r.width / 2 : innerWidth / 2, inView ? r.top + 20 : innerHeight * .4, done.size >= 12 ? 140 : 70);
+}
+let resetArmed = 0;
+$('#reset').addEventListener('click', e => {
+  const b = e.currentTarget;
+  if (!resetArmed){ b.textContent = 'Säker? Tryck igen för att sudda'; resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Sudda alla bockar'; }, 3500); return; }
+  clearTimeout(resetArmed); resetArmed = 0; b.textContent = 'Sudda alla bockar';
+  done.clear(); save(); renderProgress(); toast('Alla bockar är suddade');
+});
+
+let toastT = 0;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); }
+
+const confetti = (() => {
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  let parts = [], run = false, last = 0, w = 1, h = 1, dpr = 1;
+  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; };
+  addEventListener('resize', size); size();
+  const cols = ['#e5463d', '#3561d8', '#f08c14', '#ffb51e', '#16834c', '#5aa6ff'];
+  function tick(now){
+    const dt = Math.min(.04, (now - last) / 1000); last = now;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    parts = parts.filter(p => (p.life -= dt) > 0 && p.y < h + 30);
+    for (const p of parts){
+      p.vy += 900 * dt; p.vx *= Math.pow(.3, dt); p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = Math.min(1, p.life); ctx.fillStyle = p.c;
+      if (p.s) ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); else { ctx.beginPath(); ctx.arc(0, 0, p.r * .8, 0, 7); ctx.fill(); }
+      ctx.restore();
+    }
+    if (parts.length) requestAnimationFrame(tick); else { run = false; ctx.clearRect(0, 0, w, h); }
+  }
+  return (x, y, n = 70) => {
+    if (RM) return;
+    for (let i = 0; i < n; i++){
+      const a = -Math.PI / 2 + (Math.random() - .5) * 2.4, v = 300 + Math.random() * 450;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 3 + Math.random() * 4, c: cols[i % cols.length], rot: Math.random() * 6, vr: (Math.random() - .5) * 12, life: 1.6 + Math.random(), s: i % 2 });
+    }
+    if (!run){ run = true; last = performance.now(); requestAnimationFrame(tick); }
+  };
+})();
+
+/* ---------- Spelmotorer ---------- */
+function sortGame(host, { items, bins, id, count }){
+  let deck, i, score, piles;
+  const pilesHtml = () => '<div class="piles">' + bins.map((b, k) => '<div class="pile"><b>' + b + '</b><div>' + (piles[k].map(t => '<span class="chip">' + t + '</span>').join('') || '<span class="muted">Tomt än</span>') + '</div></div>').join('') + '</div>';
+  function start(){ deck = shuffle(items).slice(0, count || items.length); i = 0; score = 0; piles = bins.map(() => []); render(false); }
+  function render(focus){
+    if (i >= deck.length) return end();
+    const it = deck[i];
+    host.innerHTML =
+      '<div class="g-top"><span>Kort ' + (i + 1) + ' av ' + deck.length + '</span><span class="g-score">' + score + ' rätt</span></div>' +
+      '<div class="sort-card pop"><div class="sc-pic" aria-hidden="true">' + it.p + '</div><p class="sc-t" tabindex="-1">' + it.t + '</p></div>' +
+      '<div class="sort-btns">' + bins.map((b, k) => '<button class="bin" data-k="' + k + '">' + b + '</button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite"></p>' +
+      '<div class="g-next"><button class="btn primary" hidden>' + (i === deck.length - 1 ? 'Se resultatet' : 'Nästa kort') + '</button></div>' + pilesHtml();
+    $$('.bin', host).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k, b)));
+    $('.g-next .btn', host).addEventListener('click', () => { i++; render(true); });
+    if (focus) $('.sc-t', host).focus({ preventScroll: true });
+  }
+  function answer(k, btn){
+    const it = deck[i], ok = k === it.a;
+    $$('.bin', host).forEach(b => { b.disabled = true; });
+    btn.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) $('.bin[data-k="' + it.a + '"]', host).classList.add('right');
+    if (ok) score++;
+    piles[it.a].push(it.s || it.t);
+    $('.g-score', host).textContent = score + ' rätt';
+    $('.g-feed', host).innerHTML = '<b>' + (ok ? pick(YES) : 'Inte riktigt.') + '</b> ' + it.x;
+    $('.piles', host).outerHTML = pilesHtml();
+    const nb = $('.g-next .btn', host); nb.hidden = false; nb.focus({ preventScroll: true });
+  }
+  function end(){
+    const all = score === deck.length;
+    host.innerHTML = '<div class="g-end"><p class="big">' + score + '<small> av ' + deck.length + ' rätt</small></p><p>' + (all ? 'Alla rätt, snyggt!' : score >= deck.length * .7 ? 'Bra jobbat! Spela gärna en gång till.' : 'Bra försök! Läs rutan bredvid och spela igen.') + '</p><button class="btn ghost">Spela igen</button></div>' + pilesHtml();
+    $('.g-end .btn', host).addEventListener('click', () => start());
+    complete(id, host);
+  }
+  start();
+}
+
+function orderGame(host, { steps, onDone, doneText }){
+  let n;
+  function start(){
+    n = 0;
+    host.innerHTML = '<ol class="ord-list">' + steps.map((s, k) => '<li class="slot"><span class="sn">' + (k + 1) + '</span><span class="st"></span></li>').join('') + '</ol>' +
+      '<div class="ord-pool" role="group" aria-label="Steg att lägga i ordning">' + shuffle(steps.map((s, k) => k)).map(k => '<button class="chip-btn" data-k="' + k + '">' + steps[k].t + '</button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite">Tryck på det som kommer först.</p>';
+    $$('.chip-btn', host).forEach(b => b.addEventListener('click', () => tap(+b.dataset.k, b)));
+  }
+  function tap(k, b){
+    const fb = $('.g-feed', host);
+    if (k === n){
+      const slot = $$('.slot', host)[n];
+      slot.classList.add('filled');
+      $('.st', slot).innerHTML = '<b>' + steps[k].t + '</b>' + (steps[k].d ? '<small>' + steps[k].d + '</small>' : '');
+      b.remove(); n++;
+      if (n === steps.length){
+        fb.innerHTML = '<b>Helt rätt ordning!</b> ' + (doneText || '');
+        const again = document.createElement('button'); again.className = 'btn ghost'; again.textContent = 'Blanda och gör om'; again.style.marginTop = '10px';
+        again.addEventListener('click', start); host.appendChild(again);
+        if (onDone) onDone(host);
+      } else {
+        const nxt = $('.chip-btn', host); if (nxt) nxt.focus({ preventScroll: true });
+        fb.innerHTML = '<b>' + pick(YES) + '</b> Vad kommer sedan?';
+      }
+    } else {
+      b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      fb.innerHTML = '<b>Inte än.</b> ' + (steps[n].h || 'Tänk på vad som händer först.');
+    }
+  }
+  start();
+}
+
+function quiz(host, { qs, onDone, endText }){
+  let i, score;
+  function start(focus){ i = 0; score = 0; render(focus); }
+  function render(focus){
+    if (i >= qs.length) return end(focus);
+    const q = qs[i];
+    const opts = q.keep ? q.o.map((t, k) => ({ t, k })) : shuffle(q.o.map((t, k) => ({ t, k })));
+    host.innerHTML = '<div class="g-top"><span>Fråga ' + (i + 1) + ' av ' + qs.length + '</span><span class="g-score">' + score + ' rätt</span></div>' +
+      '<h3 class="q-t" tabindex="-1">' + q.q + '</h3>' +
+      '<div class="q-opts">' + opts.map((o, j) => '<button class="q-opt" data-k="' + o.k + '"><span class="k" aria-hidden="true">' + 'ABCD'[j] + '</span><span>' + o.t + '</span></button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite"></p>' +
+      '<div class="g-next"><button class="btn primary" hidden>' + (i === qs.length - 1 ? 'Se resultatet' : 'Nästa fråga') + '</button></div>';
+    $$('.q-opt', host).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k, b)));
+    $('.g-next .btn', host).addEventListener('click', () => { i++; render(true); });
+    if (focus) $('.q-t', host).focus({ preventScroll: true });
+  }
+  function answer(k, btn){
+    const q = qs[i], ok = k === q.a;
+    $$('.q-opt', host).forEach(b => { b.disabled = true; if (+b.dataset.k === q.a) b.classList.add('right'); });
+    if (!ok) btn.classList.add('wrong'); else score++;
+    $('.g-score', host).textContent = score + ' rätt';
+    $('.g-feed', host).innerHTML = '<b>' + (ok ? pick(YES) : 'Inte riktigt.') + '</b> ' + q.x;
+    const nb = $('.g-next .btn', host); nb.hidden = false; nb.focus({ preventScroll: true });
+  }
+  function end(focus){
+    host.innerHTML = '<div class="g-end"><p class="big">' + score + '<small> av ' + qs.length + ' rätt</small></p><p class="q-t" tabindex="-1" style="margin:12px 0 16px">' + (endText ? endText(score, qs.length) : (score === qs.length ? 'Alla rätt!' : 'Bra jobbat!')) + '</p><button class="btn ghost">Gör om</button></div>';
+    $('.g-end .btn', host).addEventListener('click', () => start(true));
+    if (focus) $('.q-t', host).focus({ preventScroll: true });
+    if (onDone) onDone(host, score);
+  }
+  start(false);
+}
+
+/* ---------- 1 Materia ---------- */
+const M = 'Det väger något och tar plats.', NM = 'Det väger ingenting och tar ingen plats.';
+sortGame($('#gMateria'), { id: 'materia', bins: ['Materia', 'Inte materia'], count: 12, items: [
+  { p: '🪨', t: 'En sten', a: 0, x: M + ' En sten är tung att lyfta.' },
+  { p: '🌳', t: 'Ett träd', a: 0, x: M },
+  { p: '💻', t: 'En dator', a: 0, x: M },
+  { p: '🚗', t: 'En bil', a: 0, x: M + ' Den väger över tusen kilo!' },
+  { p: '🥛', t: 'Mjölk', a: 0, x: 'Vätskor är också materia. Mjölken tar plats i glaset och väger något.' },
+  { p: '🎈', t: 'Luften i en ballong', a: 0, x: 'Luft syns inte, men den tar plats. Därför blir ballongen stor.' },
+  { p: '👕', t: 'Dina kläder', a: 0, x: M },
+  { p: '🧒', t: 'Din kropp', a: 0, x: 'Du är byggd av materia, precis som allt annat du kan ta på.' },
+  { p: '💭', t: 'Tankar', a: 1, x: NM + ' En tanke kan du inte lägga på en våg.' },
+  { p: '❤️', t: 'Kärlek', a: 1, x: 'Kärlek är en känsla. ' + NM },
+  { p: '😄', t: 'Glädje', a: 1, x: 'Glädje är en känsla. ' + NM },
+  { p: '☀️', t: 'Ljuset från solen', a: 1, x: 'Ljus är energi, inte materia.' },
+  { p: '♨️', t: 'Värmen från en kamin', a: 1, x: 'Värme är energi. Veden i kaminen är materia, men värmen är det inte.' },
+  { p: '🔊', t: 'Ljudet från en högtalare', a: 1, x: 'Ljud är energi. Högtalaren är materia, men ljudet är det inte.' },
+  { p: '👤', t: 'En skugga', a: 1, x: 'En skugga är bara en plats där ljuset inte når fram. Den väger ingenting.' },
+  { p: '💤', t: 'En dröm', a: 1, x: 'Drömmar finns i huvudet. ' + NM }
+]});
+
+/* ---------- 2 Atomen ---------- */
+(function atom(){
+  const svg = $('#atomSvg'), info = $('#partInfo'), prompt = $('#atomPrompt'), startBtn = $('#atomStart');
+  const INFO = {
+    p: '<b>Proton (+)</b> Finns i kärnan mitt i atomen. Protonen är <b>positivt</b> laddad. Den här atomen har 2 protoner.',
+    n: '<b>Neutron (0)</b> Finns också i kärnan. Neutronen har <b>ingen laddning</b>, den är neutral. Den här atomen har 2 neutroner.',
+    e: '<b>Elektron (−)</b> Snurrar supersnabbt runt kärnan. Elektronen är <b>negativt</b> laddad. Den här atomen har 2 elektroner.'
+  };
+  const NAME = { p: 'protonen', n: 'neutronen', e: 'elektronen' };
+  const TASKS = [
+    { q: 'Hitta en del som är positivt laddad (+).', a: 'p', h: 'Positiv betyder plus. Kom ihåg: proton = plus.' },
+    { q: 'Hitta en del som snurrar runt kärnan.', a: 'e', h: 'Den sitter inte i mitten, utan åker runt utanför.' },
+    { q: 'Hitta en del som inte har någon laddning.', a: 'n', h: 'Den sitter i kärnan och är märkt med 0.' },
+    { q: 'Hitta en del som är negativt laddad (−).', a: 'e', h: 'Negativ betyder minus. Den åker runt kärnan.' },
+    { q: 'Hitta en del som finns i kärnan och är plus.', a: 'p', h: 'Den röda delen i mitten.' }
+  ];
+  let game = null;
+  function highlight(part){
+    $$('.part', svg).forEach(g => g.classList.toggle('hl', g.dataset.part === part));
+    $$('.part-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.part === part)));
+  }
+  function choose(part, srcEl){
+    if (!game){ highlight(part); info.innerHTML = INFO[part]; return; }
+    const t = TASKS[game.i];
+    if (part === t.a){
+      highlight(part); game.i++;
+      if (game.i >= TASKS.length){
+        game = null; svg.classList.remove('paused');
+        prompt.textContent = 'Du hittade alla delar!';
+        info.innerHTML = '<b>Snyggt!</b> Proton +, neutron 0, elektron −. Nu kan du atomens delar.';
+        startBtn.hidden = false; startBtn.textContent = 'Spela igen';
+        complete('atom', startBtn);
+      } else {
+        info.innerHTML = '<b>' + pick(YES) + '</b> Det var ' + NAME[part] + '. ' + (game.i) + ' av ' + TASKS.length + ' klara.';
+        prompt.textContent = TASKS[game.i].q;
+      }
+    } else {
+      info.innerHTML = '<b>Nej, det där är ' + NAME[part] + '.</b> ' + t.h;
+      const b = $('.part-btn[data-part="' + part + '"]'); if (b){ b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong'); }
+    }
+  }
+  $$('.part', svg).forEach(g => {
+    g.addEventListener('click', () => choose(g.dataset.part, g));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); choose(g.dataset.part, g); } });
+  });
+  $$('.part-btn').forEach(b => b.addEventListener('click', () => choose(b.dataset.part, b)));
+  startBtn.addEventListener('click', () => {
+    game = { i: 0 }; svg.classList.add('paused'); highlight(null); startBtn.hidden = true;
+    prompt.textContent = TASKS[0].q;
+    info.innerHTML = 'Tryck på rätt del i bilden eller på knapparna under den.';
+  });
+})();
+
+/* ---------- 3 Guld ---------- */
+(function gold(){
+  const box = $('#goldBox'), cnt = $('#goldCount'), msg = $('#goldMsg'), btn = $('#goldBtn');
+  const MSG = { 32: 'Fortfarande bara guldatomer!', 16: 'En mindre bit, men fortfarande guld.', 8: 'Fortfarande guld. Inget annat har dykt upp.', 4: 'Bara guldatomer kvar.', 2: 'Två guldatomer. Dela en gång till!',
+    1: '<b>En enda guldatom!</b> Det är den minsta biten guld som finns. Hur mycket du än delar guld får du bara guldatomer. Därför är guld ett grundämne.' };
+  let n = 64, busy = false;
+  function draw(){
+    const cols = Math.ceil(Math.sqrt(n));
+    box.style.gridTemplateColumns = 'repeat(' + cols + ', 26px)';
+    box.innerHTML = Array.from({ length: n }, () => '<span class="au">Au</span>').join('');
+    cnt.textContent = n === 1 ? '1 guldatom' : n + ' guldatomer';
+  }
+  btn.addEventListener('click', () => {
+    if (busy) return;
+    if (n === 1){ n = 64; draw(); msg.textContent = 'En liten bit guld. Allt den består av är guldatomer.'; btn.textContent = 'Dela guldbiten på mitten'; return; }
+    busy = true;
+    $$('.au', box).slice(n / 2).forEach(a => a.classList.add('away'));
+    setTimeout(() => {
+      n /= 2; draw(); msg.innerHTML = MSG[n]; busy = false;
+      if (n === 1){
+        btn.textContent = 'Börja om med en ny guldbit';
+        msg.innerHTML += ' <br><br>En riktig guldring har så många atomer att du skulle behöva dela den drygt 70 gånger.';
+        complete('grundamne', box);
+      }
+    }, RM ? 0 : 460);
+  });
+  draw();
+})();
+
+/* ---------- 4 Förening ---------- */
+const COLA = { O: ['var(--proton)', '#fff'], H: ['#f6f8fc', '#28324d'], C: ['#5a6378', '#fff'], Fe: ['#9aa3b5', '#1d2438'], Au: ['#f4c534', '#5b3f00'], Na: ['#9b6bd6', '#fff'], Cl: ['#43b05c', '#fff'] };
+function molSvg(list){
+  return '<svg viewBox="0 0 150 100">' + list.map(([s, x, y, r]) => {
+    const [f, t] = COLA[s];
+    return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + f + '"' + (s === 'H' ? ' stroke="#9aa6bf" stroke-width="1.5"' : '') + '/><text x="' + x + '" y="' + (y + 1) + '" fill="' + t + '" font-family="Grandstander,sans-serif" font-weight="800" font-size="' + Math.round(r * .8) + '" text-anchor="middle" dominant-baseline="central">' + s + '</text>';
+  }).join('') + '</svg>';
+}
+const grid6 = s => [[s, 40, 32, 17], [s, 75, 32, 17], [s, 110, 32, 17], [s, 40, 68, 17], [s, 75, 68, 17], [s, 110, 68, 17]];
+const G = 'Alla atomer är av samma sort. Då är det ett grundämne.', F = 'Här sitter olika sorters atomer ihop. Då är det en kemisk förening.';
+sortGame($('#gForening'), { id: 'forening', bins: ['Grundämne', 'Kemisk förening'], items: [
+  { p: molSvg([['O', 58, 50, 24], ['O', 92, 50, 24]]), t: 'Syrgas, O₂', s: 'Syrgas O₂', a: 0, x: 'Två atomer, men båda är syre. Samma sort, alltså ett grundämne.' },
+  { p: molSvg([['O', 75, 58, 26], ['H', 47, 32, 16], ['H', 103, 32, 16]]), t: 'Vatten, H₂O', s: 'Vatten H₂O', a: 1, x: 'Väte och syre sitter ihop. ' + F },
+  { p: molSvg([['O', 37, 50, 20], ['C', 75, 50, 20], ['O', 113, 50, 20]]), t: 'Koldioxid, CO₂', s: 'Koldioxid CO₂', a: 1, x: 'Kol och syre sitter ihop. ' + F },
+  { p: molSvg(grid6('Fe')), t: 'Järn, Fe', s: 'Järn Fe', a: 0, x: 'Bara järnatomer. ' + G },
+  { p: molSvg(grid6('Au')), t: 'Guld, Au', s: 'Guld Au', a: 0, x: 'Bara guldatomer. ' + G },
+  { p: molSvg([['Na', 40, 32, 17], ['Cl', 75, 32, 17], ['Na', 110, 32, 17], ['Cl', 40, 68, 17], ['Na', 75, 68, 17], ['Cl', 110, 68, 17]]), t: 'Bordsalt, NaCl', s: 'Bordsalt NaCl', a: 1, x: 'Natrium och klor sitter ihop. ' + F },
+  { p: molSvg([['H', 60, 50, 20], ['H', 90, 50, 20]]), t: 'Vätgas, H₂', s: 'Vätgas H₂', a: 0, x: 'Två väteatomer, samma sort. Alltså ett grundämne.' }
+]});
+
+/* ---------- 5 Filosof ---------- */
+const FI = 'Filosofen tänker och använder logik.', VE = 'Forskaren testar och samlar bevis.';
+sortGame($('#gFilosof'), { id: 'filosof', bins: ['Filosof', 'Forskare'], items: [
+  { p: '🤔', t: 'Sitter och funderar på stora frågor om livet', s: 'Funderar på livet', a: 0, x: FI },
+  { p: '🧪', t: 'Gör experiment i ett labb', s: 'Gör experiment', a: 1, x: VE },
+  { p: '🌡️', t: 'Mäter noggrant med termometer', s: 'Mäter noggrant', a: 1, x: 'Att mäta i stället för att gissa är vad forskare gör.' },
+  { p: '🧠', t: 'Använder sina egna tankar och logik för att komma fram till svar', s: 'Tänker och använder logik', a: 0, x: FI },
+  { p: '🔎', t: 'Samlar bevis i verkligheten', s: 'Samlar bevis', a: 1, x: VE },
+  { p: '💬', t: 'Diskuterar vad som är rätt och fel', s: 'Diskuterar rätt och fel', a: 0, x: 'Det går inte att testa i ett labb. Det är en fråga för en filosof.' },
+  { p: '🔁', t: 'Gör om samma test flera gånger för att vara säker', s: 'Upprepar testet', a: 1, x: VE },
+  { p: '🌌', t: 'Undrar varför universum finns, utan att göra några labbtester', s: 'Undrar varför universum finns', a: 0, x: 'Filosofer gör inte labbtester.' }
+]});
+
+/* ---------- 6 Bygg vatten ---------- */
+(function builder(){
+  const svg = $('#bSvg'), feed = $('#bFeed'), countEl = $('#bCount'), empty = $('#bEmpty');
+  const NS = 'http://www.w3.org/2000/svg';
+  const R = { H: 26, O: 40 };
+  let atoms = [], finished = false;
+  function node(sym){
+    const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'b-atom');
+    const [f, t] = COLA[sym];
+    g.innerHTML = '<circle r="' + R[sym] + '" fill="' + f + '"' + (sym === 'H' ? ' stroke="#9aa6bf" stroke-width="2"' : '') + '/><text fill="' + t + '">' + sym + '</text>';
+    g.style.transform = 'translate(150px, 260px)';
+    svg.appendChild(g);
+    return g;
+  }
+  function layout(){
+    const H = atoms.filter(a => a.s === 'H').length, O = atoms.filter(a => a.s === 'O').length;
+    finished = H === 2 && O === 1;
+    svg.classList.toggle('b-done', finished);
+    empty.style.opacity = atoms.length ? 0 : 1;
+    if (finished){
+      let hi = 0;
+      atoms.forEach(a => {
+        if (a.s === 'O') a.g.style.transform = 'translate(150px, 118px)';
+        else { a.g.style.transform = hi ? 'translate(194px, 72px)' : 'translate(106px, 72px)'; hi++; }
+      });
+    } else {
+      const gap = 92, x0 = 150 - (atoms.length - 1) * gap / 2;
+      atoms.forEach((a, k) => { a.g.style.transform = 'translate(' + (x0 + k * gap) + 'px, 105px)'; });
+    }
+    countEl.textContent = atoms.length === 1 ? '1 atom' : atoms.length + ' atomer';
+  }
+  function no(btn, text){ btn.classList.remove('no'); void btn.offsetWidth; btn.classList.add('no'); feed.innerHTML = text; }
+  $$('.b-add').forEach(btn => btn.addEventListener('click', () => {
+    const s = btn.dataset.a;
+    if (finished) return no(btn, '<b>Molekylen är redan klar!</b> Tryck på Börja om om du vill bygga en till.');
+    if (s === 'C') return no(btn, '<b>Ingen kol i vatten.</b> Vatten består bara av väte och syre. Titta på formeln H₂O.');
+    if (s === 'Fe') return no(btn, '<b>Inget järn i vatten.</b> Vatten består bara av väte (H) och syre (O).');
+    const H = atoms.filter(a => a.s === 'H').length, O = atoms.filter(a => a.s === 'O').length;
+    if (s === 'H' && H >= 2) return no(btn, '<b>Två väteatomer räcker.</b> Den lilla 2:an i H₂O betyder två.');
+    if (s === 'O' && O >= 1) return no(btn, '<b>Bara en syreatom.</b> Efter O står ingen siffra, och då betyder det en.');
+    atoms.push({ s, g: node(s) });
+    requestAnimationFrame(() => requestAnimationFrame(layout));
+    const H2 = H + (s === 'H'), O2 = O + (s === 'O');
+    if (H2 === 2 && O2 === 1){
+      feed.innerHTML = '<b>Du byggde en vattenmolekyl!</b> 2 väte och 1 syre. Ser du huvudet med de två öronen?';
+      setTimeout(() => complete('molekyl', svg), 600);
+    } else feed.innerHTML = 'Bra! Du har ' + H2 + ' väte och ' + O2 + ' syre. Vad mer behövs?';
+  }));
+  $('#bReset').addEventListener('click', () => { atoms.forEach(a => a.g.remove()); atoms = []; feed.textContent = ''; layout(); });
+  layout();
+})();
+
+/* ---------- 7 Superkrafter ---------- */
+(function powers(){
+  const gr = $('#grains');
+  let html = '';
+  for (let i = 0; i < 14; i++){ const x = 62 + (i % 7) * 11 + (i > 6 ? 5 : 0), y = 138 - (i > 6 ? 8 : 0); html += '<rect class="grain" x="' + x + '" y="' + y + '" width="7" height="7" rx="1" style="transition-delay:' + (i * .07).toFixed(2) + 's"/>'; }
+  gr.innerHTML = html;
+  const TEXT = {
+    ice: '<b>Isen flyter!</b> När vatten fryser utvidgar det sig och tar mer plats. Därför blir is lättare än samma mängd flytande vatten.',
+    strider: '<b>Den sjunker inte!</b> Vattnets yta är som en tunn hinna. Det kallas <b>ytspänning</b>. Den gör att små djur som skräddare kan gå på vattnet.',
+    sugar: '<b>Sockret försvann inte.</b> Det löstes upp och finns kvar i vattnet. Smaka, så märker du! Vatten är ett bra <b>lösningsmedel</b>. Det löser lätt upp salt och socker.'
+  };
+  const MAP = { ice: ['#pIce', '#rIce'], strider: ['#pStrider', '#rStrider'], sugar: ['#pSugar', '#rSugar'] };
+  const seen = new Set();
+  $$('[data-power]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.power, [sv, rv] = MAP[k], s = $(sv);
+    s.classList.remove('go'); void s.getBoundingClientRect(); s.classList.add('go');
+    setTimeout(() => { $(rv).innerHTML = TEXT[k]; }, RM ? 0 : k === 'strider' ? 1800 : 1200);
+    b.textContent = 'Gör om';
+    seen.add(k);
+    if (seen.size === 3) setTimeout(() => complete('egenskaper', b), RM ? 0 : 1600);
+  }));
+})();
+
+/* ---------- 8 Fast, flytande, gas ---------- */
+(function states(){
+  const stage = $('#stStage'), cv = $('#stCanvas'), ctx = cv.getContext('2d'), badge = $('#stBadge');
+  const COLS = 7, ROWS = 6, N = COLS * ROWS;
+  let w = 1, h = 1, dpr = 1, r = 10, mode = 1, grid = [], P = [], col = '#1d6fd6', colT = 0, vis = false;
+  const seen = new Set([1]);
+  function layoutGrid(){
+    const d = r * 2.3, gx = w / 2 - (COLS - 1) * d / 2, gy = h - 18 - r - (ROWS - 1) * d;
+    grid = []; for (let i = 0; i < N; i++) grid.push([gx + (i % COLS) * d, gy + Math.floor(i / COLS) * d]);
+  }
+  function size(){
+    const b = cv.getBoundingClientRect(); if (b.width < 2 || b.height < 2) return;
+    dpr = Math.min(devicePixelRatio || 1, 2); w = b.width; h = b.height; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    r = Math.max(7, Math.min(13, Math.min(w, h) * .034)); layoutGrid();
+    if (!P.length) for (let i = 0; i < N; i++){ const x = 20 + Math.random() * (w - 40), y = h * .6 + Math.random() * (h * .35); P.push({ x, y, vx: 0, vy: 0, ph: Math.random() * 6.28, home: i, vt: .7 + Math.random() * .6 }); }
+  }
+  new ResizeObserver(size).observe(cv); size();
+  new IntersectionObserver(es => { vis = es[0].isIntersecting; }, { rootMargin: '60px' }).observe(stage);
+  function assign(){
+    const ps = P.slice().sort((a, b) => b.y - a.y);
+    for (let row = 0; row < ROWS; row++){
+      const chunk = ps.slice(row * COLS, row * COLS + COLS).sort((a, b) => a.x - b.x);
+      chunk.forEach((p, c) => { p.home = (ROWS - 1 - row) * COLS + c; });
+    }
+  }
+  function setMode(m){
+    if (m === mode) return;
+    if (m === 0) assign();
+    if (mode === 0) P.forEach(p => { const a = Math.random() * 6.28; p.vx = Math.cos(a) * 40; p.vy = Math.sin(a) * 40; });
+    mode = m;
+    badge.textContent = ['Fast form: is', 'Flytande: vatten', 'Gasform: ånga'][m];
+    $$('#modeBtns .mode').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.m === m)));
+    seen.add(m);
+    if (seen.size === 3) complete('former', stage);
+  }
+  $$('#modeBtns .mode').forEach(b => b.addEventListener('click', () => setMode(+b.dataset.m)));
+  function step(dt, t){
+    if (mode === 0){
+      const k = 1 - Math.exp(-dt * 5), amp = r * .12;
+      P.forEach(p => { const g = grid[p.home]; p.x += (g[0] + Math.sin(t * 13 + p.ph) * amp - p.x) * k; p.y += (g[1] + Math.cos(t * 11 + p.ph) * amp - p.y) * k; });
+      return;
+    }
+    const gas = mode === 2, sub = 2, hh = dt / sub, D = r * 2.15, A = r * 3.2;
+    const vT = gas ? 190 : 45, g = gas ? 0 : 520, rate = 1 - Math.exp(-hh * 3);
+    for (let s = 0; s < sub; s++){
+      P.forEach(p => { p.ax = 0; p.ay = g; });
+      for (let i = 0; i < N; i++){ const a = P[i];
+        for (let j = i + 1; j < N; j++){ const b = P[j], dx = b.x - a.x, dy = b.y - a.y, d2 = dx * dx + dy * dy;
+          if (d2 > A * A || d2 < 1e-6) continue;
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d;
+          let f = d < D ? -(D - d) * 1400 : (gas ? 0 : (d - D) * 80);
+          a.ax += nx * f; a.ay += ny * f; b.ax -= nx * f; b.ay -= ny * f;
+        }
+      }
+      P.forEach(p => {
+        p.vx += p.ax * hh; p.vy += p.ay * hh;
+        const sp = Math.hypot(p.vx, p.vy), tg = vT * p.vt;
+        if (sp < 1){ const a = Math.random() * 6.28; p.vx = Math.cos(a) * tg * .5; p.vy = Math.sin(a) * tg * .5; }
+        else { const ns = sp + (tg - sp) * rate; p.vx *= ns / sp; p.vy *= ns / sp; }
+        const j = (Math.random() - .5) * hh * (gas ? 1 : 2.5), c = Math.cos(j), sn = Math.sin(j), vx = p.vx * c - p.vy * sn; p.vy = p.vx * sn + p.vy * c; p.vx = vx;
+        p.x += p.vx * hh; p.y += p.vy * hh;
+        const m = 8 + r;
+        if (p.x < m){ p.x = m; p.vx = Math.abs(p.vx); } else if (p.x > w - m){ p.x = w - m; p.vx = -Math.abs(p.vx); }
+        if (p.y < m + 26){ p.y = m + 26; p.vy = Math.abs(p.vy); } else if (p.y > h - m){ p.y = h - m; p.vy = -Math.abs(p.vy) * (gas ? 1 : .5); }
+      });
+    }
+  }
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(.04, (now - last) / 1000); last = now;
+    if (vis && !document.hidden){
+      const t = now / 1000;
+      if ((colT -= dt) <= 0){ col = getComputedStyle(document.documentElement).getPropertyValue('--water').trim() || col; colT = 1; }
+      step(RM ? dt * .4 : dt, t);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = col;
+      if (mode === 2){ ctx.strokeStyle = col; ctx.globalAlpha = .18; ctx.lineWidth = r; ctx.lineCap = 'round'; P.forEach(p => { ctx.beginPath(); ctx.moveTo(p.x - p.vx * .06, p.y - p.vy * .06); ctx.lineTo(p.x, p.y); ctx.stroke(); }); ctx.globalAlpha = 1; }
+      P.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 6.2832); ctx.fill(); });
+      ctx.fillStyle = 'rgba(255,255,255,.35)';
+      P.forEach(p => { ctx.beginPath(); ctx.arc(p.x - r * .32, p.y - r * .34, r * .3, 0, 6.2832); ctx.fill(); });
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- 9 Fasövergångar ---------- */
+(function phases(){
+  const PH = [
+    { n: 'Smältning', f: 'Fast → Flytande', ex: 'En isbit eller glass värms upp i solen och blir till flytande vätska.', w: 'Det behövs värme.' },
+    { n: 'Avdunstning', f: 'Flytande → Gas', ex: 'En vattenpöl torkar bort i solen när vattnet blir till osynlig vattenånga.', w: 'Det behövs värme.' },
+    { n: 'Kondensering', f: 'Gas → Flytande', ex: 'Varm vattenånga träffar en kall spegel och blir till små vattendroppar.', w: 'Det händer när ångan kyls ner.' },
+    { n: 'Stelning (frysning)', f: 'Flytande → Fast', ex: 'Vatten blir till hård is när det fryser i frysen eller utomhus på vintern.', w: 'Det händer när det blir kallt.' }
+  ];
+  $$('.ph-arrow').forEach(b => b.addEventListener('click', () => {
+    const p = PH[+b.dataset.p];
+    $$('.ph-arrow').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    $('#phInfo').innerHTML = '<h3>' + p.n + '</h3><p><b>' + p.f + '.</b> ' + p.w + '</p><p class="hint" style="margin-top:4px">I vardagen: ' + p.ex + '</p>';
+  }));
+  const O = ['Smältning', 'Avdunstning', 'Kondensering', 'Stelning'];
+  quiz($('#gFas'), { onDone: h => complete('fas', h), endText: (s, n) => s === n ? 'Alla rätt! Du kan fasövergångarna.' : 'Bra! Tryck på pilarna till vänster och gör om.', qs: [
+    { q: 'En glass ligger i solen och blir till sås.', o: O, a: 0, keep: true, x: 'Fast blir flytande. Det heter smältning.' },
+    { q: 'En vattenpöl på skolgården torkar bort när solen skiner.', o: O, a: 1, keep: true, x: 'Flytande blir gas, osynlig vattenånga. Det heter avdunstning.' },
+    { q: 'Efter duschen blir badrumsspegeln full av små droppar.', o: O, a: 2, keep: true, x: 'Varm ånga kyls ner mot den kalla spegeln och blir droppar. Det heter kondensering.' },
+    { q: 'Du ställer vatten i frysen och det blir isbitar.', o: O, a: 3, keep: true, x: 'Flytande blir fast. Det heter stelning eller frysning.' },
+    { q: 'Vad heter det när något går från gas till flytande?', o: O, a: 2, keep: true, x: 'Gas → flytande är kondensering. Tänk på spegeln i badrummet.' },
+    { q: 'Snön smälter på våren. Vilken fasövergång?', o: O, a: 0, keep: true, x: 'Snö är fast vatten som blir flytande. Smältning!' }
+  ]});
+})();
+
+/* ---------- 10 Ta hand om vattnet ---------- */
+sortGame($('#gOmsorg'), { id: 'omsorg', bins: ['Bra för vattnet', 'Dåligt för vattnet'], items: [
+  { p: '🪥', t: 'Stänger kranen medan hon borstar tänderna', s: 'Stänger kranen', a: 0, x: 'Då rinner inte rent vatten bort i onödan.' },
+  { p: '🚿', t: 'Duschar lite kortare', s: 'Duschar kortare', a: 0, x: 'Kortare dusch sparar vatten.' },
+  { p: '🧤', t: 'Plockar upp skräp på stranden', s: 'Plockar skräp', a: 0, x: 'Skräp i vattnet skadar fiskar och fåglar.' },
+  { p: '🎨', t: 'Lämnar gammal målarfärg på återvinningen', s: 'Lämnar färg på återvinningen', a: 0, x: 'Rätt! Färg ska aldrig i avloppet.' },
+  { p: '🍬', t: 'Slänger godispapper i sjön', s: 'Skräpar i sjön', a: 1, x: 'Skräpa aldrig ner i naturen eller i sjöar.' },
+  { p: '🚽', t: 'Spolar ner målarfärg i toaletten', s: 'Spolar ner färg', a: 1, x: 'Kemikalier och färg i avloppet förstör vattnet.' },
+  { p: '🚰', t: 'Låter kranen stå och rinna hela tiden', s: 'Låter kranen rinna', a: 1, x: 'Då slösar man med rent vatten.' },
+  { p: '🧴', t: 'Häller ut starka kemikalier i diket', s: 'Kemikalier i diket', a: 1, x: 'Kemikalierna rinner vidare till grundvattnet och sjöarna.' }
+]});
+
+/* ---------- 11 Kretslopp ---------- */
+(function cycle(){
+  const svg = $('#wc'), text = $('#wcText'), playBtn = $('#wcPlay');
+  const S = [null,
+    ['1. Avdunstning', 'Solen värmer havet. Vattnet blir till vattenånga som stiger upp. Ångan är osynlig!'],
+    ['2. Kondensering', 'Högt uppe i luften är det kallt. Ångan kyls ner och blir till pyttesmå droppar. Massor av droppar tillsammans blir ett moln.'],
+    ['3. Nederbörd', 'När dropparna blir stora och tunga faller de från molnen som regn. När det är kallt faller de som snö.'],
+    ['4. Tillrinning', 'Vattnet rinner i bäckar och floder tillbaka till havet, eller sjunker ner i marken och blir grundvatten. Sedan börjar allt om igen!']
+  ];
+  let timer = 0;
+  function show(s){
+    svg.setAttribute('class', 'wc s' + s);
+    $$('.wc-step').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.s === s)));
+    text.innerHTML = '<h3>' + S[s][0] + '</h3><p>' + S[s][1] + '</p>';
+  }
+  function stop(){ clearTimeout(timer); timer = 0; playBtn.textContent = 'Spela hela kretsloppet'; }
+  $$('.wc-step').forEach(b => b.addEventListener('click', () => { stop(); show(+b.dataset.s); }));
+  playBtn.addEventListener('click', () => {
+    if (timer){ stop(); return; }
+    let s = 1; show(s); playBtn.textContent = 'Pausa';
+    const next = () => { s++; if (s > 4){ stop(); return; } show(s); timer = setTimeout(next, 4200); };
+    timer = setTimeout(next, 4200);
+  });
+  orderGame($('#gKret'), { onDone: h => complete('kretslopp', h), doneText: 'Och sedan börjar det om från början. Därför heter det ett kretslopp.', steps: [
+    { t: 'Avdunstning', d: 'Solen värmer havet och vattnet blir ånga som stiger upp.', h: 'Allt börjar med att solen värmer havet.' },
+    { t: 'Kondensering', d: 'Ångan kyls ner högt uppe och bildar moln.', h: 'Ångan har stigit upp. Vad händer när den kyls ner?' },
+    { t: 'Nederbörd', d: 'Regn eller snö faller från molnen.', h: 'Molnen finns. Vad faller från dem?' },
+    { t: 'Tillrinning', d: 'Vattnet rinner tillbaka till havet eller blir grundvatten.', h: 'Regnet har fallit. Vart tar vattnet vägen?' }
+  ]});
+})();
+
+/* ---------- 12 Experiment ---------- */
+(function experiment(){
+  const f = { q: false, o: false };
+  const check = h => { if (f.q && f.o) complete('experiment', h); };
+  quiz($('#gExpQuiz'), { onDone: (h) => { f.q = true; check(h); }, endText: (s, n) => s === n ? 'Perfekt planerat! Nu är experimentet rättvist, noggrant och upprepat.' : 'Bra! Läs rutan om ett bra experiment och gör om.', qs: [
+    { q: 'Vilket test är rättvist?', o: ['Två lika stora isbitar i lika mycket vatten med samma temperatur. Bara det ena glaset har salt.', 'En isbit i kallt vanligt vatten och en isbit i varmt saltvatten.', 'En stor isbit och en liten isbit, båda i saltvatten.'], a: 0, x: 'Bara en sak får vara olika: saltet. Annars vet du inte vad som gjorde att isen smälte.' },
+    { q: 'Hur ska du ta reda på vilken isbit som smälter först?', o: ['Titta lite då och då och gissa', 'Ta tid med ett tidtagarur', 'Fråga en kompis vad hen tror'], a: 1, x: 'Noggrannhet! Mät med tidtagarur i stället för att gissa.' },
+    { q: 'Hur kan du bli helt säker på resultatet?', o: ['Göra testet en gång', 'Göra testet flera gånger', 'Skriva att du är säker'], a: 1, x: 'Upprepa! Om du får samma resultat flera gånger kan du lita på det.' },
+    { q: 'Du vill testa om varmt vatten smälter isen snabbare. Vad ska vara olika i glasen?', o: ['Bara vattnets temperatur', 'Temperaturen och isbitarnas storlek', 'Allt kan vara olika'], a: 0, x: 'Ändra bara en sak i taget. Nu är det temperaturen som testas.' }
+  ]});
+  orderGame($('#gLabb'), { onDone: h => { f.o = true; check(h); }, doneText: 'Det är så en riktig forskare skriver.', steps: [
+    { t: 'Rubrik', d: 'Experimentets namn. Till exempel: Smälter is snabbare i saltvatten?', h: 'Det första du skriver är experimentets namn.' },
+    { t: 'Syfte', d: 'Vad vill du ta reda på?', h: 'Efter namnet skriver du vad du vill ta reda på.' },
+    { t: 'Hypotes', d: 'Vad tror du kommer att hända, innan du startar?', h: 'Innan du börjar: vad tror du kommer hända?' },
+    { t: 'Materiel', d: 'Lista alla saker du behöver använda.', h: 'Vad behöver du ta fram innan du börjar?' },
+    { t: 'Utförande', d: 'Beskriv steg för steg hur du gjorde experimentet.', h: 'Nu ska du berätta hur du gjorde.' },
+    { t: 'Resultat', d: 'Vad hände? Visa med text, siffror eller bild.', h: 'Experimentet är gjort. Vad hände?' },
+    { t: 'Slutsats', d: 'Varför blev det så? Stämde hypotesen? Vad har du lärt dig?', h: 'Det allra sista: vad lärde du dig?' }
+  ]});
+})();
+
+/* ---------- Provet ---------- */
+quiz($('#gProv'), {
+  endText: (s, n) => s === n ? 'Fullpott, ' + NAMN + '! Du är redo för provet.' : s >= n * .8 ? 'Riktigt bra, ' + NAMN + '! Kolla igenom det du missade, så sitter allt.' : s >= n * .5 ? 'Bra jobbat! Spela stationerna du var osäker på och gör om provet.' : 'Bra kämpat! Gå igenom stationerna en gång till, sedan går det bättre.',
+  onDone: (h, s) => { if (s >= 12){ const r = h.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + 40, 140); } },
+  qs: [
+    { q: 'Vad är materia?', o: ['Allt som väger något och tar plats', 'Bara saker som är hårda', 'Allt som man kan höra', 'Bara sådant som lever'], a: 0, x: 'Materia väger något och tar plats. Även luft och vatten är materia.' },
+    { q: 'Vilket av dessa är INTE materia?', o: ['Luften i en ballong', 'Mjölk', 'Ljudet från en högtalare', 'En sten'], a: 2, x: 'Ljud är energi. Det väger ingenting och tar ingen plats.' },
+    { q: 'Vilken del av atomen är negativt laddad (−)?', o: ['Protonen', 'Neutronen', 'Elektronen'], a: 2, keep: true, x: 'Elektronen är negativ och snurrar runt kärnan.' },
+    { q: 'Var finns protonerna och neutronerna?', o: ['I kärnan, mitt i atomen', 'De snurrar runt kärnan', 'Utanför atomen'], a: 0, x: 'Protoner och neutroner finns i kärnan. Elektronerna snurrar runt.' },
+    { q: 'Vad är ett grundämne?', o: ['Ett ämne med bara en sorts atomer', 'Ett ämne med många olika sorters atomer', 'Ett ämne som finns i marken'], a: 0, x: 'Ett grundämne har bara en sorts atomer, till exempel guld, syre eller järn.' },
+    { q: 'Vilket är en kemisk förening?', o: ['Guld', 'Syre', 'Järn', 'Vatten (H₂O)'], a: 3, x: 'I vatten sitter två olika sorters atomer ihop: väte och syre.' },
+    { q: 'Vad består en vattenmolekyl av?', o: ['2 väteatomer och 1 syreatom', '1 väteatom och 2 syreatomer', '2 väteatomer och 2 syreatomer'], a: 0, x: 'H₂O: två H (väte) och ett O (syre).' },
+    { q: 'Varför flyter is på vatten?', o: ['Is är kallare', 'Is utvidgar sig och blir lättare än flytande vatten', 'Is har luft i mitten', 'Isen har ytspänning'], a: 1, x: 'När vatten fryser tar det mer plats och blir lättare än samma mängd vatten.' },
+    { q: 'Hur kan en skräddare gå på vatten?', o: ['Den simmar fort', 'Vattnet har ytspänning, som en tunn hinna', 'Den har flytväst'], a: 1, x: 'Ytspänningen gör att vattenytan fungerar som en hinna.' },
+    { q: 'Hur rör sig molekylerna i en gas?', o: ['De sitter fast i ett mönster', 'De glider runt varandra', 'De är långt isär och rör sig snabbt'], a: 2, keep: true, x: 'I en gas är molekylerna långt isär och susar runt.' },
+    { q: 'Varm ånga träffar en kall spegel och blir droppar. Vad heter det?', o: ['Smältning', 'Avdunstning', 'Kondensering', 'Stelning'], a: 2, keep: true, x: 'Gas blir flytande. Det heter kondensering.' },
+    { q: 'Vad kommer direkt efter avdunstning i vattnets kretslopp?', o: ['Nederbörd', 'Kondensering: ångan bildar moln', 'Tillrinning'], a: 1, x: 'Ångan stiger upp, kyls ner och bildar moln. Sedan kommer nederbörd.' },
+    { q: 'Vilket är bra för vattnet?', o: ['Spola ner målarfärg', 'Stänga kranen när du borstar tänderna', 'Låta kranen rinna'], a: 1, x: 'Då sparar du rent vatten.' },
+    { q: 'Vad gör en forskare, som en filosof inte gör?', o: ['Tänker på stora frågor', 'Gör experiment och mäter noggrant', 'Använder logik'], a: 1, x: 'Forskaren testar i verkligheten. Filosofen tänker.' },
+    { q: 'Vad betyder ett rättvist test?', o: ['Alla får vara med', 'Man ändrar bara en sak i taget', 'Man gör testet snabbt'], a: 1, x: 'Ändra bara en sak, så vet du vad som påverkade resultatet.' },
+    { q: 'Vad skriver du under Hypotes i en labbrapport?', o: ['Vad du tror kommer att hända', 'Vilka saker du behöver', 'Vad som hände'], a: 0, x: 'Hypotesen är din gissning innan du startar experimentet.' }
+  ]
+});
+
+renderProgress();
+})();
+</script>
+
+</body></html>
