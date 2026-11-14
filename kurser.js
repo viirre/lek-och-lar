@@ -23,4 +23,14 @@ window.KURSER = [
     nummer: 2,
     farg: '#e5304a',
   },
+  {
+    id: 'sverigekoll',
+    titel: 'Sverigekoll',
+    amne: 'Geografi',
+    niva: 'Åk 4',
+    beskrivning: 'Sjöar, älvar, landsdelar, klimat och naturresurser. Öva in alla 25 landskap på kartan och gör provet på låtsas.',
+    symbol: 'SE',
+    nummer: 3,
+    farg: '#1f7a4d',
+  },
 ];

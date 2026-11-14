@@ -1,0 +1,1372 @@
+<!doctype html><html lang="sv"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Sverigekoll</title>
+<script src="../../delad/profil.js"></script>
+<script>if (LekOchLar.kravNamn('sverigekoll')) document.title = LekOchLar.genitiv() + ' sverigekoll';</script>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Grandstander:wght@600;800&family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+/* Samma upplägg som kemikoll: en väg av stationer som följer checklistan. Varje station = kort förklaring + ett litet spel som bockar av rutan. */
+:root{
+  --display:"Grandstander","Trebuchet MS","Arial Rounded MT Bold",sans-serif;
+  --body:"Lexend","Segoe UI",Roboto,Arial,sans-serif;
+  --hand:"Gochi Hand","Comic Sans MS","Marker Felt",cursive;
+
+  --bg:#eff6ee; --paper:#ffffff; --paper-2:#f2f8f1;
+  --ink:#1b2d24; --ink-soft:#4b5e54; --ink-faint:#74857b;
+  --line:rgba(27,45,36,.12); --line-strong:rgba(27,45,36,.28);
+  --brand:#1f7a4d; --brand-soft:#d4eedd; --brand-ink:#0f4f30; --on-brand:#ffffff;
+  --good:#16834c; --good-soft:#daf3e5; --bad:#cc3341; --bad-soft:#fde3e5; --warn:#b26a00; --warn-soft:#fff0cf;
+  --pen:#2346b8;
+  --sea:#d3e7f4; --land:#fbf8ef; --border:#8b846f; --lake:#5aa5db; --lake-ink:#1d5c91;
+  --gota:#f0a23b; --svea:#5a9ad4; --norr:#69bb7a;
+  --vinter:#c8d3e6; --vaar:#f3cd6f; --sommar:#7f9c4c; --host:#e7832b;
+  --city:#cc3341;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1a16; --paper:#16241e; --paper-2:#1c2d26;
+    --ink:#eaf4ee; --ink-soft:#b1c5ba; --ink-faint:#85988d;
+    --line:rgba(210,235,220,.13); --line-strong:rgba(210,235,220,.3);
+    --brand:#4fc287; --brand-soft:#1b3b2b; --brand-ink:#a6e8c4; --on-brand:#0a1e14;
+    --good:#47d18c; --good-soft:#163c2c; --bad:#ff6d78; --bad-soft:#45202a; --warn:#ffc35c; --warn-soft:#3a2e14;
+    --pen:#93b2ff;
+    --sea:#12283a; --land:#22342c; --border:#7e9187; --lake:#3d87c6; --lake-ink:#a0ccf2;
+    --gota:#c98a30; --svea:#4683bf; --norr:#4c9a5d;
+    --vinter:#8d9ab3; --vaar:#c9a74c; --sommar:#6a8a3c; --host:#c56a1e;
+    --city:#ff6d78;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1a16; --paper:#16241e; --paper-2:#1c2d26;
+  --ink:#eaf4ee; --ink-soft:#b1c5ba; --ink-faint:#85988d;
+  --line:rgba(210,235,220,.13); --line-strong:rgba(210,235,220,.3);
+  --brand:#4fc287; --brand-soft:#1b3b2b; --brand-ink:#a6e8c4; --on-brand:#0a1e14;
+  --good:#47d18c; --good-soft:#163c2c; --bad:#ff6d78; --bad-soft:#45202a; --warn:#ffc35c; --warn-soft:#3a2e14;
+  --pen:#93b2ff;
+  --sea:#12283a; --land:#22342c; --border:#7e9187; --lake:#3d87c6; --lake-ink:#a0ccf2;
+  --gota:#c98a30; --svea:#4683bf; --norr:#4c9a5d;
+  --vinter:#8d9ab3; --vaar:#c9a74c; --sommar:#6a8a3c; --host:#c56a1e;
+  --city:#ff6d78;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* topprad */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:1100;background:var(--bg);background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:56px}
+.top .brand{font:800 1.1rem/1 var(--display);color:var(--ink);text-decoration:none}
+.top .spacer{flex:1}
+.top a.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line-strong);color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem}
+.top a.pill:hover{border-color:var(--ink)}
+.top .count{font-variant-numeric:tabular-nums}
+@media (max-width:560px){.top .brand{display:none}.top .spacer{display:none}.top .wrap{justify-content:flex-end;gap:8px}.top a.pill{padding:7px 11px}}
+@media (max-width:420px){.top a.pill.wide{display:none}}
+
+/* knappar */
+.btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:14px;font:600 1rem/1.1 var(--body);text-decoration:none;transition:transform .12s,box-shadow .2s,background-color .2s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--brand);color:var(--on-brand);box-shadow:0 3px 0 var(--brand-ink)}
+.btn.primary:hover{box-shadow:0 3px 0 var(--brand-ink),0 0 0 4px color-mix(in srgb,var(--brand) 22%,transparent)}
+.btn.ghost{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--line-strong)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.btn.small{min-height:40px;padding:0 14px;font-size:.92rem;border-radius:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* checkrutor som på pappret */
+.box{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border:2.5px solid var(--ink);border-radius:5px;background:var(--paper)}
+.box svg{width:130%;height:130%;margin:-6px -2px 0 6px;overflow:visible}
+.box path{fill:none;stroke:var(--pen);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;transition:stroke-dashoffset .5s ease}
+.box.on path{stroke-dashoffset:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(32px,6vw,72px) clamp(24px,4vw,40px)}
+.hello{font:400 clamp(1.8rem,4vw,2.4rem)/1 var(--hand);color:var(--pen);transform:rotate(-2deg);transform-origin:left;margin-bottom:10px}
+.hero h1{font-size:clamp(2.3rem,5.6vw,4rem);font-weight:800}
+.hero .lead{margin-top:18px;max-width:34em;color:var(--ink-soft);font-size:1.1rem}
+.prog{display:flex;align-items:center;gap:14px;margin-top:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.prog .bar{flex:1;max-width:260px;height:12px;border-radius:999px;background:var(--brand-soft);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;border-radius:inherit;background:var(--good);transition:width .6s cubic-bezier(.3,1.3,.5,1)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.sheet{position:relative;background:var(--paper);border-radius:6px;padding:26px 26px 22px;box-shadow:0 1px 0 var(--line),0 18px 40px -18px rgba(27,45,36,.35);transform:rotate(1.2deg);border:1px solid var(--line)}
+.sheet-title{font-weight:600;font-size:.98rem}
+.sheet-name{margin-top:10px;display:flex;align-items:baseline;justify-content:flex-end;gap:8px;font-size:.95rem}
+.sheet-name .hand{font:400 1.7rem/1 var(--hand);color:var(--pen);min-width:150px;border-bottom:1.5px solid var(--ink);padding:0 6px 2px;transform:rotate(-1.5deg)}
+.sheet ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:4px}
+.sheet a{display:flex;align-items:center;gap:12px;padding:5px 6px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:.97rem}
+.sheet a:hover{background:var(--paper-2)}
+.sheet .box{width:24px;height:24px;border-width:2px}
+.reset{appearance:none;border:0;background:none;color:var(--ink-faint);font:400 .85rem var(--body);cursor:pointer;margin-top:12px;padding:6px;text-decoration:underline;text-underline-offset:3px}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.sheet{transform:none}}
+
+/* stationer */
+.station{padding-block:clamp(44px,7vw,80px) 0}
+.st-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:24px}
+.st-head .box{width:38px;height:38px;border-width:3px;border-radius:7px;margin-top:2px}
+.st-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800}
+.goal{margin-top:6px;color:var(--ink-soft);font-size:.98rem;max-width:44em}
+.goal::before{content:"Kunna: ";font-weight:600;color:var(--ink)}
+.st-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,34px);align-items:start}
+@media (max-width:860px){.st-grid{grid-template-columns:1fr}}
+.learn{display:grid;gap:14px;font-size:1.06rem;max-width:36em}
+.learn b{font-weight:600;color:var(--ink)}
+.learn ul,.learn ol{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.remember{border:2px dashed var(--line-strong);border-radius:14px;padding:14px 18px;background:var(--paper-2)}
+.remember h3{font-size:1.05rem;margin-bottom:6px}
+.remember ul{padding-left:1.1em}
+.tip{font:400 1.35rem/1.25 var(--hand);color:var(--pen)}
+.play{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,2.6vw,26px);box-shadow:0 10px 30px -22px rgba(27,45,36,.5);min-width:0}
+.play h3{font-size:1.2rem;margin-bottom:4px}
+.hint{font-size:.92rem;color:var(--ink-soft)}
+.muted{color:var(--ink-faint);font-size:.85rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2.4vw,24px);align-items:start}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.stack{display:grid;gap:clamp(16px,2.4vw,24px)}
+
+/* spelgemensamt */
+.g-top{display:flex;justify-content:space-between;font-size:.86rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.g-feed{min-height:3.2em;margin-top:14px;color:var(--ink-soft);font-size:.98rem}
+.g-feed b{color:var(--ink)}
+.g-next{margin-top:10px}
+.g-end{text-align:center;padding:10px 0 4px}
+.g-end .big{font:800 3.4rem/1 var(--display);color:var(--ink)}
+.g-end .big small{font:600 1.1rem var(--body);color:var(--ink-soft)}
+.g-end p{margin-bottom:14px}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.85);opacity:.4}to{transform:none;opacity:1}}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* sorteringsspel */
+.sort-card{display:grid;justify-items:center;gap:6px;margin:16px auto 0;padding:20px 16px;border-radius:18px;background:var(--paper-2);border:2px solid var(--line);max-width:360px;text-align:center}
+.sc-pic{font-size:3.2rem;line-height:1.1}
+.sc-pic:empty{display:none}
+.sc-pic .smap{height:220px;width:auto}
+.smap.mini .lp.hl{stroke:var(--brand-ink);stroke-width:1.5}
+.sc-t{font:600 1.18rem/1.3 var(--body)}
+.sort-btns{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:10px;margin-top:16px}
+@media (max-width:480px){.sort-btns.many{grid-template-columns:1fr 1fr}}
+.bin{appearance:none;cursor:pointer;min-height:54px;padding:8px 10px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 1rem/1.2 var(--body);transition:border-color .2s,background-color .2s}
+.bin:hover:not(:disabled){border-color:var(--ink)}
+.bin:disabled{cursor:default}
+.bin.right{border-color:var(--good);background:var(--good-soft)}
+.bin.wrong{border-color:var(--bad);background:var(--bad-soft);animation:shake .4s}
+.piles{display:grid;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));gap:10px;margin-top:18px}
+@media (max-width:480px){.piles.many{grid-template-columns:1fr 1fr}}
+.pile{border-top:2px solid var(--line);padding-top:8px;min-width:0}
+.pile b{display:block;font-size:.84rem;margin-bottom:6px}
+.pile div{display:flex;flex-wrap:wrap;gap:4px}
+.chip{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--brand-soft);color:var(--ink);font-size:.8rem}
+
+/* ordningsspel */
+.ord-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+.slot{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;min-height:46px;padding:6px 10px;border-radius:12px;border:2px dashed var(--line-strong)}
+.slot .sn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--paper-2);font:800 .95rem/1 var(--display)}
+.slot.filled{border-style:solid;border-color:var(--good);background:var(--good-soft);animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.slot.filled .sn{background:var(--good);color:var(--paper)}
+.slot .st b{display:block;line-height:1.25}
+.slot .st small{display:block;color:var(--ink-soft);font-size:.86rem;line-height:1.35}
+.ord-pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-btn{appearance:none;cursor:pointer;padding:10px 16px;min-height:46px;border-radius:12px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 1rem/1.2 var(--body)}
+.chip-btn:hover{border-color:var(--brand)}
+
+/* quiz */
+.q-t{font-size:clamp(1.2rem,2.4vw,1.5rem);margin:16px 0 14px;line-height:1.25}
+.q-t:focus{outline:none}
+.q-opts{display:grid;gap:8px}
+.q-opt{appearance:none;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 14px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:400 1rem/1.35 var(--body)}
+.q-opt .k{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--paper-2);font:800 .9rem/1 var(--display)}
+.q-opt:hover:not(:disabled){border-color:var(--ink)}
+.q-opt:disabled{cursor:default}
+.q-opt.right{border-color:var(--good);background:var(--good-soft)}
+.q-opt.right .k{background:var(--good);color:var(--paper)}
+.q-opt.wrong{border-color:var(--bad);background:var(--bad-soft);animation:shake .4s}
+.q-opt.wrong .k{background:var(--bad);color:var(--paper)}
+
+/* para ihop */
+.match{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:8px 12px;margin-top:14px}
+.match .col{display:grid;gap:8px;align-content:start}
+.m-btn{appearance:none;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;min-height:54px;padding:8px 12px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:400 .95rem/1.3 var(--body)}
+.m-btn .e{font-size:1.5rem;line-height:1}
+.m-btn b{font-weight:600}
+.m-btn:hover:not(:disabled){border-color:var(--ink)}
+.m-btn[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.m-btn.done{border-color:var(--good);background:var(--good-soft);cursor:default}
+.m-btn.wrong{border-color:var(--bad);animation:shake .4s}
+
+/* små svg-kartor */
+.smap{display:block;width:100%;height:auto}
+.smap .lp{fill:var(--land);stroke:var(--border);stroke-width:.9;stroke-linejoin:round;transition:fill .3s}
+.smap.mini .lp{stroke-width:.7}
+.smap .lp.hl{fill:var(--brand)}
+.smap .lp.d-gotaland{fill:var(--gota)}
+.smap .lp.d-svealand{fill:var(--svea)}
+.smap .lp.d-norrland{fill:var(--norr)}
+.smap.tap .lp{cursor:pointer}
+.smap .lp.sel{stroke:var(--ink);stroke-width:2.5}
+.smap .lake{fill:var(--lake);stroke:var(--lake-ink);stroke-width:.5;transition:fill .3s}
+.smap .lake.dim{fill:color-mix(in srgb,var(--lake) 45%,var(--land))}
+.smap .lake.on{fill:var(--lake);stroke-width:1.4}
+.smap .lake.hl{fill:var(--brand);stroke:var(--brand-ink)}
+.smap text{font:800 11px var(--display);fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.smap text.big{font-size:17px}
+.smap text.small{font:600 8px var(--body)}
+.smap .tag{opacity:0;transition:opacity .4s}
+.smap .tag.on{opacity:1}
+.smap .city{fill:var(--city);fill-opacity:.75;stroke:var(--paper);stroke-width:1}
+.map-card{border-radius:18px;background:var(--sea);border:2px solid var(--line);padding:10px;overflow:hidden}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.92rem;margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:14px;height:14px;border-radius:4px;flex:none}
+.map-info{margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--paper-2);min-height:3.4em;font-size:.97rem}
+.side{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px;align-items:start}
+@media (max-width:620px){.side{grid-template-columns:1fr}}
+
+/* sjöar */
+.lake-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.lake-list li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--paper)}
+.lake-list .sn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--lake);color:#fff;font:800 .95rem/1 var(--display)}
+.lake-list small{color:var(--ink-soft);font-size:.86rem;display:block;line-height:1.3}
+.lake-list .km{font-variant-numeric:tabular-nums;font-size:.86rem;color:var(--ink-soft);white-space:nowrap}
+.mnemo{font:400 1.5rem/1.2 var(--hand);color:var(--pen)}
+.mnemo b{font-weight:400;color:var(--bad);text-decoration:underline;text-underline-offset:4px}
+
+/* vattendrag */
+.wtiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:480px){.wtiles{grid-template-columns:1fr 1fr}}
+.wtile{display:grid;gap:4px;justify-items:center;text-align:center;padding:8px;border-radius:14px;background:var(--paper);border:1px solid var(--line)}
+.wtile svg{width:100%;height:auto;border-radius:10px;display:block}
+.wtile b{font:800 1.05rem/1.1 var(--display)}
+.wtile small{font-size:.78rem;color:var(--ink-soft);line-height:1.25}
+
+/* naturtyper */
+.ntiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.ntile{border:2px solid var(--line-strong);border-radius:14px;padding:8px 10px;background:var(--paper);display:grid;gap:2px;line-height:1.2}
+.ntile .e{font-size:1.8rem}
+.ntile b{font:800 1.05rem/1.1 var(--display)}
+.ntile small{font-size:.8rem;color:var(--ink-soft)}
+.ntile.top1{border-color:var(--good);background:var(--good-soft)}
+.waffle{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;width:220px;max-width:100%}
+.waffle i{aspect-ratio:1;border-radius:3px}
+.w-skog{background:#2f7d43}.w-jord{background:#e0b64a}.w-stad{background:#8a8f99}.w-fjall{background:#b9a99a}
+.waffle-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+@media (max-width:480px){.waffle-wrap{grid-template-columns:1fr}}
+
+/* klimat */
+.pies{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.pies{grid-template-columns:1fr 1fr}}
+.pie{display:grid;justify-items:center;gap:4px;text-align:center}
+.pie svg{width:100%;max-width:170px;height:auto;display:block}
+.pie h3{font-size:1.1rem}
+.pie ul{list-style:none;margin:0;padding:0;font-size:.82rem;color:var(--ink-soft);display:grid;gap:1px;text-align:left}
+.pie li{display:flex;align-items:center;gap:6px}
+.pie li i{width:10px;height:10px;border-radius:3px;flex:none}
+.pie text{font:600 10px var(--body);fill:#1b2d24;text-anchor:middle;dominant-baseline:central}
+.climate-map{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:center}
+@media (max-width:620px){.climate-map{grid-template-columns:1fr}.climate-map .map-card{max-width:150px}}
+
+/* landskapskartan */
+.lk{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);grid-template-rows:auto auto 1fr;gap:14px clamp(16px,2.6vw,28px);align-items:start}
+.lk-map{grid-column:1;grid-row:1 / span 3}
+.lk-ctrl,.lk-panel,.lk-goal{grid-column:2;min-width:0}
+.lk-ctrl{display:grid;gap:14px}
+/* Mobil: i Hitta och Skriv ligger frågan ovanför kartan och följer med, så att man ser båda samtidigt. */
+@media (max-width:860px){
+  .lk{grid-template-columns:1fr;grid-template-rows:none}
+  .lk > *{grid-column:1;grid-row:auto}
+  .lk-ctrl{order:0}.lk-map{order:2}.lk-panel{order:3}.lk-goal{order:4}
+  .lk.asking .lk-panel{order:1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);z-index:1050;padding:12px 14px;box-shadow:0 12px 28px -14px rgba(27,45,36,.55)}
+  .lk.asking .lk-panel .hint{display:none}
+  .lk.asking .lk-panel .g-feed{min-height:1.6em;margin-top:8px}
+  .lk.asking .lk-panel .lk-prompt{font-size:1.25rem}
+}
+.lk-map{height:min(80vh,760px);min-height:520px;border-radius:22px;border:2px solid var(--line);overflow:hidden;background:var(--sea);position:relative}
+@media (max-width:860px){.lk-map{height:min(78vh,700px);max-width:430px;margin:0 auto;width:100%}}
+.lk-map.leaflet-container{background:var(--sea);font-family:var(--body)}
+.lk-map .leaflet-control-attribution{background:color-mix(in srgb,var(--paper) 80%,transparent);color:var(--ink-faint);font-size:10px}
+.lk-map .leaflet-control-attribution a{color:var(--ink-soft)}
+.lk-map .leaflet-bar a{background:var(--paper);color:var(--ink);border-bottom-color:var(--line)}
+.lk-map .leaflet-bar a:hover{background:var(--paper-2)}
+.lk-map .leaflet-bar{border:2px solid var(--line-strong)}
+.lk-fail{display:grid;place-items:center;height:100%;padding:20px;text-align:center;color:var(--ink-soft)}
+path.lk-p{fill:var(--land);fill-opacity:1;stroke:var(--border);stroke-width:1.1;stroke-opacity:1;transition:fill .25s}
+path.lk-p.d-gotaland{fill:color-mix(in srgb,var(--gota) 35%,var(--land))}
+path.lk-p.d-svealand{fill:color-mix(in srgb,var(--svea) 35%,var(--land))}
+path.lk-p.d-norrland{fill:color-mix(in srgb,var(--norr) 35%,var(--land))}
+path.lk-p.out{fill:color-mix(in srgb,var(--land) 55%,var(--sea));stroke-opacity:.5}
+path.lk-p.ok{fill:var(--good-soft);stroke:var(--good)}
+path.lk-p.miss{fill:var(--bad-soft);stroke:var(--bad)}
+path.lk-p.sel{fill:var(--brand-soft);stroke:var(--brand);stroke-width:3}
+path.lk-p.target{fill:var(--brand);stroke:var(--brand-ink);stroke-width:2.5;animation:lkpulse 1.2s ease-in-out infinite}
+path.lk-p.flash{fill:var(--bad-soft);stroke:var(--bad);stroke-width:3}
+@keyframes lkpulse{50%{fill-opacity:.55}}
+path.lk-lake{fill:var(--lake);fill-opacity:1;stroke:var(--lake-ink);stroke-width:.6;stroke-opacity:1}
+.lk-lbl{pointer-events:none!important}
+.lk-lbl span{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font:800 11px/1 var(--display);color:var(--ink);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 2px var(--paper)}
+.lk-lbl.bad span{color:var(--bad)}
+.lk-lbl.good span{color:var(--good)}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mode{appearance:none;cursor:pointer;display:grid;gap:2px;justify-items:start;text-align:left;padding:10px 12px;border-radius:16px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:400 .84rem/1.3 var(--body)}
+.mode b{font:800 1.05rem/1.15 var(--display)}
+.mode span{color:var(--ink-soft)}
+.mode[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.mode .ok{color:var(--good);font-weight:600}
+@media (max-width:480px){.mode span{display:none}}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filters > span{font-size:.88rem;color:var(--ink-soft);margin-right:2px}
+.fbtn{appearance:none;cursor:pointer;padding:6px 12px;border-radius:999px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 .86rem/1.2 var(--body)}
+.fbtn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fbtn i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.lk-prompt{font:800 clamp(1.3rem,2.6vw,1.7rem)/1.2 var(--display)}
+.lk-prompt:focus{outline:none}
+.lk-form{display:flex;gap:8px;flex-wrap:wrap}
+.lk-form input{flex:1 1 180px;min-width:0;min-height:48px;padding:0 14px;border-radius:14px;border:2px solid var(--line-strong);background:var(--paper);color:var(--ink);font:600 1.1rem var(--body)}
+.lk-form input:focus{outline:none;border-color:var(--brand)}
+.lk-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lk-bar{height:10px;border-radius:999px;background:var(--brand-soft);overflow:hidden}
+.lk-bar i{display:block;height:100%;width:0;background:var(--good);border-radius:inherit;transition:width .4s}
+.lk-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.lk-list{grid-template-columns:1fr 1fr}}
+.lk-list h4{margin:0 0 4px;font:800 .95rem/1.2 var(--display);display:flex;align-items:center;gap:6px}
+.lk-list h4 i{width:12px;height:12px;border-radius:3px}
+.lk-list ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.lk-list button{appearance:none;cursor:pointer;border:0;background:none;padding:3px 6px;border-radius:8px;color:var(--ink);font:400 .9rem/1.3 var(--body);text-align:left;width:100%}
+.lk-list button:hover{background:var(--paper-2)}
+.lk-list button[aria-pressed="true"]{background:var(--brand-soft);font-weight:600}
+
+#prov .play{max-width:760px}
+footer{padding-block:clamp(70px,9vw,110px) 48px;text-align:center}
+footer .tip{font-size:1.8rem}
+footer p.muted{margin-top:8px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:1200;padding:12px 20px;border-radius:999px;background:var(--ink);color:var(--paper);font-weight:600;pointer-events:none;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1250}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head><body>
+
+<nav class="top" aria-label="Snabblänkar">
+  <div class="wrap">
+    <a class="brand" href="#start"><span data-namn-genitiv></span> sverigekoll</a>
+    <span class="spacer"></span>
+    <a class="pill" href="#start"><span class="box" data-box="all" aria-hidden="true" style="width:20px;height:20px;border-width:2px"></span><span class="count" id="topCount">0/10</span><span class="sr">rutor bockade, till checklistan</span></a>
+    <a class="pill wide" href="#landskap">Kartan</a>
+    <a class="pill" href="#prov">Provet</a>
+    <a class="pill" href="../../">Alla kurser</a>
+  </div>
+</nav>
+
+<header class="wrap hero" id="start">
+  <div>
+    <p class="hello">Hej <span data-namn></span>!</p>
+    <h1>Geografiprovet: Sverige</h1>
+    <p class="lead">Sjöar, älvar, landsdelar, klimat och alla 25 landskap. Läs lite, spela lite och testa dig själv. När du klarar en station bockas rutan av, precis som på pappret.</p>
+    <div class="prog"><span id="progCount">0 av 10 bockade</span><span class="bar" id="progBar"><i></i></span></div>
+    <div class="hero-actions">
+      <a class="btn primary" href="#sjoar">Börja med första rutan</a>
+      <a class="btn ghost" href="#landskap">Öva på kartan</a>
+    </div>
+  </div>
+  <aside class="sheet" aria-label="Checklista">
+    <p class="sheet-title">Checklista: Geografi – Sverige</p>
+    <p class="sheet-name">Namn: <span class="hand" data-namn></span></p>
+    <ul id="sheetList"></ul>
+    <button class="reset" id="reset" type="button">Sudda alla bockar</button>
+  </aside>
+</header>
+
+<main>
+<!-- 1 sjöar -->
+<section class="station wrap" id="sjoar" aria-labelledby="h-sjoar">
+  <header class="st-head"><span class="box" data-box="sjoar" aria-hidden="true"></span><div><h2 id="h-sjoar">Sveriges 5 största sjöar</h2><p class="goal">namnge Sveriges 5 största sjöar.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>Sverige har nästan <b>100 000 sjöar</b>. De fem största är, från störst till minst:</p>
+      <ol class="lake-list" id="lakeList"></ol>
+      <p class="mnemo">Kom ihåg: <b>V</b>i <b>V</b>ill <b>M</b>ysa <b>H</b>ela <b>S</b>ommaren</p>
+      <p class="muted">Vänern, Vättern, Mälaren, Hjälmaren, Storsjön. Vänern är så stor att man inte ser andra sidan.</p>
+    </div>
+    <div class="play">
+      <h3>Från störst till minst</h3>
+      <p class="hint">Tryck på sjöarna i rätt ordning. Den största först! Se var de ligger på kartan.</p>
+      <div class="side">
+        <div class="map-card" id="lakeMap"></div>
+        <div id="gSjoar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 natur- och kulturlandskap -->
+<section class="station wrap" id="landskapstyp" aria-labelledby="h-typ">
+  <header class="st-head"><span class="box" data-box="landskapstyp" aria-hidden="true"></span><div><h2 id="h-typ">Naturlandskap och kulturlandskap</h2><p class="goal">förklara skillnaden mellan ett naturlandskap och ett kulturlandskap.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <div class="two" style="gap:10px">
+        <div class="remember"><h3>🏔️ Naturlandskap</h3><p>Ett landskap som <b>naturen själv</b> har format. Människan har inte ändrat det så mycket. Till exempel höga fjäll, urskog, myrar och vilda kuster.</p></div>
+        <div class="remember"><h3>🌾 Kulturlandskap</h3><p>Ett landskap som <b>människor</b> har format och ändrat. Till exempel åkrar, betesmarker, städer, vägar och planterad skog.</p></div>
+      </div>
+      <p class="tip">Knep: Har människor byggt, odlat eller ändrat det? Då är det ett kulturlandskap.</p>
+    </div>
+    <div class="play">
+      <h3>Natur eller kultur?</h3>
+      <p class="hint">Vem har format landskapet, naturen eller människan?</p>
+      <div id="gTyp"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 vattendrag -->
+<section class="station wrap" id="vattendrag" aria-labelledby="h-vatten">
+  <header class="st-head"><span class="box" data-box="vattendrag" aria-hidden="true"></span><div><h2 id="h-vatten">Vattendrag</h2><p class="goal">ge minst 4 olika exempel på vattendrag.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <div class="wtiles" id="wTiles"></div>
+      <ul>
+        <li><b>Sjö</b>: vatten som står nästan stilla, med land runt omkring. Till exempel Vänern.</li>
+        <li><b>Älv</b>: ett riktigt stort vattendrag. Älvarna rinner från fjällen ända ut i havet. Till exempel Torne älv, Lule älv och Dalälven.</li>
+        <li><b>Å</b>: mindre än en älv, men större än en bäck. Till exempel Fyrisån i Uppsala.</li>
+        <li><b>Bäck</b>: ett litet vattendrag. Ofta så smalt att du kan hoppa över det.</li>
+      </ul>
+      <p class="tip">Från minst till störst: bäck, å, älv.</p>
+    </div>
+    <div class="play">
+      <h3>Vilket vattendrag?</h3>
+      <p class="hint">Läs kortet. Är det en sjö, en älv, en å eller en bäck?</p>
+      <div id="gVatten"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 landsdelar -->
+<section class="station wrap" id="landsdelar" aria-labelledby="h-delar">
+  <header class="st-head"><span class="box" data-box="landsdelar" aria-hidden="true"></span><div><h2 id="h-delar">Sveriges 3 landsdelar</h2><p class="goal">Sveriges 3 landsdelar: Götaland, Svealand och Norrland.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>Sverige delas in i tre <b>landsdelar</b>. Varje landsdel består av flera <b>landskap</b>.</p>
+      <div class="side">
+        <div>
+          <div class="map-card" id="delMap"></div>
+        </div>
+        <div style="display:grid;gap:10px">
+          <p><b style="color:var(--ink)">Götaland</b> i söder. 10 landskap.</p>
+          <p><b>Svealand</b> i mitten. 6 landskap.</p>
+          <p><b>Norrland</b> i norr. 9 landskap. Norrland är störst, mer än halva Sverige!</p>
+          <p class="map-info" id="delInfo" aria-live="polite">Tryck på ett landskap på kartan.</p>
+        </div>
+      </div>
+      <p class="tip">Söderifrån: Götaland, Svealand, Norrland. Glada Sälar Nyser!</p>
+    </div>
+    <div class="play">
+      <h3>Vilken landsdel?</h3>
+      <p class="hint">Landskapet som lyser på kartan. Ligger det i Götaland, Svealand eller Norrland?</p>
+      <div id="gDelar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 naturtyper -->
+<section class="station wrap" id="naturtyper" aria-labelledby="h-natur">
+  <header class="st-head"><span class="box" data-box="naturtyper" aria-hidden="true"></span><div><h2 id="h-natur">Naturtyper i Sverige</h2><p class="goal">ge exempel på 3 olika naturtyper i Sverige, och vilken som är vanligast.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <div class="ntiles">
+        <div class="ntile top1"><span class="e">🌲</span><b>Skog</b><small>Vanligast! Finns i hela landet.</small></div>
+        <div class="ntile"><span class="e">🏔️</span><b>Fjäll</b><small>I nordväst, längs gränsen mot Norge.</small></div>
+        <div class="ntile"><span class="e">🚜</span><b>Jordbruk och åkrar</b><small>Mest i söder, till exempel i Skåne.</small></div>
+        <div class="ntile"><span class="e">🏖️</span><b>Kust</b><small>Hav, stränder och skärgård med många öar.</small></div>
+      </div>
+      <div class="remember">
+        <h3>Vanligast är skog</h3>
+        <div class="waffle-wrap">
+          <div class="waffle" id="waffle" role="img" aria-label="100 rutor: ungefär 69 skog, 7 jordbruk, 3 städer och vägar, 21 fjäll, myrar och berg"></div>
+          <div class="legend" style="display:grid;gap:4px;margin:0">
+            <span><i class="w-skog"></i>Skog, ungefär 7 av 10 delar</span>
+            <span><i class="w-fjall"></i>Fjäll, myrar och berg</span>
+            <span><i class="w-jord"></i>Jordbruk och åkrar</span>
+            <span><i class="w-stad"></i>Städer och vägar</span>
+          </div>
+        </div>
+        <p class="muted" style="margin-top:8px">Så ser Sveriges mark ut om man delar den i 100 rutor (ungefär, utan sjöarna).</p>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Kolla naturen</h3>
+      <p class="hint">Fyra frågor om Sveriges natur.</p>
+      <div id="gNatur"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 världsdel -->
+<section class="station wrap" id="varldsdel" aria-labelledby="h-varld">
+  <header class="st-head"><span class="box" data-box="varldsdel" aria-hidden="true"></span><div><h2 id="h-varld">Vilken världsdel?</h2><p class="goal">vilken världsdel Sverige ligger i.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p style="font-size:3rem;line-height:1">🌍</p>
+      <p>Sverige ligger i <b>Europa</b>, längst upp i norr. Jorden har sju världsdelar: Europa, Asien, Afrika, Nordamerika, Sydamerika, Oceanien och Antarktis.</p>
+      <p>Sverige, Norge, Danmark, Finland och Island kallas tillsammans <b>Norden</b>.</p>
+      <div class="remember">
+        <h3>Sveriges grannar</h3>
+        <ul>
+          <li><b>Norge</b> i väster. Fjällen ligger längs gränsen.</li>
+          <li><b>Finland</b> i öster, längst upp vid Torne älv.</li>
+          <li><b>Danmark</b> i söder, på andra sidan Öresund. Öresundsbron går från Malmö.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Var i världen?</h3>
+      <p class="hint">Fyra snabba frågor.</p>
+      <div id="gVarld"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 befolkning -->
+<section class="station wrap" id="befolkning" aria-labelledby="h-folk">
+  <header class="st-head"><span class="box" data-box="befolkning" aria-hidden="true"></span><div><h2 id="h-folk">Var bor flest människor?</h2><p class="goal">var det bor flest människor i Sverige, och varför de bor där.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <div class="side">
+        <div class="map-card" id="folkMap" role="img" aria-label="Karta med Sveriges största städer. De flesta ligger i södra Sverige."></div>
+        <div style="display:grid;gap:10px">
+          <p>I Sverige bor drygt <b>10 miljoner</b> människor. De flesta bor i <b>södra Sverige</b>, alltså i Götaland och Svealand, och ofta <b>nära kusten</b>.</p>
+          <p>De största städerna är <b>Stockholm</b>, <b>Göteborg</b> och <b>Malmö</b>.</p>
+          <p>I Norrland, som är mer än halva landet, bor bara ungefär en av tio.</p>
+        </div>
+      </div>
+      <div class="remember">
+        <h3>Varför bor flest i söder?</h3>
+        <ul>
+          <li><b>Klimatet</b> är mildare, med längre och varmare somrar.</li>
+          <li><b>Bra jord</b> och platt mark gör det lätt att odla mat.</li>
+          <li><b>Nära till andra länder</b> i Europa, bra för handel.</li>
+          <li>Det finns många <b>jobb och skolor</b> i de stora städerna.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Är det ett skäl?</h3>
+      <p class="hint">Är det här en anledning till att många bor i södra Sverige?</p>
+      <div id="gFolk"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 klimat -->
+<section class="station wrap" id="klimat" aria-labelledby="h-klimat">
+  <header class="st-head"><span class="box" data-box="klimat" aria-hidden="true"></span><div><h2 id="h-klimat">Klimatet i norr och söder</h2><p class="goal">förklara skillnader och likheter mellan klimatet i norra Sverige och södra Sverige.</p></div></header>
+  <div class="stack">
+    <div class="two">
+      <div class="learn">
+        <div class="remember"><h3>Skillnader</h3><p>I <b>norr</b> är det kallare, med <b>längre vintrar</b> och <b>korta, svala somrar</b>. I <b>söder</b> är somrarna <b>längre och varmare</b>, och <b>våren kommer tidigare</b>.</p></div>
+        <div class="remember"><h3>Likheter</h3><p>Både norr och söder har <b>fyra årstider</b>: vinter, vår, sommar och höst.</p></div>
+        <p class="tip">Längst i norr går solen inte ner på sommaren. Det heter midnattssol!</p>
+      </div>
+      <div class="play">
+        <h3>Hur långa är årstiderna?</h3>
+        <p class="hint">Ungefär hur många månader varje årstid varar. Jämför Luleå i norr med Malmö i söder.</p>
+        <div class="climate-map" style="margin-top:12px">
+          <div class="map-card" id="klimMap"></div>
+          <div class="pies" id="pies"></div>
+        </div>
+      </div>
+    </div>
+    <div class="play">
+      <h3>Norr, söder eller båda?</h3>
+      <p class="hint">Gäller det norra Sverige, södra Sverige eller båda?</p>
+      <div id="gKlimat"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 naturresurser -->
+<section class="station wrap" id="resurser" aria-labelledby="h-res">
+  <header class="st-head"><span class="box" data-box="resurser" aria-hidden="true"></span><div><h2 id="h-res">Naturresurser</h2><p class="goal">nämna 4 olika naturresurser vi har i Sverige och hur de påverkar vårt land.</p></div></header>
+  <div class="st-grid">
+    <div class="learn">
+      <p>En <b>naturresurs</b> är något från naturen som vi människor kan använda.</p>
+      <ul>
+        <li><b>Malm (järn)</b>. Bryts i gruvor, till exempel i Kiruna. Sverige säljer mycket till andra länder.</li>
+        <li><b>Trä, virke och skog</b>. Blir papper, möbler och hus. Exporteras (säljs) till andra länder.</li>
+        <li><b>Koppar</b>. Behövs i vattenrör och elkablar, och man kan bygga med koppar.</li>
+        <li><b>Vatten</b>. Älvarnas vatten driver vattenkraftverk som gör el.</li>
+        <li><b>Fisk</b>. Ger oss mat.</li>
+        <li><b>Åkrar</b>. Där odlar man vete, råg, korn och havre. Ger oss mat.</li>
+      </ul>
+      <p class="tip">Lär dig minst fyra, och vad de ger oss!</p>
+    </div>
+    <div class="play">
+      <h3>Para ihop</h3>
+      <p class="hint">Tryck på en naturresurs och sedan på vad den ger oss.</p>
+      <div id="gRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 landskap -->
+<section class="station wrap" id="landskap" aria-labelledby="h-lk">
+  <header class="st-head"><span class="box" data-box="landskap" aria-hidden="true"></span><div><h2 id="h-lk">Sveriges 25 landskap</h2><p class="goal">placera ut och skriva Sveriges 25 landskap på en karta.</p></div></header>
+  <div class="lk" id="lk">
+    <div class="lk-map" id="lkMap"></div>
+    <div class="lk-ctrl">
+      <div class="modes" role="group" aria-label="Välj övning">
+        <button class="mode" data-mode="lar" aria-pressed="true"><b>Lär dig</b><span>Alla namn syns</span></button>
+        <button class="mode" data-mode="hitta" aria-pressed="false"><b>Hitta</b><span>Tryck på kartan</span></button>
+        <button class="mode" data-mode="skriv" aria-pressed="false"><b>Skriv</b><span>Skriv namnet</span></button>
+      </div>
+      <div class="filters" role="group" aria-label="Vilka landskap">
+        <span>Öva på:</span>
+        <button class="fbtn" data-f="alla" aria-pressed="true">Alla 25</button>
+        <button class="fbtn" data-f="gotaland" aria-pressed="false"><i style="background:var(--gota)"></i>Götaland</button>
+        <button class="fbtn" data-f="svealand" aria-pressed="false"><i style="background:var(--svea)"></i>Svealand</button>
+        <button class="fbtn" data-f="norrland" aria-pressed="false"><i style="background:var(--norr)"></i>Norrland</button>
+      </div>
+    </div>
+    <div class="play lk-panel" id="lkPanel"></div>
+    <p class="muted lk-goal">Rutan bockas av när du har klarat både Hitta och Skriv med alla 25 landskap, med minst 20 rätt varje gång. Öva gärna en landsdel i taget först. Nyp eller använd + och − för att zooma.</p>
+  </div>
+</section>
+
+<!-- prov -->
+<section class="station wrap" id="prov" aria-labelledby="h-prov">
+  <header class="st-head"><div><h2 id="h-prov">Provet på låtsas</h2><p class="goal">svara på frågor om hela checklistan. Efter varje svar får du veta varför.</p></div></header>
+  <div class="play" id="gProv"></div>
+</section>
+</main>
+
+<footer class="wrap">
+  <p class="tip">Lycka till på provet, <span data-namn></span>!</p>
+  <p class="muted">Du kan göra om alla spel hur många gånger du vill. Inte <span data-namn></span>? <a href="../../">Byt person</a>.</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="karta.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, e = document) => e.querySelector(s);
+const $$ = (s, e = document) => Array.from(e.querySelectorAll(s));
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.random() * a.length | 0];
+const YES = ['Rätt!', 'Snyggt!', 'Precis!', 'Ja, rätt!', 'Bra!'];
+
+/* ---------- Bockar ---------- */
+const ITEMS = [
+  ['sjoar', 'Sveriges 5 största sjöar'], ['landskapstyp', 'Naturlandskap och kulturlandskap'], ['vattendrag', 'Vattendrag'],
+  ['landsdelar', 'Sveriges 3 landsdelar'], ['naturtyper', 'Naturtyper i Sverige'], ['varldsdel', 'Vilken världsdel?'],
+  ['befolkning', 'Var bor flest människor?'], ['klimat', 'Klimatet i norr och söder'], ['resurser', 'Naturresurser'],
+  ['landskap', 'Sveriges 25 landskap']
+];
+const N = ITEMS.length;
+const KEY = LekOchLar.nyckel('sverigekoll');
+const NAMN = LekOchLar.escape(LekOchLar.namn());
+let done = new Set();
+try { done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch (e) {} };
+const TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 C 6 14.5, 8 17, 9.5 19.5 C 12 13, 16 7.5, 22 3"/></svg>';
+const doneCount = () => ITEMS.filter(([id]) => done.has(id)).length;
+
+$('#sheetList').innerHTML = ITEMS.map(([id, nm]) => '<li><a href="#' + id + '"><span class="box" data-box="' + id + '" aria-hidden="true"></span><span>' + nm + '</span><span class="sr" data-sr="' + id + '"></span></a></li>').join('');
+$$('.box').forEach(b => { b.innerHTML = TICK; });
+
+function renderProgress(){
+  const n = doneCount();
+  $$('[data-box]').forEach(b => b.classList.toggle('on', b.dataset.box === 'all' ? n >= N : done.has(b.dataset.box)));
+  $$('[data-sr]').forEach(s => { s.textContent = done.has(s.dataset.sr) ? ' (klar)' : ''; });
+  $('#progCount').textContent = n === N ? 'Alla ' + N + ' bockade!' : n + ' av ' + N + ' bockade';
+  $('#progBar i').style.width = (n / N * 100) + '%';
+  $('#topCount').textContent = n + '/' + N;
+}
+function complete(id, anchor){
+  if (done.has(id)) return;
+  done.add(id); save(); renderProgress();
+  const nm = ITEMS.find(i => i[0] === id)[1];
+  const all = doneCount() >= N;
+  toast(all ? 'Alla rutor bockade! Nu är du redo för provet.' : 'Bockat av: ' + nm);
+  const box = $('#' + id + ' .st-head .box') || anchor;
+  const r = (anchor || box).getBoundingClientRect();
+  const inView = r.bottom > 0 && r.top < innerHeight;
+  confetti(inView ? r.left + r.width / 2 : innerWidth / 2, inView ? r.top + 20 : innerHeight * .4, all ? 140 : 70);
+}
+let resetArmed = 0;
+$('#reset').addEventListener('click', e => {
+  const b = e.currentTarget;
+  if (!resetArmed){ b.textContent = 'Säker? Tryck igen för att sudda'; resetArmed = setTimeout(() => { resetArmed = 0; b.textContent = 'Sudda alla bockar'; }, 3500); return; }
+  clearTimeout(resetArmed); resetArmed = 0; b.textContent = 'Sudda alla bockar';
+  done.clear(); save(); renderProgress(); toast('Alla bockar är suddade');
+  if (window.lkRefresh) window.lkRefresh();
+});
+
+let toastT = 0;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); }
+
+const confetti = (() => {
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  let parts = [], run = false, last = 0, w = 1, h = 1, dpr = 1;
+  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; };
+  addEventListener('resize', size); size();
+  const cols = ['#1f7a4d', '#5a9ad4', '#f0a23b', '#cc3341', '#69bb7a', '#ffd23f'];
+  function tick(now){
+    const dt = Math.min(.04, (now - last) / 1000); last = now;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    parts = parts.filter(p => (p.life -= dt) > 0 && p.y < h + 30);
+    for (const p of parts){
+      p.vy += 900 * dt; p.vx *= Math.pow(.3, dt); p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = Math.min(1, p.life); ctx.fillStyle = p.c;
+      if (p.s) ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); else { ctx.beginPath(); ctx.arc(0, 0, p.r * .8, 0, 7); ctx.fill(); }
+      ctx.restore();
+    }
+    if (parts.length) requestAnimationFrame(tick); else { run = false; ctx.clearRect(0, 0, w, h); }
+  }
+  return (x, y, n = 70) => {
+    if (RM) return;
+    for (let i = 0; i < n; i++){
+      const a = -Math.PI / 2 + (Math.random() - .5) * 2.4, v = 300 + Math.random() * 450;
+      parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 3 + Math.random() * 4, c: cols[i % cols.length], rot: Math.random() * 6, vr: (Math.random() - .5) * 12, life: 1.6 + Math.random(), s: i % 2 });
+    }
+    if (!run){ run = true; last = performance.now(); requestAnimationFrame(tick); }
+  };
+})();
+
+/* ---------- Kartdata ---------- */
+const KARTA = window.SVERIGE_KARTA;
+const DEL = { gotaland: 'Götaland', svealand: 'Svealand', norrland: 'Norrland' };
+const DELAR = Object.keys(DEL);
+const LS = KARTA.landskap.features.map(f => ({ n: f.properties.name, del: f.properties.part, lbl: f.properties.etikett, g: f.geometry }))
+  .sort((a, b) => a.n.localeCompare(b.n, 'sv'));
+const BY = Object.fromEntries(LS.map(l => [l.n, l]));
+const SJO = Object.fromEntries(KARTA.sjoar.features.map(f => [f.properties.name, f.geometry]));
+
+// Enkel projektion: longitud krymps med cos(62°) så att Sverige får ungefär rätt form.
+const KX = Math.cos(62 * Math.PI / 180), SC = 40, PAD = 4;
+const rings = g => (g.type === 'Polygon' ? [g.coordinates] : g.coordinates);
+let lonMin = 99, lonMax = -99, latMin = 99, latMax = -99;
+LS.forEach(l => rings(l.g).forEach(p => p[0].forEach(([x, y]) => { lonMin = Math.min(lonMin, x); lonMax = Math.max(lonMax, x); latMin = Math.min(latMin, y); latMax = Math.max(latMax, y); })));
+const P = ([lon, lat]) => [(lon - lonMin) * KX * SC + PAD, (latMax - lat) * SC + PAD];
+const W = Math.ceil(P([lonMax, latMin])[0] + PAD), H = Math.ceil(P([lonMax, latMin])[1] + PAD);
+const pathD = g => rings(g).map(p => p.map(r => 'M' + r.map(c => P(c).map(v => v.toFixed(1)).join(' ')).join('L') + 'Z').join('')).join('');
+LS.forEach(l => { l.d = pathD(l.g); });
+const SJO_D = Object.fromEntries(Object.keys(SJO).map(n => [n, pathD(SJO[n])]));
+const viewBox = (lon0, lat0, lon1, lat1) => { const a = P([lon0, lat1]), b = P([lon1, lat0]); return [a[0], a[1], b[0] - a[0], b[1] - a[1]].map(v => v.toFixed(1)).join(' '); };
+const txt = (lonlat, s, cls = '', anchor = 'middle') => { const [x, y] = P(lonlat); return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" text-anchor="' + anchor + '" dominant-baseline="central" class="' + cls + '">' + s + '</text>'; };
+
+function mapSvg({ cls = '', fill = () => '', lakes = null, after = '', label = '', vb = '0 0 ' + W + ' ' + H }){
+  return '<svg class="smap ' + cls + '" viewBox="' + vb + '"' + (label ? ' role="img" aria-label="' + label + '"' : ' aria-hidden="true"') + '>' +
+    LS.map(l => '<path d="' + l.d + '" data-n="' + l.n + '" class="lp ' + fill(l) + '"/>').join('') +
+    (lakes ? Object.keys(SJO_D).map(n => '<path d="' + SJO_D[n] + '" class="lake ' + lakes(n) + '" data-sjo="' + n + '"/>').join('') : '') +
+    after + '</svg>';
+}
+const miniMap = name => mapSvg({ cls: 'mini', fill: l => l.n === name ? 'hl' : '', lakes: () => 'dim' });
+
+/* ---------- Spelmotorer ---------- */
+function sortGame(host, { items, bins, id, count, onDone }){
+  let deck, i, score, piles;
+  const cols = ' style="--cols:' + Math.min(bins.length, 4) + '"';
+  const many = bins.length > 3 ? ' many' : '';
+  const pilesHtml = () => '<div class="piles' + many + '"' + cols + '>' + bins.map((b, k) => '<div class="pile"><b>' + b + '</b><div>' + (piles[k].map(t => '<span class="chip">' + t + '</span>').join('') || '<span class="muted">Tomt än</span>') + '</div></div>').join('') + '</div>';
+  function start(){ deck = shuffle(items).slice(0, count || items.length); i = 0; score = 0; piles = bins.map(() => []); render(false); }
+  function render(focus){
+    if (i >= deck.length) return end();
+    const it = deck[i];
+    host.innerHTML =
+      '<div class="g-top"><span>Kort ' + (i + 1) + ' av ' + deck.length + '</span><span class="g-score">' + score + ' rätt</span></div>' +
+      '<div class="sort-card pop"><div class="sc-pic" aria-hidden="true">' + (it.p || '') + '</div><p class="sc-t" tabindex="-1">' + it.t + '</p></div>' +
+      '<div class="sort-btns' + many + '"' + cols + '>' + bins.map((b, k) => '<button class="bin" data-k="' + k + '">' + b + '</button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite"></p>' +
+      '<div class="g-next"><button class="btn primary" hidden>' + (i === deck.length - 1 ? 'Se resultatet' : 'Nästa kort') + '</button></div>' + pilesHtml();
+    $$('.bin', host).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k, b)));
+    $('.g-next .btn', host).addEventListener('click', () => { i++; render(true); });
+    if (focus) $('.sc-t', host).focus({ preventScroll: true });
+  }
+  function answer(k, btn){
+    const it = deck[i], ok = k === it.a;
+    $$('.bin', host).forEach(b => { b.disabled = true; });
+    btn.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) $('.bin[data-k="' + it.a + '"]', host).classList.add('right');
+    if (ok) score++;
+    piles[it.a].push(it.s || it.t);
+    $('.g-score', host).textContent = score + ' rätt';
+    $('.g-feed', host).innerHTML = '<b>' + (ok ? pick(YES) : 'Inte riktigt.') + '</b> ' + it.x;
+    $('.piles', host).outerHTML = pilesHtml();
+    const nb = $('.g-next .btn', host); nb.hidden = false; nb.focus({ preventScroll: true });
+  }
+  function end(){
+    const all = score === deck.length;
+    host.innerHTML = '<div class="g-end"><p class="big">' + score + '<small> av ' + deck.length + ' rätt</small></p><p>' + (all ? 'Alla rätt, snyggt!' : score >= deck.length * .7 ? 'Bra jobbat! Spela gärna en gång till.' : 'Bra försök! Läs rutan bredvid och spela igen.') + '</p><button class="btn ghost">Spela igen</button></div>' + pilesHtml();
+    $('.g-end .btn', host).addEventListener('click', () => start());
+    if (id) complete(id, host);
+    if (onDone) onDone(host, score);
+  }
+  start();
+}
+
+function orderGame(host, { steps, onDone, onStep, onStart, doneText }){
+  let n;
+  function start(){
+    n = 0;
+    if (onStart) onStart();
+    host.innerHTML = '<ol class="ord-list">' + steps.map((s, k) => '<li class="slot"><span class="sn">' + (k + 1) + '</span><span class="st"></span></li>').join('') + '</ol>' +
+      '<div class="ord-pool" role="group" aria-label="Att lägga i ordning">' + shuffle(steps.map((s, k) => k)).map(k => '<button class="chip-btn" data-k="' + k + '">' + steps[k].t + '</button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite">Tryck på den som kommer först.</p>';
+    $$('.chip-btn', host).forEach(b => b.addEventListener('click', () => tap(+b.dataset.k, b)));
+  }
+  function tap(k, b){
+    const fb = $('.g-feed', host);
+    if (k === n){
+      const slot = $$('.slot', host)[n];
+      slot.classList.add('filled');
+      $('.st', slot).innerHTML = '<b>' + steps[k].t + '</b>' + (steps[k].d ? '<small>' + steps[k].d + '</small>' : '');
+      b.remove(); n++;
+      if (onStep) onStep(k);
+      if (n === steps.length){
+        fb.innerHTML = '<b>Helt rätt ordning!</b> ' + (doneText || '');
+        const again = document.createElement('button'); again.className = 'btn ghost'; again.textContent = 'Blanda och gör om'; again.style.marginTop = '10px';
+        again.addEventListener('click', start); host.appendChild(again);
+        if (onDone) onDone(host);
+      } else {
+        const nxt = $('.chip-btn', host); if (nxt) nxt.focus({ preventScroll: true });
+        fb.innerHTML = '<b>' + pick(YES) + '</b> Vilken kommer sedan?';
+      }
+    } else {
+      b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+      fb.innerHTML = '<b>Inte än.</b> ' + (steps[n].h || 'Tänk efter vilken som kommer först.');
+    }
+  }
+  start();
+}
+
+function quiz(host, { qs, onDone, endText }){
+  let i, score;
+  function start(focus){ i = 0; score = 0; render(focus); }
+  function render(focus){
+    if (i >= qs.length) return end(focus);
+    const q = qs[i];
+    const opts = q.keep ? q.o.map((t, k) => ({ t, k })) : shuffle(q.o.map((t, k) => ({ t, k })));
+    host.innerHTML = '<div class="g-top"><span>Fråga ' + (i + 1) + ' av ' + qs.length + '</span><span class="g-score">' + score + ' rätt</span></div>' +
+      '<h3 class="q-t" tabindex="-1">' + q.q + '</h3>' +
+      '<div class="q-opts">' + opts.map((o, j) => '<button class="q-opt" data-k="' + o.k + '"><span class="k" aria-hidden="true">' + 'ABCD'[j] + '</span><span>' + o.t + '</span></button>').join('') + '</div>' +
+      '<p class="g-feed" aria-live="polite"></p>' +
+      '<div class="g-next"><button class="btn primary" hidden>' + (i === qs.length - 1 ? 'Se resultatet' : 'Nästa fråga') + '</button></div>';
+    $$('.q-opt', host).forEach(b => b.addEventListener('click', () => answer(+b.dataset.k, b)));
+    $('.g-next .btn', host).addEventListener('click', () => { i++; render(true); });
+    if (focus) $('.q-t', host).focus({ preventScroll: true });
+  }
+  function answer(k, btn){
+    const q = qs[i], ok = k === q.a;
+    $$('.q-opt', host).forEach(b => { b.disabled = true; if (+b.dataset.k === q.a) b.classList.add('right'); });
+    if (!ok) btn.classList.add('wrong'); else score++;
+    $('.g-score', host).textContent = score + ' rätt';
+    $('.g-feed', host).innerHTML = '<b>' + (ok ? pick(YES) : 'Inte riktigt.') + '</b> ' + q.x;
+    const nb = $('.g-next .btn', host); nb.hidden = false; nb.focus({ preventScroll: true });
+  }
+  function end(focus){
+    host.innerHTML = '<div class="g-end"><p class="big">' + score + '<small> av ' + qs.length + ' rätt</small></p><p class="q-t" tabindex="-1" style="margin:12px 0 16px">' + (endText ? endText(score, qs.length) : (score === qs.length ? 'Alla rätt!' : 'Bra jobbat!')) + '</p><button class="btn ghost">Gör om</button></div>';
+    $('.g-end .btn', host).addEventListener('click', () => start(true));
+    if (focus) $('.q-t', host).focus({ preventScroll: true });
+    if (onDone) onDone(host, score);
+  }
+  start(false);
+}
+
+// Para ihop: tryck på något i vänster kolumn och sedan på det som hör ihop i höger.
+function matchGame(host, { pairs, onDone }){
+  let sel, left;
+  function start(){
+    sel = null; left = pairs.length;
+    host.innerHTML = '<div class="match"><div class="col" data-side="a">' +
+      shuffle(pairs.map((p, k) => k)).map(k => '<button class="m-btn" data-k="' + k + '" aria-pressed="false"><span class="e" aria-hidden="true">' + pairs[k].e + '</span><b>' + pairs[k].a + '</b></button>').join('') +
+      '</div><div class="col" data-side="b">' +
+      shuffle(pairs.map((p, k) => k)).map(k => '<button class="m-btn" data-k="' + k + '">' + pairs[k].b + '</button>').join('') +
+      '</div></div><p class="g-feed" aria-live="polite">Börja med en naturresurs till vänster.</p>';
+    $$('[data-side="a"] .m-btn', host).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('done')) return;
+      $$('[data-side="a"] .m-btn', host).forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true'); sel = +b.dataset.k;
+      $('.g-feed', host).innerHTML = 'Vad ger oss <b>' + pairs[sel].a.toLowerCase() + '</b>? Tryck till höger.';
+    }));
+    $$('[data-side="b"] .m-btn', host).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('done')) return;
+      const fb = $('.g-feed', host);
+      if (sel === null){ fb.innerHTML = '<b>Välj först</b> en naturresurs till vänster.'; return; }
+      const k = +b.dataset.k;
+      if (k === sel){
+        const a = $('[data-side="a"] .m-btn[data-k="' + k + '"]', host);
+        [a, b].forEach(x => { x.classList.add('done'); x.setAttribute('aria-pressed', 'false'); x.disabled = true; });
+        sel = null; left--;
+        fb.innerHTML = '<b>' + pick(YES) + '</b> ' + pairs[k].x;
+        if (!left){
+          fb.innerHTML = '<b>Alla par klara!</b> ' + pairs[k].x;
+          const again = document.createElement('button'); again.className = 'btn ghost'; again.textContent = 'Blanda och gör om'; again.style.marginTop = '10px';
+          again.addEventListener('click', start); host.appendChild(again);
+          if (onDone) onDone(host);
+        }
+      } else {
+        b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong');
+        fb.innerHTML = '<b>Inte riktigt.</b> Det där hör inte ihop med ' + pairs[sel].a.toLowerCase() + '.';
+      }
+    }));
+  }
+  start();
+}
+
+/* ---------- 1 Sjöar ---------- */
+(function sjoar(){
+  const L5 = [
+    { n: 'Vänern', km: '5 650', d: 'Sveriges största sjö. Ligger mellan Värmland, Dalsland och Västergötland.', at: [13.25, 58.9], lbl: [13.25, 58.9], a: 'middle' },
+    { n: 'Vättern', km: '1 890', d: 'Lång och smal. Ligger mellan Västergötland och Östergötland.', at: [14.55, 58.3], lbl: [15.05, 58.15], a: 'start' },
+    { n: 'Mälaren', km: '1 140', d: 'Stockholm ligger där Mälaren möter havet. Uppland, Västmanland och Södermanland.', at: [17.0, 59.45], lbl: [17.1, 59.98], a: 'middle' },
+    { n: 'Hjälmaren', km: '480', d: 'Ligger nära Örebro, mest i Närke och Södermanland.', at: [15.8, 59.24], lbl: [15.8, 58.98], a: 'middle' },
+    { n: 'Storsjön', km: '460', d: 'Den enda av de fem som ligger i Norrland, i Jämtland. Östersund ligger vid sjön.', at: [14.35, 63.1], lbl: [14.95, 63.15], a: 'start' }
+  ];
+  $('#lakeList').innerHTML = L5.map((l, k) => '<li><span class="sn">' + (k + 1) + '</span><span><b>' + l.n + '</b><small>' + l.d + '</small></span><span class="km">' + l.km + ' km²</span></li>').join('');
+  const host = $('#lakeMap');
+  const tags = L5.map((l, k) => '<g class="tag" data-tag="' + l.n + '">' + txt(l.lbl, (k + 1) + '. ' + l.n, '', l.a) + '</g>').join('');
+  host.innerHTML = mapSvg({ vb: viewBox(11.2, 57.6, 19.0, 63.75), lakes: n => n === 'Siljan' ? 'dim' : '', after: tags, label: 'Karta över mellersta Sverige med de fem största sjöarna' });
+  const mark = (name, on) => { const g = $('[data-tag="' + name + '"]', host); if (g) g.classList.toggle('on', on); const p = $('[data-sjo="' + name + '"]', host); if (p) p.classList.toggle('hl', on); };
+  orderGame($('#gSjoar'), {
+    onStart: () => L5.forEach(l => mark(l.n, false)),
+    onStep: k => mark(L5[k].n, true),
+    onDone: h => complete('sjoar', h),
+    doneText: 'Vi Vill Mysa Hela Sommaren: Vänern, Vättern, Mälaren, Hjälmaren, Storsjön.',
+    steps: L5.map((l, k) => ({ t: l.n, d: l.km + ' km². ' + l.d, h: ['Den största är så stor att den nästan är ett innanhav. Den börjar på V.', 'Den näst största börjar också på V.', 'Stockholm ligger vid den här sjön.', 'Den här ligger nära Örebro.', 'Den minsta av de fem ligger i Jämtland.'][k] }))
+  });
+})();
+
+/* ---------- 2 Natur- och kulturlandskap ---------- */
+const NAT = 'Naturen har format det, människan har inte ändrat så mycket.', KUL = 'Människor har format och ändrat det.';
+sortGame($('#gTyp'), { id: 'landskapstyp', bins: ['Naturlandskap', 'Kulturlandskap'], count: 12, items: [
+  { p: '🏔️', t: 'Höga fjäll med snö på topparna', s: 'Fjäll', a: 0, x: NAT },
+  { p: '🌲', t: 'Urskog där ingen har huggit träd', s: 'Urskog', a: 0, x: 'En urskog har vuxit av sig själv i hundratals år.' },
+  { p: '🟫', t: 'En stor myr i Norrland', s: 'Myr', a: 0, x: NAT + ' En myr är blöt mark med mossa.' },
+  { p: '🪨', t: 'Klippor och skär vid havet', s: 'Klippor vid havet', a: 0, x: 'Vågor och is har format klipporna.' },
+  { p: '🌊', t: 'En vild älv med forsar', s: 'Vild älv', a: 0, x: 'Ingen har byggt något i älven. ' + NAT },
+  { p: '❄️', t: 'En glaciär i fjällen', s: 'Glaciär', a: 0, x: NAT },
+  { p: '🌾', t: 'En åker med vete', s: 'Åker', a: 1, x: KUL + ' Bonden plöjer och sår.' },
+  { p: '🏙️', t: 'En stad med hus och gator', s: 'Stad', a: 1, x: 'Allt i en stad är byggt av människor.' },
+  { p: '🐄', t: 'En betesmark med kor', s: 'Betesmark', a: 1, x: 'Korna betar för att bonden har satt dem där. ' + KUL },
+  { p: '🛣️', t: 'En motorväg', s: 'Motorväg', a: 1, x: 'Vägar byggs av människor.' },
+  { p: '⚓', t: 'En hamn med båtar', s: 'Hamn', a: 1, x: KUL },
+  { p: '⚡', t: 'Ett vattenkraftverk i en älv', s: 'Kraftverk', a: 1, x: 'Människor har byggt en damm i älven. Då är det inte vilt längre.' },
+  { p: '🌲', t: 'Planterad skog där träden står i raka rader', s: 'Planterad skog', a: 1, x: 'Klurig! Skogen är planterad av människor, så den räknas som kulturlandskap.' },
+  { p: '⛳', t: 'En golfbana', s: 'Golfbana', a: 1, x: 'Gräset klipps och banan är byggd av människor.' }
+]});
+
+/* ---------- 3 Vattendrag ---------- */
+(function vattendrag(){
+  const scene = inner => '<svg viewBox="0 0 120 80" aria-hidden="true"><rect width="120" height="80" fill="#8cc06b"/><circle cx="18" cy="16" r="7" fill="#2f7d43"/><circle cx="100" cy="64" r="8" fill="#2f7d43"/><circle cx="108" cy="14" r="6" fill="#2f7d43"/>' + inner + '</svg>';
+  const river = w => '<path d="M-5 20 C 30 20, 35 60, 70 55 S 100 25, 125 40" fill="none" stroke="#3e8fd6" stroke-width="' + w + '" stroke-linecap="round"/>';
+  const T = [
+    ['Sjö', 'står stilla', scene('<path d="M25 30 C 30 12, 80 10, 92 28 S 85 68, 55 66 S 20 48, 25 30Z" fill="#3e8fd6"/>')],
+    ['Älv', 'störst, rinner till havet', scene(river(18))],
+    ['Å', 'mellanstor', scene(river(8))],
+    ['Bäck', 'liten', scene(river(2.5))]
+  ];
+  $('#wTiles').innerHTML = T.map(t => '<div class="wtile">' + t[2] + '<b>' + t[0] + '</b><small>' + t[1] + '</small></div>').join('');
+  sortGame($('#gVatten'), { id: 'vattendrag', bins: ['Sjö', 'Älv', 'Å', 'Bäck'], count: 10, items: [
+    { p: '💧', t: 'Vattnet står nästan stilla och har land runt omkring', s: 'Står stilla', a: 0, x: 'Det är en sjö.' },
+    { p: '💧', t: 'Vänern', a: 0, x: 'Vänern är Sveriges största sjö.' },
+    { p: '💧', t: 'Storsjön i Jämtland', s: 'Storsjön', a: 0, x: 'Ordet sjö finns i namnet!' },
+    { p: '💧', t: 'Ett jättestort vattendrag som rinner från fjällen ända ut i havet', s: 'Från fjällen till havet', a: 1, x: 'Det är en älv. De flesta stora älvar finns i Norrland.' },
+    { p: '💧', t: 'Torne älv', a: 1, x: 'Torne älv är gräns mot Finland längst upp i norr.' },
+    { p: '💧', t: 'Här bygger man vattenkraftverk som gör el', s: 'Vattenkraft', a: 1, x: 'Älvarna har mycket vatten som forsar fram. Det ger el.' },
+    { p: '💧', t: 'Större än en bäck, men mindre än en älv', s: 'Mellanstor', a: 2, x: 'Det är en å.' },
+    { p: '💧', t: 'Fyrisån i Uppsala', s: 'Fyrisån', a: 2, x: 'Ån finns i namnet: Fyris-ån.' },
+    { p: '💧', t: 'Så smal att du kan hoppa över den', s: 'Hoppa över', a: 3, x: 'Det är en bäck, det minsta vattendraget.' },
+    { p: '💧', t: 'En liten porlande ränna genom skogen', s: 'Porlande ränna', a: 3, x: 'En bäck är liten och porlar.' },
+    { p: '💧', t: 'Det minsta vattendraget', s: 'Minst', a: 3, x: 'Från minst till störst: bäck, å, älv.' }
+  ]});
+})();
+
+/* ---------- 4 Landsdelar ---------- */
+(function landsdelar(){
+  const host = $('#delMap'), info = $('#delInfo');
+  const names = txt([14.1, 57.25], 'Götaland', 'big') + txt([14.9, 59.95], 'Svealand', 'big') + txt([17.4, 65.4], 'Norrland', 'big');
+  host.innerHTML = mapSvg({ cls: 'tap', fill: l => 'd-' + l.del, after: names, label: 'Karta över Sveriges tre landsdelar' });
+  host.addEventListener('click', e => {
+    const p = e.target.closest('[data-n]'); if (!p) return;
+    $$('.lp.sel', host).forEach(x => x.classList.remove('sel'));
+    p.classList.add('sel');
+    const l = BY[p.dataset.n];
+    info.innerHTML = '<b>' + l.n + '</b> ligger i <b>' + DEL[l.del] + '</b>.';
+  });
+  const legend = document.createElement('div'); legend.className = 'legend';
+  legend.innerHTML = DELAR.map(d => '<span><i style="background:var(--' + d.slice(0, 4) + ')"></i>' + DEL[d] + '</span>').join('');
+  host.after(legend);
+  sortGame($('#gDelar'), { id: 'landsdelar', bins: DELAR.map(d => DEL[d]), count: 12, items: LS.map(l => ({
+    get p(){ return miniMap(l.n); }, t: l.n, a: DELAR.indexOf(l.del), x: l.n + ' ligger i ' + DEL[l.del] + '.'
+  }))});
+})();
+
+/* ---------- 5 Naturtyper ---------- */
+$('#waffle').innerHTML = [['skog', 69], ['fjall', 21], ['jord', 7], ['stad', 3]].map(([c, n]) => ('<i class="w-' + c + '"></i>').repeat(n)).join('');
+quiz($('#gNatur'), { onDone: h => complete('naturtyper', h), endText: (s, n) => s === n ? 'Alla rätt! Skog, fjäll, jordbruk och kust. Skog är vanligast.' : 'Bra! Kom ihåg: skog är vanligast i Sverige.', qs: [
+  { q: 'Vilken naturtyp är vanligast i Sverige?', o: ['Skog', 'Fjäll', 'Åkrar', 'Kust'], a: 0, x: 'Ungefär 7 av 10 delar av Sveriges mark är skog.' },
+  { q: 'Var i Sverige finns fjällen?', o: ['I nordväst, längs gränsen mot Norge', 'I Skåne längst i söder', 'På Gotland'], a: 0, x: 'Fjällen går längs gränsen mot Norge. Sveriges högsta berg, Kebnekaise, ligger i Lappland.' },
+  { q: 'Var finns det mest åkrar och jordbruk?', o: ['I södra Sverige, till exempel i Skåne', 'Uppe på fjällen', 'Mitt i Norrlands skogar'], a: 0, x: 'I söder är jorden bördig och somrarna långa. Där är det bra att odla.' },
+  { q: 'Vilka tre är naturtyper i Sverige?', o: ['Skog, fjäll och kust', 'Öken, regnskog och savann', 'Vulkaner, öken och djungel'], a: 0, x: 'Skog, fjäll, kust och jordbruksmark finns i Sverige. Öken och regnskog finns inte här.' }
+]});
+
+/* ---------- 6 Världsdel ---------- */
+quiz($('#gVarld'), { onDone: h => complete('varldsdel', h), endText: (s, n) => s === n ? 'Alla rätt! Sverige ligger i norra Europa.' : 'Bra! Kom ihåg: Sverige ligger i Europa.', qs: [
+  { q: 'I vilken världsdel ligger Sverige?', o: ['Europa', 'Asien', 'Nordamerika', 'Afrika'], a: 0, x: 'Sverige ligger i norra Europa.' },
+  { q: 'Vilka länder har landgräns mot Sverige?', o: ['Norge och Finland', 'Danmark och Tyskland', 'Island och Polen'], a: 0, x: 'Norge i väster och Finland i öster. Till Danmark kommer man över Öresundsbron.' },
+  { q: 'Vad kallas Sverige, Norge, Danmark, Finland och Island tillsammans?', o: ['Norden', 'Sydeuropa', 'Asien'], a: 0, x: 'De fem länderna kallas Norden.' },
+  { q: 'Vilket land kommer man till över Öresundsbron från Malmö?', o: ['Danmark', 'Norge', 'Finland'], a: 0, x: 'Öresundsbron går mellan Malmö och Köpenhamn i Danmark.' }
+]});
+
+/* ---------- 7 Befolkning ---------- */
+(function befolkning(){
+  // Ungefärliga invånare i tätorten, i tusental. Bara för prickarnas storlek.
+  const C = [
+    ['Stockholm', 18.07, 59.33, 1650, 1], ['Göteborg', 11.97, 57.71, 610, 1], ['Malmö', 13.0, 55.6, 360, 1],
+    ['Uppsala', 17.64, 59.86, 180], ['Västerås', 16.55, 59.61, 130], ['Örebro', 15.21, 59.27, 125], ['Linköping', 15.62, 58.41, 115],
+    ['Helsingborg', 12.69, 56.05, 115], ['Jönköping', 14.16, 57.78, 100], ['Norrköping', 16.19, 58.59, 95], ['Umeå', 20.26, 63.83, 90],
+    ['Gävle', 17.14, 60.67, 80], ['Sundsvall', 17.31, 62.39, 55], ['Luleå', 22.15, 65.58, 50], ['Östersund', 14.64, 63.18, 50], ['Kiruna', 20.23, 67.86, 17]
+  ];
+  const dots = C.map(([n, lon, lat, pop]) => { const [x, y] = P([lon, lat]); return '<circle class="city" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (Math.sqrt(pop) * .55 + 1.5).toFixed(1) + '"><title>' + n + '</title></circle>'; }).join('');
+  const names = C.filter(c => c[4]).map(([n, lon, lat]) => txt([lon + (n === 'Göteborg' ? .35 : n === 'Malmö' ? .35 : .5), lat + (n === 'Stockholm' ? .45 : 0)], n, '', n === 'Stockholm' ? 'end' : 'start')).join('');
+  $('#folkMap').innerHTML = mapSvg({ after: dots + names });
+  sortGame($('#gFolk'), { id: 'befolkning', bins: ['Ja, ett skäl', 'Nej'], count: 10, items: [
+    { p: '☀️', t: 'Klimatet är mildare och somrarna är längre', s: 'Mildare klimat', a: 0, x: 'Det är lättare att leva och odla där det är varmare.' },
+    { p: '🌾', t: 'Jorden är bördig och bra att odla på', s: 'Bra jord', a: 0, x: 'Förr behövde alla odla sin egen mat. Därför bosatte sig många där jorden var bra.' },
+    { p: '🏗️', t: 'Marken är platt och lätt att bygga på', s: 'Platt mark', a: 0, x: 'Det är lättare att bygga städer och vägar på platt mark.' },
+    { p: '🚢', t: 'Det är nära till andra länder i Europa, bra för handel', s: 'Nära Europa', a: 0, x: 'Från södra Sverige är det nära till Danmark, Tyskland och resten av Europa.' },
+    { p: '🏢', t: 'Det finns många jobb och skolor i de stora städerna', s: 'Jobb i städerna', a: 0, x: 'Många flyttar dit jobben finns.' },
+    { p: '⚓', t: 'Städerna vid kusten har hamnar för båtar', s: 'Hamnar', a: 0, x: 'Med båt har man kunnat handla med andra länder i hundratals år.' },
+    { p: '🏔️', t: 'Där finns Sveriges högsta fjäll', s: 'Höga fjäll', a: 1, x: 'Nej, fjällen finns i norr och väster. Där bor ganska få.' },
+    { p: '🥶', t: 'Där är vintrarna längst och kallast', s: 'Längst vinter', a: 1, x: 'Nej, vintrarna är längst i norr.' },
+    { p: '🌙', t: 'Där är det midnattssol på sommaren', s: 'Midnattssol', a: 1, x: 'Nej, midnattssol finns bara längst upp i norr.' },
+    { p: '🌲', t: 'Där finns det mest skog och myrar', s: 'Mest skog och myr', a: 1, x: 'Nej, den största delen av skogen och myrarna finns i Norrland.' }
+  ]});
+})();
+
+/* ---------- 8 Klimat ---------- */
+(function klimat(){
+  const SEA = [['Vinter', 'vinter'], ['Vår', 'vaar'], ['Sommar', 'sommar'], ['Höst', 'host']];
+  // Ungefärliga månader per årstid, ungefär som i häftet. Olika år blir olika.
+  const CITIES = [
+    { n: 'Luleå', pos: [22.15, 65.58], m: [6, 1.5, 2.5, 2], t: 'Norr' },
+    { n: 'Stockholm', pos: [18.07, 59.33], m: [3.5, 2.5, 3.5, 2.5], t: 'Mitten' },
+    { n: 'Malmö', pos: [13.0, 55.6], m: [2, 2.5, 4.5, 3], t: 'Söder' }
+  ];
+  const months = m => (m % 1 ? (m | 0 ? (m | 0) + '½' : '½') : m) + ' mån';
+  function pie(m){
+    let a0 = -Math.PI / 2, out = '';
+    m.forEach((v, k) => {
+      const a1 = a0 + v / 12 * Math.PI * 2, big = a1 - a0 > Math.PI ? 1 : 0;
+      const x0 = 60 + 56 * Math.cos(a0), y0 = 60 + 56 * Math.sin(a0), x1 = 60 + 56 * Math.cos(a1), y1 = 60 + 56 * Math.sin(a1);
+      out += '<path d="M60 60L' + x0.toFixed(1) + ' ' + y0.toFixed(1) + 'A56 56 0 ' + big + ' 1 ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'Z" fill="var(--' + SEA[k][1] + ')" stroke="var(--paper)" stroke-width="1.5"/>';
+      if (v >= 2){ const am = (a0 + a1) / 2; out += '<text x="' + (60 + 34 * Math.cos(am)).toFixed(1) + '" y="' + (60 + 34 * Math.sin(am)).toFixed(1) + '">' + SEA[k][0] + '</text>'; }
+      a0 = a1;
+    });
+    return '<svg viewBox="0 0 120 120" aria-hidden="true">' + out + '</svg>';
+  }
+  $('#pies').innerHTML = CITIES.map(c => '<div class="pie"><h3>' + c.n + '</h3><p class="muted" style="margin-top:-4px">' + c.t + '</p>' + pie(c.m) +
+    '<ul aria-label="Årstider i ' + c.n + '">' + SEA.map((s, k) => '<li><i style="background:var(--' + s[1] + ')"></i>' + s[0] + ' ' + months(c.m[k]) + '</li>').join('') + '</ul></div>').join('');
+  const dots = CITIES.map(c => { const [x, y] = P(c.pos); return '<circle class="city" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="11"/>'; }).join('');
+  $('#klimMap').innerHTML = mapSvg({ after: dots, label: 'Luleå i norr, Stockholm i mitten och Malmö i söder' });
+  sortGame($('#gKlimat'), { id: 'klimat', bins: ['Norr', 'Söder', 'Båda'], count: 10, items: [
+    { p: '🥶', t: 'Långa och kalla vintrar', a: 0, x: 'I Luleå är det vinter ungefär halva året.' },
+    { p: '🌤️', t: 'Korta och svala somrar', a: 0, x: 'I norr är sommaren kort och inte så varm.' },
+    { p: '🌞', t: 'Längre och varmare somrar', a: 1, x: 'I Malmö är sommaren ungefär dubbelt så lång som i Luleå.' },
+    { p: '🌷', t: 'Våren kommer tidigare', a: 1, x: 'I söder kan det bli vår redan i februari eller mars.' },
+    { p: '🍂', t: 'Det finns fyra årstider', a: 2, x: 'Vinter, vår, sommar och höst finns i hela Sverige.' },
+    { p: '🌙', t: 'Midnattssol: solen går inte ner på sommaren', s: 'Midnattssol', a: 0, x: 'Bara längst upp i norr, norr om polcirkeln.' },
+    { p: '🌑', t: 'Mörkertid: solen går inte upp mitt i vintern', s: 'Mörkertid', a: 0, x: 'Längst i norr syns inte solen alls på några veckor i december.' },
+    { p: '⛄', t: 'Snön ligger kvar ungefär halva året', s: 'Snö halva året', a: 0, x: 'I norra Sverige kan snön ligga från oktober till maj.' },
+    { p: '🌧️', t: 'Vintern kan vara så mild att det knappt blir någon snö', s: 'Mild vinter', a: 1, x: 'I Skåne blir det ibland nästan ingen snö alls.' },
+    { p: '🌡️', t: 'Det är varmare på sommaren än på vintern', s: 'Varmare på sommaren', a: 2, x: 'Så är det överallt i Sverige.' },
+    { p: '🚜', t: 'Lång tid på året att odla på åkrarna', s: 'Lång odlingstid', a: 1, x: 'Den långa, varma sommaren är bra för jordbruket.' },
+    { p: '🍁', t: 'Löven på träden ändrar färg på hösten', s: 'Färgglada löv', a: 2, x: 'Hösten kommer både i norr och söder, men tidigare i norr.' }
+  ]});
+})();
+
+/* ---------- 9 Naturresurser ---------- */
+matchGame($('#gRes'), { onDone: h => complete('resurser', h), pairs: [
+  { e: '⛏️', a: 'Malm (järn)', b: 'Blir järn och stål. Sverige säljer mycket till andra länder.', x: 'Järnmalm bryts i gruvor, till exempel i Kiruna.' },
+  { e: '🌲', a: 'Skog', b: 'Papper, möbler och hus.', x: 'Trä och virke från skogen säljs (exporteras) också till andra länder.' },
+  { e: '🟠', a: 'Koppar', b: 'Vattenrör och elkablar.', x: 'Koppar behövs för vårt vatten och för att bygga.' },
+  { e: '💧', a: 'Vatten', b: 'El från vattenkraftverk.', x: 'Vattnet i älvarna snurrar turbiner som gör el.' },
+  { e: '🐟', a: 'Fisk', b: 'Mat från havet och sjöarna.', x: 'Fisk ger oss mat.' },
+  { e: '🌾', a: 'Åkrar', b: 'Vete, råg, korn och havre till bröd och gröt.', x: 'På åkrarna odlas säd som ger oss mat.' }
+]});
+
+/* ---------- 10 Landskap ---------- */
+(function landskap(){
+  const el = $('#lkMap'), panel = $('#lkPanel');
+  if (!window.L){ el.innerHTML = '<p class="lk-fail">Kartan kunde inte laddas. Kolla att du har internet och ladda om sidan.</p>'; return; }
+
+  // Samma projektion som de små kartorna. CRS.Simple: lat = y, lng = x.
+  const toLL = c => L.latLng(c[1], c[0] * KX);
+  const map = L.map(el, { crs: L.CRS.Simple, zoomSnap: .25, zoomDelta: .5, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, attributionControl: true, maxBoundsViscosity: .9 });
+  map.attributionControl.setPrefix(false).addAttribution('© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, Natural Earth');
+  const lay = {}, lbl = {};
+  const geo = L.geoJSON(KARTA.landskap, {
+    coordsToLatLng: toLL,
+    style: () => ({ className: 'lk-p' }),
+    onEachFeature: (f, layer) => { lay[f.properties.name] = layer; layer.on('click', () => tap(f.properties.name)); }
+  }).addTo(map);
+  L.geoJSON(KARTA.sjoar, { coordsToLatLng: toLL, interactive: false, style: () => ({ className: 'lk-lake' }) }).addTo(map);
+  LS.forEach(l => {
+    lbl[l.n] = L.marker(toLL(l.lbl), { interactive: false, keyboard: false, icon: L.divIcon({ className: 'lk-lbl', html: '<span>' + l.n + '</span>', iconSize: null }) });
+  });
+
+  let minZoom = 0;
+  const bounds = geo.getBounds();
+  function fit(){
+    map.setMinZoom(0);
+    map.fitBounds(bounds, { padding: [8, 8] });
+    minZoom = map.getZoom();
+    map.setMinZoom(minZoom);
+    map.setMaxZoom(minZoom + 3);
+    map.setMaxBounds(bounds.pad(.08));
+    syncDrag();
+  }
+  // Dra bara i kartan när den är inzoomad. Annars ska fingret kunna scrolla sidan.
+  function syncDrag(){ map.getZoom() > minZoom + .01 ? map.dragging.enable() : map.dragging.disable(); }
+  map.on('zoomend', syncDrag);
+  let rt = 0;
+  // Behåll barnets zoom om kartan bara ändrar storlek lite (t.ex. adressfältet på mobilen).
+  new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => { const zoomed = map.getZoom() > minZoom + .01; map.invalidateSize(); if (!zoomed) fit(); }, 120); }).observe(el);
+  fit();
+
+  const SUB = 'landskap:';
+  let mode = 'lar', filter = 'alla', sel = null, round = null;
+  const inFilter = l => filter === 'alla' || l.del === filter;
+  const pool = () => LS.filter(inFilter).map(l => l.n);
+  const norm = s => s.toLocaleLowerCase('sv').replace(/\s+/g, ' ').trim();
+  function lev(a, b){
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+
+  function paint(){
+    LS.forEach(l => {
+      const p = lay[l.n].getElement(); if (!p) return;
+      const r = round && round.res[l.n];
+      let c = 'lk-p leaflet-interactive';
+      if (!inFilter(l)) c += ' out';
+      else if (mode === 'lar') c += ' d-' + l.del + (sel === l.n ? ' sel' : '');
+      else if (r) c += ' ' + r;
+      if (round && round.flash === l.n) c += ' flash';
+      if (round && (round.show === l.n || (mode === 'skriv' && !round.over && round.list[round.i] === l.n && !r))) c += ' target';
+      p.setAttribute('class', c);
+      const show = inFilter(l) && (mode === 'lar' || !!r || (round && round.flash === l.n));
+      const m = lbl[l.n];
+      if (show && !map.hasLayer(m)) m.addTo(map); else if (!show && map.hasLayer(m)) m.remove();
+      const ic = m.getElement();
+      if (ic) ic.className = ic.className.replace(/ ?(good|bad)\b/g, '') + (r === 'miss' ? ' bad' : r === 'ok' && mode !== 'lar' ? ' good' : '');
+    });
+  }
+
+  function newRound(){
+    round = { list: shuffle(pool()), i: 0, score: 0, tries: 0, res: {}, flash: null, show: null, over: false, all: filter === 'alla' };
+  }
+
+  function render(focus){
+    clearTimeout(render.t);
+    $$('.mode').forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.mode === mode));
+      const k = b.dataset.mode;
+      const span = $('span', b);
+      if (k !== 'lar') span.innerHTML = done.has(SUB + k) ? '<span class="ok">Klar ✓</span>' : (k === 'hitta' ? 'Tryck på kartan' : 'Skriv namnet');
+    });
+    $$('.fbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === filter)));
+    $('#lk').classList.toggle('asking', mode !== 'lar' && !!round && !round.over);
+    if (mode === 'lar') renderLar();
+    else if (!round || round.over) renderEnd();
+    else renderAsk(focus);
+    paint();
+  }
+
+  function renderLar(){
+    const groups = DELAR.filter(d => filter === 'alla' || d === filter);
+    panel.innerHTML = '<h3>Lär dig var de ligger</h3><p class="hint">Tryck på ett landskap på kartan eller i listan. Läs namnen högt och peka på kartan.</p>' +
+      '<p class="map-info" id="lkInfo">' + (sel ? '<b>' + sel + '</b> ligger i ' + DEL[BY[sel].del] + '.' : 'Färgerna visar landsdelarna.') + '</p>' +
+      '<div class="lk-list" style="margin-top:12px">' + groups.map(d => '<div><h4><i style="background:var(--' + d.slice(0, 4) + ')"></i>' + DEL[d] + '</h4><ul>' +
+        LS.filter(l => l.del === d).map(l => '<li><button data-n="' + l.n + '" aria-pressed="' + (sel === l.n) + '">' + l.n + '</button></li>').join('') + '</ul></div>').join('') + '</div>' +
+      '<div class="lk-row" style="margin-top:14px"><button class="btn primary small" data-go="hitta">Testa dig: Hitta</button><button class="btn ghost small" data-go="skriv">Testa dig: Skriv</button></div>';
+    $$('.lk-list button', panel).forEach(b => b.addEventListener('click', () => { sel = b.dataset.n; render(); }));
+    $$('[data-go]', panel).forEach(b => b.addEventListener('click', () => setMode(b.dataset.go)));
+  }
+
+  function head(){
+    const n = round.list.length;
+    return '<div class="g-top"><span>' + Math.min(round.i + 1, n) + ' av ' + n + '</span><span>' + round.score + ' rätt</span></div>' +
+      '<div class="lk-bar" style="margin:8px 0 12px"><i style="width:' + (round.i / n * 100) + '%"></i></div>';
+  }
+
+  function renderAsk(focus){
+    const t = round.list[round.i];
+    if (mode === 'hitta'){
+      panel.innerHTML = head() + '<p class="lk-prompt" tabindex="-1">Var ligger ' + t + '?</p><p class="hint">Tryck på landskapet på kartan.</p><p class="g-feed" id="lkFeed" aria-live="polite"></p>' +
+        '<div class="lk-row"><button class="btn ghost small" id="lkSkip">Vet inte, visa</button></div>';
+      $('#lkSkip').addEventListener('click', () => reveal(t, 'Här ligger <b>' + t + '</b>.'));
+    } else {
+      panel.innerHTML = head() + '<p class="lk-prompt" tabindex="-1">Vad heter landskapet som blinkar?</p>' +
+        '<form class="lk-form" id="lkForm" autocomplete="off"><input id="lkIn" type="text" inputmode="text" autocapitalize="words" spellcheck="false" aria-label="Landskapets namn" placeholder="Skriv namnet"><button class="btn primary" type="submit">Svara</button></form>' +
+        '<p class="g-feed" id="lkFeed" aria-live="polite"></p><div class="lk-row"><button class="btn ghost small" id="lkHint" type="button">Ledtråd</button><button class="btn ghost small" id="lkSkip" type="button">Vet inte, visa</button></div>';
+      $('#lkForm').addEventListener('submit', e => { e.preventDefault(); typed($('#lkIn').value); });
+      $('#lkHint').addEventListener('click', () => {
+        const fb = $('#lkFeed');
+        fb.innerHTML = 'Det ligger i <b>' + DEL[BY[t].del] + '</b> och börjar på <b>' + t.slice(0, 2) + '…</b>';
+        $('#lkIn').focus();
+      });
+      $('#lkSkip').addEventListener('click', () => reveal(t, 'Det här är <b>' + t + '</b>.'));
+      if (focus !== false) setTimeout(() => $('#lkIn') && $('#lkIn').focus({ preventScroll: true }), 50);
+    }
+    if (focus && mode === 'hitta') $('.lk-prompt', panel).focus({ preventScroll: true });
+  }
+
+  function feed(html){ const f = $('#lkFeed'); if (f) f.innerHTML = html; }
+
+  function next(delay){
+    paint();
+    render.t = setTimeout(() => {
+      round.i++; round.tries = 0; round.flash = null; round.show = null;
+      if (round.i >= round.list.length) finish();
+      render(true);
+      if (round.over && matchMedia('(max-width:860px)').matches) panel.scrollIntoView({ block: 'center', behavior: RM ? 'auto' : 'smooth' });
+    }, delay);
+  }
+
+  // Bocken kräver en hel runda med alla 25 och minst 20 rätt, i både Hitta och Skriv.
+  function finish(){
+    round.over = true;
+    round.passed = round.all && round.list.length === LS.length && round.score >= 20;
+    if (!round.passed) return;
+    done.add(SUB + mode); save();
+    if (done.has(SUB + 'hitta') && done.has(SUB + 'skriv')) complete('landskap', panel);
+  }
+
+  function right(t){
+    round.res[t] = 'ok'; round.score++;
+    feed('<b>' + pick(YES) + '</b> Det är ' + t + ', i ' + DEL[BY[t].del] + '.');
+    $$('button, input', panel).forEach(x => { x.disabled = true; });
+    next(1100);
+  }
+  function reveal(t, msg){
+    round.res[t] = 'miss';
+    feed(msg + ' Det ligger i ' + DEL[BY[t].del] + '. Den kommer du ihåg nästa gång!');
+    $$('button, input', panel).forEach(x => { x.disabled = true; });
+    // Låt barnet se var det låg innan nästa fråga.
+    round.flash = null; round.show = t;
+    next(2400);
+  }
+
+  function tap(name){
+    if (mode === 'lar'){ if (BY[name] && inFilter(BY[name])){ sel = name; render(); } return; }
+    if (!round || round.over || round.res[round.list[round.i]] || mode !== 'hitta') return;
+    const t = round.list[round.i];
+    if (name === t) return right(t);
+    round.tries++;
+    round.flash = name; paint();
+    setTimeout(() => { if (round.flash === name){ round.flash = null; paint(); } }, 1300);
+    if (round.tries >= 2) return reveal(t, 'Det där var ' + name + '. <b>' + t + '</b> blinkar nu.');
+    feed('<b>Inte riktigt,</b> det där är ' + name + '. Försök en gång till!');
+  }
+
+  function typed(raw){
+    const t = round.list[round.i], v = norm(raw), want = norm(t);
+    if (!v) return;
+    if (v === want) return right(t);
+    round.tries++;
+    const other = LS.find(l => norm(l.n) === v);
+    const near = lev(v, want) <= 2;
+    const inp = $('#lkIn');
+    if (round.tries >= 2) return reveal(t, (near ? 'Nästan! Det stavas' : 'Det här är') + ' <b>' + t + '</b>.');
+    feed(near ? '<b>Nästan!</b> Kolla stavningen och försök igen. Tänk på å, ä och ö.' : other ? '<b>' + other.n + '</b> ligger någon annanstans. Titta igen var det blinkar!' : '<b>Inte riktigt.</b> Försök en gång till, eller tryck på Ledtråd.');
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); inp.select();
+  }
+
+  function renderEnd(){
+    const n = round.list.length, s = round.score, all = round.all && n === LS.length, passed = round.passed;
+    const missed = round.list.filter(x => round.res[x] === 'miss');
+    const other = mode === 'hitta' ? 'skriv' : 'hitta';
+    const msg = s === n ? 'Alla rätt, ' + NAMN + '!' : s >= n * .8 ? 'Riktigt bra!' : 'Bra kämpat! Öva lite till.';
+    const tick = passed ? (done.has('landskap') ? ' Rutan är bockad!' : ' Klarade! Gör ' + (other === 'skriv' ? 'Skriv' : 'Hitta') + ' också, så bockas rutan av.') : all ? ' Du behöver minst 20 rätt för att bocka av rutan.' : ' Bra övning! Kör alla 25 när du känner dig redo.';
+    panel.innerHTML = '<div class="g-end"><p class="big">' + s + '<small> av ' + n + ' rätt</small></p><p>' + msg + tick + '</p>' +
+      (missed.length ? '<p class="hint" style="margin-bottom:14px">Öva extra på: <b>' + missed.join(', ') + '</b></p>' : '') +
+      '<div class="lk-row" style="justify-content:center"><button class="btn primary" id="lkAgain">Kör igen</button>' +
+      (missed.length ? '<button class="btn ghost" id="lkMissed">Bara de jag missade</button>' : '') + '</div></div>';
+    $('#lkAgain').addEventListener('click', () => { newRound(); render(true); });
+    if (missed.length) $('#lkMissed').addEventListener('click', () => { newRound(); round.list = shuffle(missed); render(true); });
+  }
+
+  function setMode(m){
+    mode = m; sel = null;
+    if (m !== 'lar') newRound(); else round = null;
+    render(true);
+    if (matchMedia('(max-width:860px)').matches) $('#lk').scrollIntoView({ block: 'start', behavior: RM ? 'auto' : 'smooth' });
+  }
+  $$('.mode').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  $$('.fbtn').forEach(b => b.addEventListener('click', () => {
+    filter = b.dataset.f;
+    if (sel && !inFilter(BY[sel])) sel = null;
+    if (mode !== 'lar') newRound();
+    const target = filter === 'alla' ? bounds : L.latLngBounds(LS.filter(inFilter).map(l => lay[l.n].getBounds()));
+    if (filter === 'alla') fit(); else map.flyToBounds(target, { padding: [16, 16], maxZoom: minZoom + 2, duration: RM ? 0 : .6 });
+    render(false);
+  }));
+  window.lkRefresh = () => { if (!round || round.over) render(false); };
+  render(false);
+})();
+
+/* ---------- Provet ---------- */
+quiz($('#gProv'), {
+  endText: (s, n) => s === n ? 'Fullpott, ' + NAMN + '! Du är redo för provet.' : s >= n * .8 ? 'Riktigt bra, ' + NAMN + '! Kolla igenom det du missade, så sitter allt.' : s >= n * .5 ? 'Bra jobbat! Spela stationerna du var osäker på och gör om provet.' : 'Bra kämpat! Gå igenom stationerna en gång till, sedan går det bättre.',
+  onDone: (h, s) => { if (s >= 16){ const r = h.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + 40, 140); } },
+  qs: shuffle([
+    { q: 'Vilken är Sveriges största sjö?', o: ['Vänern', 'Vättern', 'Mälaren', 'Storsjön'], a: 0, x: 'Vänern är störst. Sedan kommer Vättern, Mälaren, Hjälmaren och Storsjön.' },
+    { q: 'Vilken sjö är Sveriges näst största?', o: ['Vättern', 'Hjälmaren', 'Mälaren', 'Siljan'], a: 0, x: 'Vi Vill Mysa Hela Sommaren: Vänern, Vättern, Mälaren, Hjälmaren, Storsjön.' },
+    { q: 'Vilken av de fem största sjöarna ligger i Norrland?', o: ['Storsjön', 'Vänern', 'Hjälmaren', 'Mälaren'], a: 0, x: 'Storsjön ligger i Jämtland, vid Östersund.' },
+    { q: 'Vad är ett kulturlandskap?', o: ['Ett landskap som människor har format och ändrat', 'Ett landskap som ingen människa har rört', 'Ett landskap med bara skog'], a: 0, x: 'Åkrar, städer och vägar är kulturlandskap. Människor har format dem.' },
+    { q: 'Vilket är ett naturlandskap?', o: ['Höga fjäll', 'En åker', 'En stad', 'En motorväg'], a: 0, x: 'Fjällen har naturen själv format.' },
+    { q: 'Vilket vattendrag är minst?', o: ['Bäck', 'Å', 'Älv'], a: 0, keep: true, x: 'Från minst till störst: bäck, å, älv.' },
+    { q: 'Vad är en älv?', o: ['Ett stort vattendrag som rinner från fjällen ut i havet', 'En liten sjö i skogen', 'Ett litet vattendrag som man kan hoppa över'], a: 0, x: 'Älvar är stora. Till exempel Torne älv och Dalälven.' },
+    { q: 'Vilka är Sveriges tre landsdelar?', o: ['Götaland, Svealand och Norrland', 'Skåne, Dalarna och Lappland', 'Norr, mitten och söder'], a: 0, x: 'Söderifrån: Götaland, Svealand, Norrland.' },
+    { q: 'Vilken landsdel är störst till ytan?', o: ['Norrland', 'Svealand', 'Götaland'], a: 0, keep: true, x: 'Norrland är mer än halva Sverige.' },
+    { q: 'I vilken landsdel ligger Skåne?', o: ['Götaland', 'Svealand', 'Norrland'], a: 0, keep: true, x: 'Skåne ligger längst i söder, i Götaland.' },
+    { q: 'I vilken landsdel ligger Dalarna?', o: ['Götaland', 'Svealand', 'Norrland'], a: 1, keep: true, x: 'Dalarna ligger i Svealand.' },
+    { q: 'Vilken naturtyp är vanligast i Sverige?', o: ['Skog', 'Fjäll', 'Åkrar', 'Kust'], a: 0, x: 'Ungefär 7 av 10 delar av marken är skog.' },
+    { q: 'I vilken världsdel ligger Sverige?', o: ['Europa', 'Asien', 'Nordamerika', 'Afrika'], a: 0, x: 'Sverige ligger i norra Europa, i Norden.' },
+    { q: 'Var bor flest människor i Sverige?', o: ['I södra Sverige, ofta nära kusten', 'I fjällen', 'I Lappland'], a: 0, x: 'De flesta bor i Götaland och Svealand, till exempel i Stockholm, Göteborg och Malmö.' },
+    { q: 'Varför bor flest människor i södra Sverige?', o: ['Mildare klimat och bra jord att odla på', 'Där finns flest fjäll', 'Där är vintern längst'], a: 0, x: 'Mildare klimat, bra jord, platt mark, jobb i städerna och nära till andra länder.' },
+    { q: 'Hur är klimatet i norra Sverige jämfört med södra?', o: ['Längre och kallare vintrar, kortare somrar', 'Varmare somrar och tidigare vår', 'Precis likadant'], a: 0, x: 'I norr är vintrarna långa och somrarna korta och svala.' },
+    { q: 'Vad är likadant med klimatet i norr och söder?', o: ['Båda har fyra årstider', 'Båda har midnattssol', 'Båda har lika lång vinter'], a: 0, x: 'Vinter, vår, sommar och höst finns i hela Sverige.' },
+    { q: 'Vilken naturresurs gör vi el av i älvarna?', o: ['Vatten', 'Koppar', 'Fisk', 'Åkrar'], a: 0, x: 'Vattenkraftverk i älvarna gör el.' },
+    { q: 'Vad gör man av trä från skogen?', o: ['Papper, möbler och hus', 'Elkablar', 'Järn och stål'], a: 0, x: 'Skogen ger trä och virke. Mycket säljs till andra länder.' },
+    { q: 'Vilket landskap ligger längst norrut?', o: ['Lappland', 'Skåne', 'Uppland', 'Gotland'], a: 0, x: 'Lappland är Sveriges största landskap och ligger längst i norr.' },
+    { q: 'Vilka två landskap är stora öar?', o: ['Gotland och Öland', 'Skåne och Halland', 'Uppland och Närke'], a: 0, x: 'Gotland och Öland ligger i Östersjön.' }
+  ]).slice(0, 18)
+});
+
+renderProgress();
+})();
+</script>
+
+</body></html>
