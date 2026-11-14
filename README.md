@@ -11,8 +11,8 @@ På startsidan skriver man sitt namn och väljer en kurs. Namnet sparas i webbl�
 ## Kurser
 
 1. **Kemikoll för fjärdeklassare** (`kurser/kemikoll/`). Materia, atomer, vatten och ett låtsasprov.
-2. **Atomernas värld** (`kurser/atomernas-varld/`). Atomer, joner, molekyler och värme för 13 till 14 åringar.
-3. **Sverigekoll** (`kurser/sverigekoll/`). Geografi om Sverige: sjöar, vattendrag, landsdelar, klimat, naturresurser och de 25 landskapen på en karta.
+2. **Sverigekoll** (`kurser/sverigekoll/`). Geografi om Sverige: sjöar, vattendrag, landsdelar, klimat, naturresurser och de 25 landskapen på en karta.
+3. **Atomernas värld** (`kurser/atomernas-varld/`). Atomer, joner, molekyler och värme för 13 till 14 åringar.
 
 ### Kartorna i Sverigekoll
 
